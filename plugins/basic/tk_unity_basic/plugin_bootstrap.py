@@ -139,6 +139,9 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
 
     toolkit_mgr.progress_callback = progress_callback
 
+    # It would be smart here to invoke bootstrap_engine_async so that Unity doesn't
+    # look up on startup while Toolkit caches everything. We can't invoke it right
+    # now because the Qt message loop doesn't work right now so it would fail.
     toolkit_mgr.bootstrap_engine(
         os.environ.get("SHOTGUN_ENGINE", "tk-unity"),
         entity
