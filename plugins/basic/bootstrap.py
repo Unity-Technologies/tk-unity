@@ -3,6 +3,26 @@ import sys
 import clr
 
 
+# Here is the content of my bootstrap.cs inside my Unity project.
+# using System.Collections;
+# using System.Collections.Generic;
+# using UnityEditor;
+# using UnityEngine;
+# using Python.Runtime;
+# using System.IO;
+# class Bootstrap{
+#     static void Startup()
+#     {
+#         UnityEngine.Debug.Log("Invoking Shotgun Toolkit bootstrap script.");
+#         PythonRunner.RunFile(System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION"));
+#     }
+#     [MenuItem("Shotgun/Restart engine...")]
+#     public static void CallRestartEngine()
+#     {
+#         PythonRunner.RunString("import sgtk; sgtk.platform.restart()");
+#     }
+# }
+
 def plugin_startup():
     """
     Initializes the Toolkit plugin for Unity.

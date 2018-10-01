@@ -91,17 +91,11 @@ class UnityLauncher(SoftwareLauncher):
         #
         # So instead I'm just testing for file existence.
         builds = [
-            (
-                "/Applications/Unity/Unity.app",
-                "/Applications/Unity/Unity.app/Resources/UnityPlayerIcon.png"
-            ),
-            (
-                "C:/Program Files/Unity/Editor/Unity.exe",
-                "C:/Program Files/Unity/Editor/Data/Resources/UnityPlayerIcon.png"
-            )
+            "/Applications/Unity/Unity.app",
+            "C:/Program Files/Unity/Editor/Unity.exe"
         ]
 
-        for executable_path, icon_path in builds:
+        for executable_path in builds:
             self.logger.debug("Searching for %s", executable_path)
             if os.path.exists(executable_path):
                 self.logger.debug("Software was found!")
@@ -112,5 +106,5 @@ class UnityLauncher(SoftwareLauncher):
                     "2018.2.9f1",
                     "Unity",
                     executable_path,
-                    icon_path
+                    os.path.join(self.disk_location, "icon_256.png")
                 )
