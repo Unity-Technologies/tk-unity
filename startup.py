@@ -31,6 +31,9 @@ class UnityLauncher(SoftwareLauncher):
         # Add std context and site info to the env. This will add stuff like which site to
         # connect to, what context to load, etc.
         required_env.update(self.get_standard_plugin_environment())
+
+        # This will be read by bootstrap.cs from the C# plugin in UI to know where to pick up the
+        # Toolkit code.
         required_env["SHOTGUN_UNITY_BOOTSTRAP_LOCATION"] = os.path.join(
             self.disk_location,
             "plugins",
@@ -61,11 +64,12 @@ class UnityLauncher(SoftwareLauncher):
 
         :return: A list of :class:`SoftwareVersion` objects.
         """
-
         self.logger.debug("Scanning for Unity executables...")
 
         # This piece of boiler-plate code scans for software based and for every version
         # returned checks if the engine actually supports it.
+        #
+        # You can look at other engines, which do pretty much the same thing.
         supported_sw_versions = []
         for sw_version in self._find_software():
             (supported, reason) = self._is_supported(sw_version)
@@ -84,10 +88,13 @@ class UnityLauncher(SoftwareLauncher):
         Find executables in the default install locations.
         """
         # TODO:
-        # I do not know how multiple builds of unity live of the same computer. I suspect asking
+        # I do not know how multiple builds of Unity live of the same computer. I suspect asking
         # the registry would be the most sensible way to do this on Windows.
         # On Linux/macOS, we generally scan on disk using templates to glob for files. It's hard to
         # give a proof of concept here because the build number is not in the install path.
+        #
+        # When people install software in the non-default install location, they generally configure
+        # Software entities in Shotgun.
         #
         # So instead I'm just testing for file existence.
         builds = [

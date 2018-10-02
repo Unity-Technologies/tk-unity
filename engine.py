@@ -1,5 +1,5 @@
 """
-An Unity Editor engine for Tank.
+An Unity Editor engine for Sgtk.
 """
 
 # Note that the VFX Plaform states that in 2019 all DCCs need to support Python 3,
@@ -7,10 +7,10 @@ An Unity Editor engine for Tank.
 # engine with a Python 3 compatible syntax. Note that at the moment Toolkit
 # is not Python 3 compatible.
 
-from threading import Thread
 import pprint
 from sgtk.platform import Engine
 
+# Is this even needed?
 import clr
 clr.AddReference("UnityEngine")
 import UnityEngine
@@ -77,7 +77,7 @@ class UnityEditorEngine(Engine):
         # to display correctly in all of the app windows
 
         # This is often necessary to get Qt to play nice with Python and utf-8.
-        # from tank.platform.qt import QtCore
+        # from sgtk.platform.qt import QtCore
         # # tell QT to interpret C strings as utf-8
         # utf8 = QtCore.QTextCodec.codecForName("utf-8")
         # QtCore.QTextCodec.setCodecForCStrings(utf8)
@@ -142,11 +142,15 @@ class UnityEditorEngine(Engine):
         # - {app_instance: tk-multi-workfiles2, name: File Open...}
         # - {app_instance: tk-multi-workfiles2, name: File Save...}
         #
-        # Here's a reference implementation:
+        # Here's a reference implementation that we use for all engines (again, it should be refactored)
+        # inside tk-core, but we haven't done so.
         #
         for fav in self.get_setting("menu_favourites"):
             app_instance_name = fav["app_instance"]
             menu_name = fav["name"]
+
+            # Inside this loop, you would take things OUT of the submenus in the structure you created above
+            # and put them at the root of the menu.
 
             if menu_name not in self.commands:
                 self.logger.warning("Unknown command: %s/%s", app_instance_name, menu_name)
@@ -160,6 +164,26 @@ class UnityEditorEngine(Engine):
                 continue
 
             self.logger.debug("Favorite found: ", menu_name)
+
+        # Traditionally, the menu is built the following way:
+        #
+        # - First create the Context menu, which is a folder that has a bunch of actions
+        #   in it like showing the About box and adding actions to reload Toolkit.
+        # - Then there's a separator and a list of favorites.
+        # - Finally, there's a separator and a list of folders for each Toolkit application that
+        #   has more than one command. If an app has a single command, then there is single entry
+        #   instead of a folder.
+
+        # Building the menu is as simple as doing three passes on the list of commands:
+        #
+        # - The first pass takes every context actions, removes them from the list and adds them to the
+        #   Context menu.
+        # - Add a separator.
+        # - The second pass takes every favorites and, removes them from the list of commands
+        #   and lists them in the Shotgun menu.
+        # - Add a separator.
+        # - Sort the remaining actions into sub-menus, one per application. If an application
+        #   has a single action, then you have a single item instead of a sub-menu.
 
     def post_context_change(self, old_context, new_context):
         """
@@ -190,7 +214,7 @@ class UnityEditorEngine(Engine):
         # is a Qt limitation.
         #
 
-        # from tank.platform.qt import QtGui
+        # from sgtk.platform.qt import QtGui
         # import maya.OpenMayaUI as OpenMayaUI
         # try:
         #     import shiboken2 as shiboken
@@ -205,15 +229,15 @@ class UnityEditorEngine(Engine):
 
     def _define_qt_base(self):
         """
-        This will be called at initialisation time and will allow
+        This will be called at initialization time and will allow
         a user to control various aspects of how QT is being used
-        by Tank. The method should return a dictionary with a number
+        by Toolkit. The method should return a dictionary with a number
         of specific keys, outlined below.
 
         * qt_core - the QtCore module to use
         * qt_gui - the QtGui module to use
         * wrapper - the Qt wrapper root module, e.g. PySide
-        * dialog_base - base class for to use for Tank's dialog factory
+        * dialog_base - base class for to use for Toolkit's dialog factory
 
         :returns: dict
         """
@@ -254,6 +278,9 @@ class UnityEditorEngine(Engine):
         # Assuming the Unity Editor has a message dialog, you would call
         # here a method that allows to send text to that console. Note that
         # this method can be called from any thread that uses Toolkit logging.
+        # If Unity's UnityEngine.Debug.* methods are not thread safe, you should
+        # make  sure that calls are forwarded to the main thread.
+        #
         # You should also take into account the log level of the message and call the appropriate
         # method on UnityEngine.Debug.
         UnityEngine.Debug.Log(msg)
