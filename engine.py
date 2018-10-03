@@ -300,7 +300,14 @@ class UnityEditorEngine(Engine):
         #
         # You should also take into account the log level of the message and call the appropriate
         # method on UnityEngine.Debug.
-        UnityEngine.Debug.Log(msg)
+        
+        import logging
+        if record.levelno >= logging.ERROR:
+            UnityEngine.Debug.LogError(msg)
+        elif record.levelno >= logging.WARNING:
+            UnityEngine.Debug.LogWarning(msg)
+        else:
+            UnityEngine.Debug.Log(msg)
 
     ##########################################################################################
     # panel support
