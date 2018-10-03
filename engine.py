@@ -123,7 +123,8 @@ class UnityEditorEngine(Engine):
 
         self.logger.info("Here are the available Toolkit commands:")
         
-        cmd_items = {}
+        # store the menu cmds so that we can access them later from C#
+        self._menu_cmd_items = {}
         for (cmd_name, cmd_details) in self.commands.items():
             # Prints out the name of the Toolkit commands that can be invoked
             # and the method to invoke to launch them. The callback
@@ -135,10 +136,7 @@ class UnityEditorEngine(Engine):
             self.logger.debug("Command properties:")
             self.logger.debug(pprint.pformat(cmd_details["properties"]))
             
-            cmd_items[cmd_name] = cmd_details
-        
-        # store the menu cmds so that we can access them later from C#
-        self._menu_cmd_items = cmd_items
+            self._menu_cmd_items[cmd_name] = cmd_details
         
         # Many engines implement the notion of favorites, which allow the menu
         # to bubble certain actions up to the main Shotgun menu. This shows
@@ -172,7 +170,7 @@ class UnityEditorEngine(Engine):
             self.logger.debug("Favorite found: ", menu_name)
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
-        generator = MenuItemGenerator(UnityEngine.Application.dataPath, cmd_items, "call_menu_item_callback")
+        generator = MenuItemGenerator(UnityEngine.Application.dataPath, self._menu_cmd_items, "call_menu_item_callback")
         generator.GenerateMenuItems()
 
         # Traditionally, the menu is built the following way:
