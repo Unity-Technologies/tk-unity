@@ -23,6 +23,8 @@ import clr
 #     }
 # }
 
+my_app = None
+
 def plugin_startup():
     """
     Initializes the Toolkit plugin for Unity.
@@ -36,6 +38,14 @@ def plugin_startup():
 
         if plugin_root_path not in sys.path:
             sys.path.insert(0, plugin_root_path)
+            
+        # make sure there is a QApplication
+        global my_app
+        if not my_app:
+            from PySide.QtGui import QApplication
+            my_app = QApplication.instance()
+            if not my_app :
+                my_app = QApplication(sys.argv)        
 
         # now that the path is there, we can import the plugin bootstrap logic
         import tk_unity_basic
