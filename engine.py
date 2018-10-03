@@ -122,7 +122,8 @@ class UnityEditorEngine(Engine):
         # into refactoring that logic in the future.
 
         self.logger.info("Here are the available Toolkit commands:")
-
+        
+        cmd_items = {}
         for (cmd_name, cmd_details) in self.commands.items():
             # Prints out the name of the Toolkit commands that can be invoked
             # and the method to invoke to launch them. The callback
@@ -133,7 +134,12 @@ class UnityEditorEngine(Engine):
             self.logger.debug("Command name: " + cmd_name)
             self.logger.debug("Command properties:")
             self.logger.debug(pprint.pformat(cmd_details["properties"]))
-
+            
+            cmd_items[cmd_name] = cmd_details
+        
+        # store the menu cmds so that we can access them later from C#
+        self._menu_cmd_items = cmd_items
+        
         # Many engines implement the notion of favorites, which allow the menu
         # to bubble certain actions up to the main Shotgun menu. This shows
         # up in the environment file as.
@@ -164,6 +170,10 @@ class UnityEditorEngine(Engine):
                 continue
 
             self.logger.debug("Favorite found: ", menu_name)
+        
+        from tk_create_menus.generateMenuItems import MenuItemGenerator
+        generator = MenuItemGenerator(UnityEngine.Application.dataPath, cmd_items, "call_menu_item_callback")
+        generator.GenerateMenuItems()
 
         # Traditionally, the menu is built the following way:
         #
@@ -185,6 +195,13 @@ class UnityEditorEngine(Engine):
         # - Sort the remaining actions into sub-menus, one per application. If an application
         #   has a single action, then you have a single item instead of a sub-menu.
 
+    # call this function to then call the callbacks, so we can debug
+    def call_menu_item_callback(self, name):
+        if not self._menu_cmd_items or (not name in self._menu_cmd_items):
+            self.logger.error("Missing menu command {0}".format(name))
+            return
+        self._menu_cmd_items[name]["callback"]()
+        
     def post_context_change(self, old_context, new_context):
         """
         Runs after a context change.
