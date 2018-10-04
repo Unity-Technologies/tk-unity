@@ -23,6 +23,8 @@ import clr
 #     }
 # }
 
+my_app = None
+
 def plugin_startup():
     """
     Initializes the Toolkit plugin for Unity.
@@ -36,10 +38,21 @@ def plugin_startup():
 
         if plugin_root_path not in sys.path:
             sys.path.insert(0, plugin_root_path)
-
+            
         # now that the path is there, we can import the plugin bootstrap logic
         import tk_unity_basic
         tk_unity_basic.plugin_bootstrap(plugin_root_path)
+
+        # make sure there is a QApplication. We need to wait after the call to 
+        # plugin_bootstrap in order for sgtk.platform.qt to be properly 
+        # populated
+        global my_app
+        if not my_app:
+            from sgtk.platform.qt import QtGui
+            my_app = QtGui.QApplication.instance()
+            if not my_app :
+                my_app = QtGui.QApplication(sys.argv)        
+
     except Exception, e:
         import traceback
         stack_trace = traceback.format_exc()
