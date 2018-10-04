@@ -51,7 +51,7 @@ class UnityLauncher(SoftwareLauncher):
         self.logger.debug("Launch environment: %s", pprint.pformat(required_env))
         self.logger.debug("Launch arguments: %s", args)
 
-        args += " -executeMethod Bootstrap.Startup"
+        args += '-importPackage "{0}/{1}/{2}"'.format(self.disk_location, "startup", "shotgunBootstrap.unitypackage")
 
         return LaunchInformation(exec_path, args, required_env)
 
