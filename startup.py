@@ -21,11 +21,14 @@ class UnityLauncher(SoftwareLauncher):
     # to be added here.
     EXECUTABLE_TEMPLATES = {
         "darwin": [
-            "/Applications/Unity/Unity.app",
-            "/Applications/Unity/Hub/Editor/{version}/Unity.app",
-            "/Applications/{version}/Unity.app",
+            "/Applications/Unity/Unity.app/Contents/MacOS/Unity",
+            "/Applications/Unity/Hub/Editor/{version}/Unity.app/Contents/MacOS/Unity",
+            "/Applications/{version}/Unity.app/Contents/MacOS/Unity",
         ],
         "win32": [
+            "C:/Program Files/Unity/Editor/Unity.exe",
+            "C:/Program Files/Unity{version}/Editor/Unity.exe",
+            "C:/Program Files/Unity {version}/Editor/Unity.exe",
             "D:/Program Files/{version}/Editor/Unity.exe",
             "D:/Program Files/Unity {version}/Editor/Unity.exe",
             "D:/Program Files/Unity{version}/Editor/Unity.exe",
