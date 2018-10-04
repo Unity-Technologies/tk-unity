@@ -58,7 +58,7 @@ class UnityLauncher(SoftwareLauncher):
         """
         The minimum software version that is supported by the launcher.
         """
-        return "2018.2.0a8"
+        return "2018.2"
 
     def prepare_launch(self, exec_path, args, file_to_open=None):
         """
