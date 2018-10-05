@@ -1,0 +1,163 @@
+/***************
+ * Header
+ ***************/
+QWidget
+{
+    font-family: "Open Sans";
+    font-style: "Regular";
+}
+
+#header QPushButton
+{
+    background-color: transparent;
+    font-size: 15px;
+    font-style: "Condensed Light";
+    border: none;
+    padding: 15px 0px 10px 0px;
+}
+#header QPushButton:hover
+{
+    border-bottom: 2px solid rgb(85, 85, 85);
+}
+#header QPushButton:pressed
+{
+    border-bottom: 2px solid rgb(255, 255, 255);
+}
+#header QPushButton[active=true]
+{
+    border-bottom: 2px solid rgb(195, 195, 195);
+}
+
+/***************
+ * Project subheader
+ ***************/
+#subheader, #project_subheader
+{
+    background-color: rgb(38, 38, 38);
+    border-bottom: 1px solid rgb(20, 20, 20);
+}
+
+#subheader_label {
+    font-size: 20px;
+    font-style: "Condensed Light";
+}
+
+#subheader #search_frame
+{
+    border-radius: 5px;
+}
+
+#subheader #search_frame[collapsed="false"]
+{
+    background-color: rgb(195, 195, 195);
+}
+
+#subheader #search_frame[collapsed="true"]
+{
+    background-color: transparent;
+}
+
+#subheader #search_text
+{
+    color: rgb(38, 38, 38);
+    background-color: transparent;
+    border: none;
+}
+
+/***************
+ * Recents subheader
+ ***************/
+
+#project_subheader QPushButton
+{
+    background-color: transparent;
+}
+
+#configuration_frame
+{
+    background-color: rgb(67, 131, 168);
+    padding: 10px;
+}
+
+#configuration_name
+{
+    color: white;
+}
+
+#project_menu
+{
+    background-color: rgb(65, 65, 65);
+}
+
+#project_menu::menu-indicator
+{
+    image: url(does_not_exist.jpg);
+}
+
+#project_menu_configuration_label
+{
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 2px;
+}
+
+#project_subheader #project_name
+{
+    font-size: 20px;
+    font-style: "Condensed Light";
+}
+
+#project_commands
+{
+    padding: 10px;
+    background-color: rgb(40, 40, 40);
+}
+
+#tab_view
+{
+    background-color: rgb(40, 40, 40);
+}
+
+#user_button
+{
+    margin: 2px;
+    background-color: transparent;
+}
+
+#user_button::menu-indicator
+{
+    image: none;
+}
+
+#stack
+{
+    border-top: 1px solid rgb(20, 20, 20);
+    border-bottom: 1px solid rgb(20, 20, 20);
+}
+
+#footer QPushButton
+{
+    border: 1px solid transparent;
+    border-radius: 3px;
+}
+
+#footer QPushButton:hover
+{
+    border: 1px solid rgb(67, 131, 168);
+    border-radius: 3px;
+}
+
+/***************
+ * Banner widget
+ ***************/
+
+#BannerWidget
+{
+    background-color: rgb(67, 131, 168);
+    color: rgb(255, 255, 255);
+}
+
+#banners
+{
+    background-color: rgb(34, 65, 84);
+}

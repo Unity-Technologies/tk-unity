@@ -146,3 +146,13 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
         os.environ.get("SHOTGUN_ENGINE", "tk-unity"),
         entity
     )
+    
+    # Merge in app specific look and feel
+    from sgtk.platform.qt import QtGui
+    app = QtGui.QApplication.instance()
+    
+    css_file = os.path.join(self._engine.disk_location, "style.qss")
+    with open(css_file) as f:
+        css = app.styleSheet() + "\n\n" + f.read()
+    app.setStyleSheet(css)
+
