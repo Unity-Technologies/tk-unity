@@ -71,8 +71,8 @@ class UnityActions(HookBaseClass):
         if "import" in actions:
             action_instances.append( {"name": "import", 
                                       "params": None,
-                                      "caption": "Import into Scene", 
-                                      "description": "This will import the item into the current scene."} )
+                                      "caption": "Import Asset", 
+                                      "description": "This will import the item into the current project."} )
 
         return action_instances
 
@@ -134,8 +134,7 @@ class UnityActions(HookBaseClass):
 
     def _do_import(self, path, sg_publish_data):
         """
-        Create a reference with the same settings Maya would use
-        if you used the create settings dialog.
+        Import file at path into Unity project.
         
         :param path: Path to file.
         :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
