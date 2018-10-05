@@ -1,9 +1,59 @@
 import os
+import sys
 import pprint
 from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 
 
 class UnityLauncher(SoftwareLauncher):
+    # Named regex strings to insert into the executable template paths when
+    # matching against supplied versions and products. Similar to the glob
+    # strings, these allow us to alter the regex matching for any of the
+    # variable components of the path in one place
+    COMPONENT_REGEX_LOOKUP = {
+        "version": "[\d]+[\d.\[a-z\]]+"
+    }
+
+    # This dictionary defines a list of executable template strings for each
+    # of the supported operating systems. The templates are used for both
+    # globbing and regex matches by replacing the named format placeholders
+    # with an appropriate glob or regex string. As Side FX adds modifies the
+    # install path on a given OS for a new release, a new template will need
+    # to be added here.
+    EXECUTABLE_TEMPLATES = {
+        "darwin": [
+            "/Applications/Unity/Unity.app/Contents/MacOS/Unity",
+            "/Applications/Unity/Hub/Editor/{version}/Unity.app/Contents/MacOS/Unity",
+            "/Applications/{version}/Unity.app/Contents/MacOS/Unity",
+        ],
+        "win32": [
+            "C:/Program Files/Unity/Editor/Unity.exe",
+            "C:/Program Files/Unity{version}/Editor/Unity.exe",
+            "C:/Program Files/Unity {version}/Editor/Unity.exe",
+            "C:/Program Files/Unity/{version}/Editor/Unity.exe",
+            "C:/Program Files/Unity/Hub/Editor/{version}/Editor/Unity.exe",            
+            "D:/Program Files/{version}/Editor/Unity.exe",
+            "D:/Program Files/Unity {version}/Editor/Unity.exe",
+            "D:/Program Files/Unity{version}/Editor/Unity.exe",
+            "D:/Program Files/Unity/{version}/Editor/Unity.exe",
+            "D:/Unity Editors/{version}/Editor/Unity.exe"
+        ],
+        "linux2": [
+            # TODO
+        ]
+    }
+    
+    HUB_EXECUTABLES = {
+        "darwin": [
+            # TODO
+        ],
+        "win32": [
+            "C:/Users/{username}/AppData/Roaming/UnityHub/editors.json"
+        ],
+        "linux2": [
+            # TODO
+        ]
+    }
+
     """
     Handles launching Unity executables. Automatically starts up
     a tk-unity engine with the current context in the new session
@@ -14,7 +64,7 @@ class UnityLauncher(SoftwareLauncher):
         """
         The minimum software version that is supported by the launcher.
         """
-        return "2018.2.9f1"
+        return "2018.2"
 
     def prepare_launch(self, exec_path, args, file_to_open=None):
         """
@@ -86,32 +136,92 @@ class UnityLauncher(SoftwareLauncher):
     def _find_software(self):
         """
         Find executables in the default install locations.
+        
+        Three different ways to find versions:
+            1. If Unity Hub is installed, get versions from editors.json file
+            2. Use default install location templates to glob for executable filesystem
+            3. Try to get paths from UNITY_EDITOR_PATH environment variable if set
         """
-        # TODO:
-        # I do not know how multiple builds of Unity live of the same computer. I suspect asking
-        # the registry would be the most sensible way to do this on Windows.
-        # On Linux/macOS, we generally scan on disk using templates to glob for files. It's hard to
-        # give a proof of concept here because the build number is not in the install path.
-        #
-        # When people install software in the non-default install location, they generally configure
-        # Software entities in Shotgun.
-        #
-        # So instead I'm just testing for file existence.
-        builds = [
-            "/Applications/Unity/Unity.app",
-            "C:/Program Files/Unity/Editor/Unity.exe"
-        ]
+        
+        # all the discovered executables
+        sw_versions = []
+        
+        # If Unity Hub is installed then try to get some of the versions from there
+        editor_jsons = self.HUB_EXECUTABLES.get(sys.platform, [])
+        import getpass
+        username = getpass.getuser()
+        for i in range(len(editor_jsons)):
+            editor_json = editor_jsons[i].format(username = username)
+            if os.path.exists(editor_json):
+                with open(editor_json, "r") as f:
+                    import json
+                    data = json.load(f)
+                    if not data:
+                        continue
+                    
+                    for vals in data.values():
+                        version = vals["version"]
+                        exec_paths = vals["location"] # list of locations
+                        if len(exec_paths) < 1:
+                            continue
+                        exec_path = exec_paths[0]
+                        
+                        sw_versions.append(
+                            SoftwareVersion(
+                                version,
+                                "Unity",
+                                exec_path,
+                                os.path.join(self.disk_location, "icon_256.png")
+                            )
+                        )
+        
+        # all the executable templates for the current OS
+        executable_templates = self.EXECUTABLE_TEMPLATES.get(sys.platform, [])
 
-        for executable_path in builds:
-            self.logger.debug("Searching for %s", executable_path)
-            if os.path.exists(executable_path):
-                self.logger.debug("Software was found!")
-                yield SoftwareVersion(
-                    # This would be retrieved from the registry or a file.
-                    # /Applications/Unity/Unity.app/Contents/Info.plist on macOS actually has this information.
-                    # So does HKEY_CURRENT_USER\Software\Unity Technologies\Installer\Unity\Version on Windows.
-                    "2018.2.9f1",
-                    "Unity",
-                    executable_path,
-                    os.path.join(self.disk_location, "icon_256.png")
+        for executable_template in executable_templates:
+
+            self.logger.debug("Processing template %s.", executable_template)
+
+            executable_matches = self._glob_and_match(
+                executable_template,
+                self.COMPONENT_REGEX_LOOKUP
+            )
+
+            # Extract all products from that executable.
+            for (executable_path, key_dict) in executable_matches:
+
+                # extract the matched keys form the key_dict (default to None if
+                # not included)
+                executable_version = key_dict.get("version")
+                
+                if not executable_version:
+                    executable_version = "Unknown"
+                
+                self.logger.warning("Software was found: " + executable_path + ", " + executable_version)
+
+                sw_versions.append(
+                    SoftwareVersion(
+                        executable_version,
+                        "Unity",
+                        executable_path,
+                        os.path.join(self.disk_location, "icon_256.png")
+                    )
                 )
+                
+        # also try to get from environment variable
+        environ_paths = os.environ.get("UNITY_EDITOR_PATH")
+        if not environ_paths:
+            return sw_versions
+        
+        environ_paths = environ_paths.split(";")
+        for executable_path in environ_paths:
+            sw_versions.append(
+                    SoftwareVersion(
+                        "Unknown",
+                        "Unity",
+                        executable_path,
+                        os.path.join(self.disk_location, "icon_256.png")
+                    )
+                )
+                
+        return sw_versions
