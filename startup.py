@@ -29,9 +29,12 @@ class UnityLauncher(SoftwareLauncher):
             "C:/Program Files/Unity/Editor/Unity.exe",
             "C:/Program Files/Unity{version}/Editor/Unity.exe",
             "C:/Program Files/Unity {version}/Editor/Unity.exe",
+            "C:/Program Files/Unity/{version}/Editor/Unity.exe",
+            "C:/Program Files/Unity/Hub/Editor/{version}/Editor/Unity.exe",            
             "D:/Program Files/{version}/Editor/Unity.exe",
             "D:/Program Files/Unity {version}/Editor/Unity.exe",
             "D:/Program Files/Unity{version}/Editor/Unity.exe",
+            "D:/Program Files/Unity/{version}/Editor/Unity.exe",
             "D:/Unity Editors/{version}/Editor/Unity.exe"
         ],
         "linux2": [
