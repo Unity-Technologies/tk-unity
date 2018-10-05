@@ -23,8 +23,6 @@ import clr
 #     }
 # }
 
-my_app = None
-
 def plugin_startup():
     """
     Initializes the Toolkit plugin for Unity.
@@ -46,12 +44,12 @@ def plugin_startup():
         # make sure there is a QApplication. We need to wait after the call to 
         # plugin_bootstrap in order for sgtk.platform.qt to be properly 
         # populated
-        global my_app
-        if not my_app:
-            from sgtk.platform.qt import QtGui
-            my_app = QtGui.QApplication.instance()
-            if not my_app :
-                my_app = QtGui.QApplication(sys.argv)        
+        from sgtk.platform.qt import QtGui
+        if not QtGui.QApplication.instance():
+            my_app = QtGui.QApplication(sys.argv)
+
+        import sgtk
+        sgtk.platform.current_engine()._initialize_dark_look_and_feel()
 
     except Exception, e:
         import traceback
