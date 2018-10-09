@@ -142,11 +142,20 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     # It would be smart here to invoke bootstrap_engine_async so that Unity doesn't
     # look up on startup while Toolkit caches everything. We can't invoke it right
     # now because the Qt message loop doesn't work right now so it would fail.
+    """
     toolkit_mgr.bootstrap_engine(
         os.environ.get("SHOTGUN_ENGINE", "tk-unity"),
         entity
     )
+
+    pydevd_path = 'D:/Program Files/eclipse/plugins/org.python.pydev.core_6.5.0.201809011628/pysrc'
     
+    if pydevd_path not in sys.path:
+      sys.path.append(pydevd_path)
+    
+    import pydevd
+    pydevd.settrace()
+
     # Merge in app specific look and feel
     from sgtk.platform.qt import QtGui
     app = QtGui.QApplication.instance()
@@ -155,4 +164,4 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     with open(css_file) as f:
         css = app.styleSheet() + "\n\n" + f.read()
     app.setStyleSheet(css)
-
+    """
