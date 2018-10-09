@@ -146,4 +146,3 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
         os.environ.get("SHOTGUN_ENGINE", "tk-unity"),
         entity
     )
-    
