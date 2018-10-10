@@ -46,7 +46,7 @@ def plugin_startup():
         # populated
         from sgtk.platform.qt import QtGui
         if not QtGui.QApplication.instance():
-            my_app = QtGui.QApplication(sys.argv)
+            QtGui.QApplication(sys.argv)
 
         import sgtk
         sgtk.platform.current_engine()._initialize_dark_look_and_feel()
