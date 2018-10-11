@@ -46,6 +46,45 @@ class UnitySessionCollector(HookBaseClass):
 
         return collector_settings
 
+    def _collect_file(self, parent_item, path):
+        """
+        Process the supplied file path.
+
+        :param parent_item: parent item instance
+        :param path: Path to analyze
+        :param frame_sequence: Treat the path as a part of a sequence
+        :returns: The item that was created
+        """
+
+        # make sure the path is normalized. no trailing separator, separators
+        # are appropriate for the current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(path)
+
+        publisher = self.parent
+
+        # get info for the extension
+        item_info = self._get_item_info(path)
+        item_type = item_info["item_type"]
+        type_display = item_info["type_display"]
+        evaluated_path = path
+        is_sequence = False
+
+        display_name = publisher.util.get_publish_name(
+            path, sequence=is_sequence)
+
+        # create and populate the item
+        file_item = parent_item.create_item(
+            "unity.video", type_display, "Session Recording")
+        file_item.set_icon_from_path(item_info["icon_path"])
+
+        # all we know about the file is its path. set the path in its
+        # properties for the plugins to use for processing.
+        file_item.properties["path"] = evaluated_path
+
+        self.logger.info("Collected file: %s" % (evaluated_path,))
+
+        return file_item    
+        
     def process_current_session(self, settings, parent_item):
         """
         Analyzes the current session open in Maya and parents a subtree of
@@ -57,23 +96,14 @@ class UnitySessionCollector(HookBaseClass):
         """
         
         import UnityEngine
-        import UnityEditor
         session_item = parent_item.create_item(
-            "unity.scene",
-            "Unity Scene",
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+            "unity.session",
+            "Unity Session",
+            UnityEngine.Application.productName
         )
         session_item.properties["project_root"] = UnityEngine.Application.dataPath
-        
-        # find all timelines in the scene and create items for them
-        playable_directors = UnityEngine.Object.FindObjectsOfType[UnityEngine.Playables.PlayableDirector]()
-        for pd in playable_directors:
-            timeline_path = UnityEditor.AssetDatabase.GetAssetPath(pd.playableAsset)
-            timeline_item = session_item.create_item(
-                "unity.timeline",
-                "Timeline Asset",
-                pd.playableAsset.name
+        import tempfile
+        item = self._collect_file(
+                session_item,
+                os.path.join(tempfile.gettempdir(), UnityEngine.Application.productName + ".mp4")
             )
-            timeline_item.properties["path"] = timeline_path
-            timeline_item.properties["asset"] = pd.playableAsset
-            timeline_item.properties["gameobject"] = pd.gameObject
