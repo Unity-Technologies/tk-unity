@@ -1,0 +1,13 @@
+{
+    "name": "Unity.Recorder.Editor",
+    "references": [
+        "Unity.Recorder",
+        "Shotgun"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

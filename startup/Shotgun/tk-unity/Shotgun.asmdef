@@ -1,0 +1,10 @@
+{
+    "name": "Shotgun",
+    "references": [
+        "com.unity.scripting.python"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
