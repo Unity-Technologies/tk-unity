@@ -180,14 +180,16 @@ class UnityActions(HookBaseClass):
         import UnityEngine
         projectPath = UnityEngine.Application.dataPath
         
-        import_paths = self._on_browse(projectPath)
-        if import_paths and len(import_paths) > 0:
-            import shutil
-            shutil.copy2(path, import_paths[0])
-            UnityEngine.Debug.Log("importing asset {0} to {1}".format(path, import_paths[0]))
-        
-            import UnityEditor
-            UnityEditor.AssetDatabase.Refresh()
-            return
+        try:
+            import_paths = self._on_browse(projectPath)
+            if import_paths and len(import_paths) > 0:
+                import shutil
+                shutil.copy2(path, import_paths[0])
+                UnityEngine.Debug.Log("importing asset {0} to {1}".format(path, import_paths[0]))
             
+                import UnityEditor
+                UnityEditor.AssetDatabase.Refresh()
+                return
+        except IOError as e:
+            UnityEngine.Debug.LogError("IOError: {0}".format(str(e)))
         UnityEngine.Debug.LogWarning("Shotgun: No import path selected, will not import asset")
