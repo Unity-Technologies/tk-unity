@@ -149,8 +149,21 @@ class UnityActions(HookBaseClass):
         projectPath = UnityEngine.Application.dataPath
         UnityEngine.Debug.LogWarning("importing asset {0} to {1}".format(path, projectPath))
         
+        # get filename without version number if possible
+        filename = os.path.basename(path)
+        if "name" in sg_publish_data:
+            filename = sg_publish_data["name"]
+            
+        filePath = os.path.join(projectPath, filename)
+        
         import shutil
-        shutil.copy2(path, projectPath)
+        shutil.copy2(path, filePath)
         
         import UnityEditor
         UnityEditor.AssetDatabase.Refresh()
+        
+        # store the path in the meta file
+        asset = "Assets/" + filename
+        modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
+        modelImporter.userData = path
+        UnityEditor.AssetDatabase.ImportAsset(asset)

@@ -39,9 +39,7 @@ class BreakdownSceneOperations(Hook):
         available. Any such versions are then displayed in the UI as out of date.
         """
         
-        self.logger.debug("Scanning scene....")
-        import UnityEngine
-        UnityEngine.Debug.LogWarning("scanning scene.....")
+        import UnityEditor
         
         """
         import sys
@@ -52,33 +50,26 @@ class BreakdownSceneOperations(Hook):
         pydevd.settrace()
         """
         
-        return [{"node": "Grave", "type": "file", "path": "S:\\imgspc\\production\\adagio\\assets\\Grave_temp\\Grave.v002.fbx"}]
-        """
         refs = []
-
-        # first let's look at maya references
-        for x in pm.listReferences():
-            node_name = x.refNode.longName()
-
-            # get the path and make it platform dependent
-            # (maya uses C:/style/paths)
-            maya_path = x.path.replace("/", os.path.sep)
-            refs.append( {"node": node_name, "type": "reference", "path": maya_path})
-
-        # now look at file texture nodes
-        for file_node in cmds.ls(l=True, type="file"):
-            # ensure this is actually part of this scene and not referenced
-            if cmds.referenceQuery(file_node, isNodeReferenced=True):
-                # this is embedded in another reference, so don't include it in the breakdown
+        
+        # check the meta data of all fbx files in the project to see if they contain a shotgun path, add them if they do
+        guids = UnityEditor.AssetDatabase.FindAssets("t:model")
+        for guid in guids:
+            path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid)
+            extension = os.path.splitext(path)[1] 
+            if extension.lower() != ".fbx":
+                continue # ignore potentially finding other files
+                
+            modelImporter = UnityEditor.AssetImporter.GetAtPath(path)
+            if not modelImporter:
                 continue
-
-            # get path and make it platform dependent (maya uses C:/style/paths)
-            path = cmds.getAttr("%s.fileTextureName" % file_node).replace("/", os.path.sep)
-
-            refs.append( {"node": file_node, "type": "file", "path": path})
-
+                
+            item = {}
+            item["type"] = "file"
+            item["node"] = os.path.splitext(path)[0]
+            item["path"] = modelImporter.userData
+            refs.append(item)
         return refs
-        """
 
     def update(self, items):
         """
