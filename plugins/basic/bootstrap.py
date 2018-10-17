@@ -28,7 +28,7 @@ def plugin_startup():
         # now that the path is there, we can import the plugin bootstrap logic
         import tk_unity_basic
         tk_unity_basic.plugin_bootstrap(plugin_root_path)
-   
+
         # make sure there is a QApplication. We need to wait after the call to 
         # plugin_bootstrap in order for sgtk.platform.qt to be properly 
         # populated
