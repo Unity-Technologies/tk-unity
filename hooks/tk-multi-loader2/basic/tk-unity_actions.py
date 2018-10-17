@@ -150,9 +150,7 @@ class UnityActions(HookBaseClass):
         UnityEngine.Debug.LogWarning("importing asset {0} to {1}".format(path, projectPath))
         
         # get filename without version number if possible
-        filename = os.path.basename(path)
-        if "name" in sg_publish_data:
-            filename = sg_publish_data["name"]
+        filename = sg_publish_data.get("name", os.path.basename(path))
             
         filePath = os.path.join(projectPath, filename)
         
