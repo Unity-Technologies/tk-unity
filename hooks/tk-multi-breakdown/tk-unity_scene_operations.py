@@ -40,16 +40,6 @@ class BreakdownSceneOperations(Hook):
         """
         
         import UnityEditor
-        
-        """
-        import sys
-        pydevd_path = 'D:\\eclipse-java-2018-09-win32-x86_64\\eclipse\\plugins\\org.python.pydev.core_6.5.0.201809011628\\pysrc'
-        if pydevd_path not in sys.path:
-            sys.path.append(pydevd_path)
-        import pydevd
-        pydevd.settrace()
-        """
-        
         refs = []
         
         # check the meta data of all fbx files in the project to see if they contain a shotgun path, add them if they do
