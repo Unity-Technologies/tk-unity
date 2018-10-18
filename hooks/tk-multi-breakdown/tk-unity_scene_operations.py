@@ -24,7 +24,7 @@ class BreakdownSceneOperations(Hook):
         to analyze the current scene and return a list of references that are
         to be potentially operated on.
 
-        The return data structure is a list of dictionaries. Each scene reference
+        The return data structure is a list of dictionaries. Each scene asset
         that is returned should be represented by a dictionary with three keys:
 
         - "node": The name of the 'node' that is to be operated on. Most DCCs have
