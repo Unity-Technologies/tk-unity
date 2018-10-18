@@ -179,6 +179,7 @@ class UnityActions(HookBaseClass):
         # copy file to Unity project
         import UnityEngine
         projectPath = UnityEngine.Application.dataPath
+        
         try:
             import_paths = self._on_browse(projectPath)
             if import_paths and len(import_paths) > 0:
