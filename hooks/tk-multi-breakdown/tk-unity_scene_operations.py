@@ -21,7 +21,7 @@ class BreakdownSceneOperations(Hook):
     def scan_scene(self):
         """
         The scan scene method is executed once at startup and its purpose is
-        to analyze the current scene and return a list of references that are
+        to analyze the current scene and return a list of assets that are
         to be potentially operated on.
 
         The return data structure is a list of dictionaries. Each scene asset
