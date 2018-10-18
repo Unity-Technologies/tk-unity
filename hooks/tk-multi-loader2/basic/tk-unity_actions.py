@@ -132,6 +132,38 @@ class UnityActions(HookBaseClass):
     ##############################################################################################################
     # helper methods which can be subclassed in custom hooks to fine tune the behaviour of things
 
+    def _on_browse(self, starting_dir):
+        """Opens a file dialog to browse to folder for import."""
+
+        from sgtk.platform.qt import QtGui
+        # options for either browse type
+        options = [
+            QtGui.QFileDialog.DontResolveSymlinks,
+            QtGui.QFileDialog.DontUseNativeDialog
+        ]
+
+        # browse folders specifics
+        caption = "Browse folder to import FBX into"
+        file_mode = QtGui.QFileDialog.Directory
+        options.append(QtGui.QFileDialog.ShowDirsOnly)
+
+        # create the dialog
+        file_dialog = QtGui.QFileDialog(parent=QtGui.QApplication.instance().activeWindow(), caption=caption, directory=starting_dir)
+        file_dialog.setLabelText(QtGui.QFileDialog.Accept, "Select")
+        file_dialog.setLabelText(QtGui.QFileDialog.Reject, "Cancel")
+        file_dialog.setFileMode(file_mode)
+
+        # set the appropriate options
+        for option in options:
+            file_dialog.setOption(option)
+
+        # browse!
+        if not file_dialog.exec_():
+            return
+
+        # process the browsed files/folders for publishing
+        return file_dialog.selectedFiles()
+    
     def _do_import(self, path, sg_publish_data):
         """
         Import file at path into Unity project.
@@ -142,26 +174,36 @@ class UnityActions(HookBaseClass):
         
         if not os.path.exists(path):
             raise Exception("File not found on disk - '%s'" % path)
-        
+            
         # import into Unity
         # copy file to Unity project
         import UnityEngine
         projectPath = UnityEngine.Application.dataPath
-        UnityEngine.Debug.LogWarning("importing asset {0} to {1}".format(path, projectPath))
-        
-        # get filename without version number if possible
-        filename = sg_publish_data.get("name", os.path.basename(path))
+        try:
+            import_paths = self._on_browse(projectPath)
+            if import_paths and len(import_paths) > 0:
+
+                # get filename without version number if possible
+                filename = sg_publish_data.get("name", os.path.basename(path))  
+                filePath = os.path.join(import_paths[0], filename)
+
+                import shutil
+                shutil.copy2(path, filePath)
+                UnityEngine.Debug.Log("importing asset {0} to {1}".format(path, import_paths[0]))
             
-        filePath = os.path.join(projectPath, filename)
+                import UnityEditor
+                UnityEditor.AssetDatabase.Refresh()
         
-        import shutil
-        shutil.copy2(path, filePath)
-        
-        import UnityEditor
-        UnityEditor.AssetDatabase.Refresh()
-        
-        # store the path in the meta file
-        asset = "Assets/" + filename
-        modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
-        modelImporter.userData = path
-        UnityEditor.AssetDatabase.ImportAsset(asset)
+                # store the path in the meta file
+                
+                # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
+                asset = os.path.join("Assets", os.path.relpath(filename, projectPath))
+                modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
+                if not modelImporter:
+                    UnityEngine.Debug.LogWarning("Shotgun: Could not find importer for asset {0}".format(filePath))
+                    return
+                modelImporter.userData = path
+                return
+        except IOError as e:
+            UnityEngine.Debug.LogError("IOError: {0}".format(str(e)))
+        UnityEngine.Debug.LogWarning("Shotgun: No import path selected, will not import asset")
