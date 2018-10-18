@@ -170,9 +170,11 @@ class UnityEditorEngine(Engine):
                 continue
 
             self.logger.debug("Favorite found: ", menu_name)
+            self._menu_cmd_items[menu_name]["properties"]["type"] = "favorite"
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
-        generator = MenuItemGenerator(UnityEngine.Application.dataPath, self._menu_cmd_items, "call_menu_item_callback")
+        context_name = str(self.context).decode("utf-8")
+        generator = MenuItemGenerator(UnityEngine.Application.dataPath, self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
         
         # Unity domain reload has not been fully tested. There are known 
