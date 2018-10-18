@@ -183,12 +183,27 @@ class UnityActions(HookBaseClass):
         try:
             import_paths = self._on_browse(projectPath)
             if import_paths and len(import_paths) > 0:
+
+                # get filename without version number if possible
+                filename = sg_publish_data.get("name", os.path.basename(path))  
+                filePath = os.path.join(import_paths[0], filename)
+
                 import shutil
-                shutil.copy2(path, import_paths[0])
+                shutil.copy2(path, filePath)
                 UnityEngine.Debug.Log("importing asset {0} to {1}".format(path, import_paths[0]))
             
                 import UnityEditor
                 UnityEditor.AssetDatabase.Refresh()
+        
+                # store the path in the meta file
+                
+                # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
+                asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
+                modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
+                if not modelImporter:
+                    UnityEngine.Debug.LogWarning("Shotgun: Could not find importer for asset {0}".format(asset))
+                    return
+                modelImporter.userData = path
                 return
         except IOError as e:
             UnityEngine.Debug.LogError("IOError: {0}".format(str(e)))
