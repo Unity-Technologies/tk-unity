@@ -197,10 +197,10 @@ class UnityActions(HookBaseClass):
                 # store the path in the meta file
                 
                 # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
-                asset = os.path.join("Assets", os.path.relpath(filename, projectPath))
+                asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
                 modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
                 if not modelImporter:
-                    UnityEngine.Debug.LogWarning("Shotgun: Could not find importer for asset {0}".format(filePath))
+                    UnityEngine.Debug.LogWarning("Shotgun: Could not find importer for asset {0}".format(asset))
                     return
                 modelImporter.userData = path
                 return
