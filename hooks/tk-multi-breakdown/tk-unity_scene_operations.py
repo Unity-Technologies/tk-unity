@@ -13,9 +13,9 @@ import os
 
 class BreakdownSceneOperations(Hook):
     """
-    Breakdown operations for Maya.
+    Breakdown operations for Unity.
 
-    This implementation handles detection of maya references and file texture nodes.
+    This implementation handles detection of fbx files in Unity that contain shotgun meta data.
     """
 
     def scan_scene(self):
