@@ -177,8 +177,15 @@ class UnityActions(HookBaseClass):
             
         # import into Unity
         # copy file to Unity project
-        import UnityEngine
-        projectPath = UnityEngine.Application.dataPath
+        
+        
+        #####
+        ## HACK: right now I need to run the server from a thread. 
+        ##       Calling UnityEngine.Application.dataPath is not allowed from a thread
+#        app_data_path =  UnityEngine.Application.dataPath
+        app_data_path =  'D:/unityProjects/remoteSG/Assets'
+
+        projectPath = app_data_path
         
         try:
             import_paths = self._on_browse(projectPath)
@@ -190,21 +197,30 @@ class UnityActions(HookBaseClass):
 
                 import shutil
                 shutil.copy2(path, filePath)
-                UnityEngine.Debug.Log("importing asset {0} to {1}".format(path, import_paths[0]))
+                #UnityEngine.Debug.Log("importing asset {0} to {1}".format(path, import_paths[0]))
+                print("[log] importing asset {0} to {1}".format(path, import_paths[0]))
             
-                import UnityEditor
-                UnityEditor.AssetDatabase.Refresh()
+                import unity_connection
+                UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
+                
+                ######
+                ## HACK: cannot call this from a separate thread
+                
+                #UnityEditor.AssetDatabase.Refresh()
         
                 # store the path in the meta file
                 
                 # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
-                asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
-                modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
-                if not modelImporter:
-                    UnityEngine.Debug.LogWarning("Shotgun: Could not find importer for asset {0}".format(asset))
-                    return
-                modelImporter.userData = path
+                #asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
+                #modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
+                #if not modelImporter:
+#                    UnityEngine.Debug.LogWarning("Shotgun: Could not find importer for asset {0}".format(asset))
+                #    print("[warning] Shotgun: Could not find importer for asset {0}".format(asset))
+                #    return
+                #modelImporter.userData = path
                 return
         except IOError as e:
-            UnityEngine.Debug.LogError("IOError: {0}".format(str(e)))
-        UnityEngine.Debug.LogWarning("Shotgun: No import path selected, will not import asset")
+#            UnityEngine.Debug.LogError("IOError: {0}".format(str(e)))
+            print("[error] IOError: {0}".format(str(e)))
+#        UnityEngine.Debug.LogWarning("Shotgun: No import path selected, will not import asset")
+        print("[warning] Shotgun: No import path selected, will not import asset")

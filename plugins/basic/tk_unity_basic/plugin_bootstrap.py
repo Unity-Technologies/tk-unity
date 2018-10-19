@@ -10,12 +10,9 @@
 
 import os
 import sys
+import unity_connection
 
-import clr
-
-clr.AddReference("UnityEngine")
-import UnityEngine
-
+UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
 
 def plugin_bootstrap(plugin_root_path):
     """
@@ -135,7 +132,8 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     sgtk_logger.debug("Will launch the engine with entity: %s" % entity)
 
     def progress_callback(value, message):
-        UnityEngine.Debug.Log("[%s] - %s" % (value, message))
+#        UnityEngine.Debug.Log("[%s] - %s" % (value, message))
+        print("[%s] - %s" % (value, message))
 
     toolkit_mgr.progress_callback = progress_callback
 

@@ -10,13 +10,9 @@ An Unity Editor engine for Sgtk.
 import pprint
 from sgtk.platform import Engine
 
-# Is this even needed?
-import clr
-clr.AddReference("UnityEditor")
-clr.AddReference("UnityEngine")
-
-import UnityEditor
-import UnityEngine
+import unity_connection
+UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
 
 ###############################################################################################
 # The Shotgun Unity engine
@@ -180,9 +176,12 @@ class UnityEditorEngine(Engine):
         # Unity domain reload has not been fully tested. There are known 
         # crashes and hangs in the Python interpreter on domain reload. 
         # Disabling domain reload (auto refresh)
-        if UnityEditor.EditorPrefs.HasKey('kAutoRefresh'):
-            self._initialAutoRefreshValue = UnityEditor.EditorPrefs.GetBool('kAutoRefresh')
-            UnityEditor.EditorPrefs.SetBool('kAutoRefresh', False)
+        
+        #######
+        ## Hacked out: cannot access from a thread
+#        if UnityEditor.EditorPrefs.HasKey('kAutoRefresh'):
+ #           self._initialAutoRefreshValue = UnityEditor.EditorPrefs.GetBool('kAutoRefresh')
+  #          UnityEditor.EditorPrefs.SetBool('kAutoRefresh', False)
 
         # Traditionally, the menu is built the following way:
         #
@@ -316,11 +315,14 @@ class UnityEditorEngine(Engine):
         
         import logging
         if record.levelno >= logging.ERROR:
-            UnityEngine.Debug.LogError(msg)
+            print('[error] %s'%msg)
+#            UnityEngine.Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:
-            UnityEngine.Debug.LogWarning(msg)
+            print('[warning] %s'%msg)
+#            UnityEngine.Debug.LogWarning(msg)
         else:
-            UnityEngine.Debug.Log(msg)
+            print('[log] %s'%msg)
+#            UnityEngine.Debug.Log(msg)
 
     ##########################################################################################
     # panel support

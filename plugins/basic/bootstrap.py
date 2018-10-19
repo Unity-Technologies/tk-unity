@@ -1,14 +1,19 @@
 import os
 import sys
-import clr
-
+import pprint
 
 def plugin_startup():
     """
     Initializes the Toolkit plugin for Unity.
     """
-    clr.AddReference("UnityEngine")
-    import UnityEngine
+    # Make sure we can import from our own location
+    bootstrap_location = 'D:/projects/tk-unity/plugins/basic'
+    if bootstrap_location not in sys.path:
+        sys.path.append(bootstrap_location)
+        
+    import unity_connection
+
+    UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
     try:
         # Ensure that we can find PySide on MacOS
         # TODO: move this to part of the python installation steps.
@@ -54,9 +59,10 @@ def plugin_startup():
         message = "Shotgun Toolkit Error: %s" % (e,)
         details = "Error stack trace:\n\n%s" % (stack_trace)
 
-        UnityEngine.Debug.LogError(message)
-        UnityEngine.Debug.LogError(details)
+#        UnityEngine.Debug.LogError(message)
+#        UnityEngine.Debug.LogError(details)
 
+        print(message)
+        print(details)
 
-# Invoked on startup while Nuke is walking NUKE_PATH.
 plugin_startup()
