@@ -343,4 +343,45 @@ class UnityEditorEngine(Engine):
         # dialogs.
         self.log_warning("Panel functionality not implemented. Falling back to showing "
                          "panel '%s' in a modeless dialog" % panel_id)
-        return self.show_dialog(title, bundle, widget_class, *args, **kwargs)
+        dialog = self.show_dialog(title, bundle, widget_class, *args, **kwargs)
+        
+        # TODO: make a custom hook for this so the shotgun panel code is not linked to the engine
+        if panel_id == "tk_multi_shotgunpanel_main":
+            
+            # get the Unity selection
+            import UnityEditor
+            mainAsset = UnityEditor.Selection.activeObject
+            if not mainAsset:
+                return dialog
+            
+            # make sure to get the main asset in order to get the path
+            if not UnityEditor.AssetDatabase.IsMainAsset(mainAsset):
+                mainAsset = UnityEditor.EditorUtility.GetPrefabParent(mainAsset)
+                
+            assetPath = UnityEditor.AssetDatabase.GetAssetPath(mainAsset)
+            if not assetPath:
+                return dialog
+            
+            # get user data from model importer
+            modelImporter = UnityEditor.AssetImporter.GetAtPath(assetPath)
+            if not modelImporter:
+                return dialog
+                
+            shotgunPath = modelImporter.userData
+            if not shotgunPath: 
+                return dialog
+            
+            # get publish entity from asset if possible
+            import tank
+            sg_data = tank.util.find_publish(bundle.tank, [shotgunPath], fields=["entity"])
+            if not sg_data:
+                return dialog
+                
+            entity = sg_data[shotgunPath].get("entity", None)
+            if not entity:
+                return dialog
+            
+            dialog.navigate_to_entity(entity["type"], entity["id"])
+            return dialog
+        
+        return dialog
