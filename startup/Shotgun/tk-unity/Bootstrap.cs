@@ -7,21 +7,60 @@ using System.IO;
 
 public class Bootstrap
 {
+    // Do not use single-quotes in the passed string
+    public static void RunPythonCodeOnClient(string pythonCodeToExecute)
+    {
+        string serverCode = string.Format(
+@"
+import sys
+server_path = 'D:/unityProjects/rpycPrototype/PythonScripts'
+
+if server_path not in sys.path:
+  sys.path.append(server_path)
+
+import server
+server.run_python_code_on_client('{0}')
+", pythonCodeToExecute);
+
+        UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
+        PythonRunner.RunString(serverCode);
+        UnityEngine.Debug.Log("  Done running Python on Client");
+    }
+
+    // Do not use single-quotes in the passed string
+    public static void RunPythonFileOnClient(string pythonCodeToExecute)
+    {
+        string serverCode = string.Format(
+@"
+import sys
+server_path = 'D:/unityProjects/rpycPrototype/PythonScripts'
+
+if server_path not in sys.path:
+  sys.path.append(server_path)
+
+import server
+server.run_python_file_on_client('{0}')
+", pythonCodeToExecute);
+
+        UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
+        PythonRunner.RunString(serverCode);
+        UnityEngine.Debug.Log("  Done running Python on Client");
+    }
+
     public static void CallBootstrap()
     {
-        UnityEngine.Debug.Log("Invoking Shotgun Toolkit bootstrap script.");
-        PythonRunner.RunFile(System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION"));
+        string bootstrapScript = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
+        bootstrapScript = bootstrapScript.Replace(@"\", "/");
+        UnityEngine.Debug.Log(string.Format("Invoking Shotgun Toolkit bootstrap script on client ({0})",bootstrapScript));
+        RunPythonFileOnClient(bootstrapScript);
+
+        //string contents = File.ReadAllText(System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION"));
+        //RunPythonCodeOnClient(contents);
     }
 
     [UnityEditor.Callbacks.DidReloadScripts]
     public static void OnReload()
     {
-        // check environment variable to see if we want to bootstrap
-        var bootstrap = System.Environment.GetEnvironmentVariable("BOOTSTRAP_SG_ON_UNITY_STARTUP");
-        if (bootstrap == null)
-        {
-            return;
-        }
         CallBootstrap();
     }
 
