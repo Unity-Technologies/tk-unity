@@ -301,11 +301,14 @@ class UnityEditorEngine(Engine):
         
         import logging
         if record.levelno >= logging.ERROR:
-            UnityEngine.Debug.LogError(msg)
+            print('[error] %s'%msg)
+#            UnityEngine.Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:
-            UnityEngine.Debug.LogWarning(msg)
+            print('[warning] %s'%msg)
+#            UnityEngine.Debug.LogWarning(msg)
         else:
-            UnityEngine.Debug.Log(msg)
+            print('[log] %s'%msg)
+#            UnityEngine.Debug.Log(msg)
 
     ##########################################################################################
     # panel support

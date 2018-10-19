@@ -48,9 +48,7 @@ class UnityConnection:
 
     @ensure_connect
     def getmodule(self, module_name):
-        the_module = self._connection.root.getmodule(module_name)
-        return the_module
-        
+        return self._connection.root.getmodule(module_name)
     
     @ensure_connect
     def call_module_method(self, module_name, method_name, *args, **kwargs):
@@ -71,10 +69,4 @@ def get_unity_connection():
         connection.connect()
     
     return connection
-
-def reset_unity_connection():
-    global connection
-    
-    # Should we also explicitly disconnect the rpyc connection?
-    connection = None
-    
+        
