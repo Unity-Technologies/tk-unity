@@ -7,19 +7,21 @@ using System.IO;
 
 public class Bootstrap
 {
-    // Do not use single-quotes in the passed string
-    public static void RunPythonCodeOnClient(string pythonCodeToExecute)
-    {
-        string serverCode = string.Format(
-@"
+    static string ImportServerString = @"
 import sys
-server_path = 'D:/unityProjects/rpycPrototype/PythonScripts'
+server_path = 'D:/GoogleDrive/ImgSpc/ut/Uni-67748 Brainstorm ideas SG integration, artist can use SG 247/rpyc/pollingServer'
 
 if server_path not in sys.path:
   sys.path.append(server_path)
 
-import server
-server.run_python_code_on_client('{0}')
+import pollingServer_unity
+";
+    // Do not use single-quotes in the passed string
+    public static void RunPythonCodeOnClient(string pythonCodeToExecute)
+    {
+        string serverCode = ImportServerString + string.Format(
+@"
+pollingServer_unity.run_python_code_on_client('{0}')
 ", pythonCodeToExecute);
 
         UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
@@ -30,16 +32,8 @@ server.run_python_code_on_client('{0}')
     // Do not use single-quotes in the passed string
     public static void RunPythonFileOnClient(string pythonCodeToExecute)
     {
-        string serverCode = string.Format(
+        string serverCode = ImportServerString + string.Format(
 @"
-import sys
-server_path = 'D:/unityProjects/rpycPrototype/PythonScripts'
-
-if server_path not in sys.path:
-  sys.path.append(server_path)
-
-import server
-server.run_python_file_on_client('{0}')
 ", pythonCodeToExecute);
 
         UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
