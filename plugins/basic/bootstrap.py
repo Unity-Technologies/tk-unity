@@ -13,6 +13,9 @@ def plugin_startup():
         
     import unity_connection
 
+    #############dltrace#################
+    print('Retrieving UnityEngine')
+    #############dltrace#################
     UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
     try:
         # Ensure that we can find PySide on MacOS
