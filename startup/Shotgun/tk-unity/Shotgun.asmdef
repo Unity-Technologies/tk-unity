@@ -1,7 +1,8 @@
 {
     "name": "Shotgun",
     "references": [
-        "com.unity.scripting.python"
+        "com.unity.scripting.python",
+        "PythonUtils"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
