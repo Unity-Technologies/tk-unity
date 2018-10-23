@@ -11,10 +11,6 @@ def plugin_startup():
         sys.path.append(bootstrap_location)
         
     import unity_connection
-
-    #############dltrace#################
-    print('Retrieving UnityEngine')
-    #############dltrace#################
     UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
     try:
         # Ensure that we can find PySide on MacOS
@@ -61,7 +57,7 @@ def plugin_startup():
         message = "Shotgun Toolkit Error: %s" % (e,)
         details = "Error stack trace:\n\n%s" % (stack_trace)
 
-#        UnityEngine.Debug.LogError(message)
-#        UnityEngine.Debug.LogError(details)
+        UnityEngine.Debug.LogError(message)
+        UnityEngine.Debug.LogError(details)
 
 plugin_startup()
