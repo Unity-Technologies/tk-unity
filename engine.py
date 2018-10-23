@@ -168,31 +168,15 @@ class UnityEditorEngine(Engine):
             self.logger.debug("Favorite found: ", menu_name)
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
-
-        ##############dltrace#################
-        print('UnityEngine = %s'%UnityEngine)
-        print('UnityEngine.Application = %s'%UnityEngine.Application)
-#        print('UnityEngine.Application.dataPath = %s'%UnityEngine.Application.dataPath)
-        ##############dltrace#################
-        
-        #####
-        ## HACK: right now I need to run the server from a thread. 
-        ##       Calling UnityEngine.Application.dataPath is not allowed from a thread
-#        app_data_path =  UnityEngine.Application.dataPath
-        app_data_path =  'D:/unityProjects/remoteSG/Assets'
-        
-        generator = MenuItemGenerator(app_data_path, self._menu_cmd_items, "call_menu_item_callback")
+        generator = MenuItemGenerator(UnityEngine.Application.dataPath, self._menu_cmd_items, "call_menu_item_callback")
         generator.GenerateMenuItems()
         
         # Unity domain reload has not been fully tested. There are known 
         # crashes and hangs in the Python interpreter on domain reload. 
         # Disabling domain reload (auto refresh)
-        
-        #######
-        ## Hacked out: cannot access from a thread
-#        if UnityEditor.EditorPrefs.HasKey('kAutoRefresh'):
- #           self._initialAutoRefreshValue = UnityEditor.EditorPrefs.GetBool('kAutoRefresh')
-  #          UnityEditor.EditorPrefs.SetBool('kAutoRefresh', False)
+        if UnityEditor.EditorPrefs.HasKey('kAutoRefresh'):
+            self._initialAutoRefreshValue = UnityEditor.EditorPrefs.GetBool('kAutoRefresh')
+            UnityEditor.EditorPrefs.SetBool('kAutoRefresh', False)
 
         # Traditionally, the menu is built the following way:
         #
@@ -326,14 +310,11 @@ class UnityEditorEngine(Engine):
         
         import logging
         if record.levelno >= logging.ERROR:
-            print('[error] %s'%msg)
-#            UnityEngine.Debug.LogError(msg)
+            UnityEngine.Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:
-            print('[warning] %s'%msg)
-#            UnityEngine.Debug.LogWarning(msg)
+            UnityEngine.Debug.LogWarning(msg)
         else:
-            print('[log] %s'%msg)
-#            UnityEngine.Debug.Log(msg)
+            UnityEngine.Debug.Log(msg)
 
     ##########################################################################################
     # panel support
