@@ -132,8 +132,7 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     sgtk_logger.debug("Will launch the engine with entity: %s" % entity)
 
     def progress_callback(value, message):
-#        UnityEngine.Debug.Log("[%s] - %s" % (value, message))
-        print("[%s] - %s" % (value, message))
+        UnityEngine.Debug.Log("[%s] - %s" % (value, message))
 
     toolkit_mgr.progress_callback = progress_callback
 
