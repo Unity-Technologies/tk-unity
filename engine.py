@@ -176,12 +176,9 @@ class UnityEditorEngine(Engine):
         # Unity domain reload has not been fully tested. There are known 
         # crashes and hangs in the Python interpreter on domain reload. 
         # Disabling domain reload (auto refresh)
-        
-        #######
-        ## Hacked out: cannot access from a thread
-#        if UnityEditor.EditorPrefs.HasKey('kAutoRefresh'):
- #           self._initialAutoRefreshValue = UnityEditor.EditorPrefs.GetBool('kAutoRefresh')
-  #          UnityEditor.EditorPrefs.SetBool('kAutoRefresh', False)
+        if UnityEditor.EditorPrefs.HasKey('kAutoRefresh'):
+            self._initialAutoRefreshValue = UnityEditor.EditorPrefs.GetBool('kAutoRefresh')
+            UnityEditor.EditorPrefs.SetBool('kAutoRefresh', False)
 
         # Traditionally, the menu is built the following way:
         #
@@ -315,14 +312,11 @@ class UnityEditorEngine(Engine):
         
         import logging
         if record.levelno >= logging.ERROR:
-            print('[error] %s'%msg)
-#            UnityEngine.Debug.LogError(msg)
+            UnityEngine.Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:
-            print('[warning] %s'%msg)
-#            UnityEngine.Debug.LogWarning(msg)
+            UnityEngine.Debug.LogWarning(msg)
         else:
-            print('[log] %s'%msg)
-#            UnityEngine.Debug.Log(msg)
+            UnityEngine.Debug.Log(msg)
 
     ##########################################################################################
     # panel support
