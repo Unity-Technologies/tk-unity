@@ -48,15 +48,7 @@ class UnityConnection:
 
     @ensure_connect
     def getmodule(self, module_name):
-        #############dltrace#################
-        print('In UnityConnection.getmodule for %s'%module_name)
-        #############dltrace#################
-
         the_module = self._connection.root.getmodule(module_name)
-        #############dltrace#################
-        print('the_module = %s'%the_module)
-        #############dltrace#################
-        
         return the_module
         
     
