@@ -16,7 +16,7 @@ if server_path not in sys.path:
 
 import pollingServer_unity
 ";
-    // Do not use single-quotes in the passed string
+
     public static void RunPythonCodeOnClient(string pythonCodeToExecute)
     {
         string serverCode = ImportServerString + string.Format(
@@ -29,7 +29,6 @@ pollingServer_unity.run_python_code_on_client('{0}')
         UnityEngine.Debug.Log("  Done running Python on Client");
     }
 
-    // Do not use single-quotes in the passed string
     public static void RunPythonFileOnClient(string pythonCodeToExecute)
     {
         string serverCode = ImportServerString + string.Format(

@@ -1,13 +1,12 @@
 import os
 import sys
-import pprint
 
 def plugin_startup():
     """
     Initializes the Toolkit plugin for Unity.
     """
-    # Make sure we can import from our own location
-    bootstrap_location = 'D:/projects/tk-unity/plugins/basic'
+    # Make sure we can import from our own location (to get unity_connection)
+    bootstrap_location = os.path.dirname(os.environ['SHOTGUN_UNITY_BOOTSTRAP_LOCATION'])
     if bootstrap_location not in sys.path:
         sys.path.append(bootstrap_location)
         
