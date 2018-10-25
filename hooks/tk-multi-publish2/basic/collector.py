@@ -95,7 +95,8 @@ class UnitySessionCollector(HookBaseClass):
 
         """
         
-        import UnityEngine
+        import unity_connection
+        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
         session_item = parent_item.create_item(
             "unity.session",
             "Unity Session",
