@@ -48,7 +48,7 @@ def start():
     
     UnityEngine.Debug.Log("[rpyc-server] (%s) Server started"%threading._get_ident())
     
-    UnityEditor.EditorApplication.update = UnityEditor.EditorApplication.CallbackFunction(onApplicationUpdate)
+    UnityEditor.EditorApplication.update = UnityEditor.EditorApplication.update.Combine(UnityEditor.EditorApplication.update,UnityEditor.EditorApplication.CallbackFunction(onApplicationUpdate))
 
 def stop():
     global rpyc_server
