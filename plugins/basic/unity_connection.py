@@ -71,4 +71,10 @@ def get_unity_connection():
         connection.connect()
     
     return connection
-        
+
+def reset_unity_connection():
+    global connection
+    
+    # Should we also explicitly disconnect the rpyc connection?
+    connection = None
+    

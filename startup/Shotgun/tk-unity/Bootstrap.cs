@@ -42,12 +42,51 @@ pollingServer_unity.run_python_file_on_client('{0}')
         UnityEngine.Debug.Log("  Done running Python on Client");
     }
 
+#if DEBUG
+    [MenuItem("Python/Start RPyC server")]
+#endif // DEBUG
+    public static void CallStartServer()
+    {
+        string serverCode = ImportServerString + 
+@"
+pollingServer_unity.start()
+";
+   
+        UnityEngine.Debug.Log("Starting rpyc server...");
+        PythonRunner.RunString(serverCode);
+        UnityEngine.Debug.Log("rpyc server started");
+    }
+
+#if DEBUG
+    [MenuItem("Python/Stop RPyC server")]
+#endif // DEBUG
+    public static void CallStopServer()
+    {
+        string serverCode = ImportServerString + 
+@"
+pollingServer_unity.stop()
+";
+   
+        UnityEngine.Debug.Log("Stopped rpyc server...");
+        PythonRunner.RunString(serverCode);
+        UnityEngine.Debug.Log("rpyc server stopped");
+    }
+
     public static void CallBootstrap()
     {
+        // First start the rpyc server
+        CallStartServer();
+
         string bootstrapScript = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
         bootstrapScript = bootstrapScript.Replace(@"\", "/");
-        UnityEngine.Debug.Log(string.Format("Invoking Shotgun Toolkit bootstrap script on client ({0})",bootstrapScript));
-        RunPythonFileOnClient(bootstrapScript);
+
+        string serverCode = ImportServerString + string.Format(
+@"
+pollingServer_unity.bootstrap_shotgun_on_client('{0}')
+", bootstrapScript);
+
+        UnityEngine.Debug.Log("Invoking Shotgun Toolkit bootstrap");
+        PythonRunner.RunString(serverCode);
     }
 
     [UnityEditor.Callbacks.DidReloadScripts]

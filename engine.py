@@ -171,13 +171,6 @@ class UnityEditorEngine(Engine):
         generator = MenuItemGenerator(UnityEngine.Application.dataPath, self._menu_cmd_items, "call_menu_item_callback")
         generator.GenerateMenuItems()
         
-        # Unity domain reload has not been fully tested. There are known 
-        # crashes and hangs in the Python interpreter on domain reload. 
-        # Disabling domain reload (auto refresh)
-        if UnityEditor.EditorPrefs.HasKey('kAutoRefresh'):
-            self._initialAutoRefreshValue = UnityEditor.EditorPrefs.GetBool('kAutoRefresh')
-            UnityEditor.EditorPrefs.SetBool('kAutoRefresh', False)
-
         # Traditionally, the menu is built the following way:
         #
         # - First create the Context menu, which is a folder that has a bunch of actions
@@ -223,10 +216,6 @@ class UnityEditorEngine(Engine):
 
         # This is where you would destroy the menu and panel.
         
-        # Restore the auto-refresh preference
-        if UnityEditor.EditorPrefs.HasKey('kAutoRefresh'):
-            UnityEditor.EditorPrefs.SetBool('kAutoRefresh', self._initialAutoRefreshValue)
-
     def _get_dialog_parent(self):
         """
         Get the QWidget parent for all dialogs created through
