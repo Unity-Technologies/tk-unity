@@ -4,24 +4,26 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using System.IO;
+using Python.Runtime;
 
 public class Bootstrap
 {
     static string ImportServerString = @"
+import os
 import sys
-server_path = 'D:/GoogleDrive/ImgSpc/ut/Uni-67748 Brainstorm ideas SG integration, artist can use SG 247/rpyc/pollingServer'
+server_path = os.path.dirname(os.environ['SHOTGUN_UNITY_BOOTSTRAP_LOCATION'])
 
 if server_path not in sys.path:
   sys.path.append(server_path)
 
-import pollingServer_unity
+import unity_server
 ";
 
     public static void RunPythonCodeOnClient(string pythonCodeToExecute)
     {
         string serverCode = ImportServerString + string.Format(
 @"
-pollingServer_unity.run_python_code_on_client('{0}')
+unity_server.run_python_code_on_client('{0}')
 ", pythonCodeToExecute);
 
         UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
@@ -33,7 +35,7 @@ pollingServer_unity.run_python_code_on_client('{0}')
     {
         string serverCode = ImportServerString + string.Format(
 @"
-pollingServer_unity.run_python_file_on_client('{0}')
+unity_server.run_python_file_on_client('{0}')
 ", pythonCodeToExecute);
 
         UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
@@ -49,7 +51,7 @@ pollingServer_unity.run_python_file_on_client('{0}')
     {
         string serverCode = ImportServerString + 
 @"
-pollingServer_unity.start()
+unity_server.start()
 ";
    
         UnityEngine.Debug.Log("Starting rpyc server...");
@@ -64,7 +66,7 @@ pollingServer_unity.start()
     {
         string serverCode = ImportServerString + 
 @"
-pollingServer_unity.stop()
+unity_server.stop()
 ";
    
         UnityEngine.Debug.Log("Stopped rpyc server...");
@@ -82,17 +84,26 @@ pollingServer_unity.stop()
 
         string serverCode = ImportServerString + string.Format(
 @"
-pollingServer_unity.bootstrap_shotgun_on_client('{0}')
+unity_server.bootstrap_shotgun_on_client('{0}')
 ", bootstrapScript);
 
         UnityEngine.Debug.Log("Invoking Shotgun Toolkit bootstrap");
         PythonRunner.RunString(serverCode);
+
+        PythonEngine.ShutdownHandler += OnPythonShutdown;
     }
 
     [UnityEditor.Callbacks.DidReloadScripts]
     public static void OnReload()
     {
         CallBootstrap();
+    }
+
+    public static void OnPythonShutdown()
+    {
+        UnityEngine.Debug.Log("In Bootstrap.OnPythonShutdown");
+        CallStopServer();
+        PythonEngine.ShutdownHandler -= OnPythonShutdown;
     }
 
 #if DEBUG
