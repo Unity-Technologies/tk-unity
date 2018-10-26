@@ -1,5 +1,14 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.2
+
+NEW FEATURES
+* The Shotgun Panel will now focus on selected objects
+
+FIXES
+
+* Fixed problem launching apps that are under submenus
+
 **Version**: 0.1
 
 NEW FEATURES
