@@ -24,9 +24,9 @@ import unity_server
         string serverCode = ImportServerString + string.Format(
 @"
 unity_server.run_python_code_on_client('{0}')
-", pythonCodeToExecute);
+",pythonCodeToExecute);
 
-        UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
+        UnityEngine.Debug.Log(string.Format("Running Python: {0}",pythonCodeToExecute));
         PythonRunner.RunString(serverCode);
         UnityEngine.Debug.Log("  Done running Python on Client");
     }
@@ -36,10 +36,10 @@ unity_server.run_python_code_on_client('{0}')
         string serverCode = ImportServerString + string.Format(
 @"
 unity_server.run_python_file_on_client('{0}')
-", pythonCodeToExecute);
+",pythonCodeToExecute);
 
-        UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
-        UnityEngine.Debug.Log(string.Format("serverCode = {0}", serverCode));
+        UnityEngine.Debug.Log(string.Format("Running Python: {0}",pythonCodeToExecute));
+        UnityEngine.Debug.Log(string.Format("serverCode = {0}",serverCode));
         PythonRunner.RunString(serverCode);
         UnityEngine.Debug.Log("  Done running Python on Client");
     }
@@ -49,11 +49,11 @@ unity_server.run_python_file_on_client('{0}')
 #endif // DEBUG
     public static void CallStartServer()
     {
-        string serverCode = ImportServerString + 
+        string serverCode = ImportServerString +
 @"
 unity_server.start()
 ";
-   
+
         UnityEngine.Debug.Log("Starting rpyc server...");
         PythonRunner.RunString(serverCode);
         UnityEngine.Debug.Log("rpyc server started");
@@ -64,11 +64,11 @@ unity_server.start()
 #endif // DEBUG
     public static void CallStopServer()
     {
-        string serverCode = ImportServerString + 
+        string serverCode = ImportServerString +
 @"
 unity_server.stop()
 ";
-   
+
         UnityEngine.Debug.Log("Stopped rpyc server...");
         PythonRunner.RunString(serverCode);
         UnityEngine.Debug.Log("rpyc server stopped");
@@ -80,17 +80,17 @@ unity_server.stop()
         CallStartServer();
 
         string bootstrapScript = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
-        bootstrapScript = bootstrapScript.Replace(@"\", "/");
+        bootstrapScript = bootstrapScript.Replace(@"\","/");
 
         string serverCode = ImportServerString + string.Format(
 @"
 unity_server.bootstrap_shotgun_on_client('{0}')
-", bootstrapScript);
+",bootstrapScript);
 
         UnityEngine.Debug.Log("Invoking Shotgun Toolkit bootstrap");
         PythonRunner.RunString(serverCode);
 
-        PythonEngine.ShutdownHandler += OnPythonShutdown;
+        PythonEngine.AddShutdownHandler(OnPythonShutdown);
     }
 
     [UnityEditor.Callbacks.DidReloadScripts]
@@ -103,7 +103,7 @@ unity_server.bootstrap_shotgun_on_client('{0}')
     {
         UnityEngine.Debug.Log("In Bootstrap.OnPythonShutdown");
         CallStopServer();
-        PythonEngine.ShutdownHandler -= OnPythonShutdown;
+        PythonEngine.RemoveShutdownHandler(OnPythonShutdown);
     }
 
 #if DEBUG
@@ -131,7 +131,7 @@ ctx = tk.context_empty()
 engine = sgtk.platform.start_engine('tk-unity', tk, ctx)
         ";
 
-        pyScript = string.Format(pyScript, ProjectRoot);
+        pyScript = string.Format(pyScript,ProjectRoot);
 
         PythonRunner.RunString(pyScript);
     }
@@ -150,9 +150,9 @@ sgtk.platform.restart()
     [MenuItem("Shotgun/Debug/Print Engine Envs")]
     public static void CallPrintEnv()
     {
-        string[] envs = { "SHOTGUN_UNITY_BOOTSTRAP_LOCATION", "BOOTSTRAP_SG_ON_UNITY_STARTUP", };
+        string[] envs = { "SHOTGUN_UNITY_BOOTSTRAP_LOCATION","BOOTSTRAP_SG_ON_UNITY_STARTUP",};
 
-        foreach (string env in envs)
+        foreach(string env in envs)
         {
             UnityEngine.Debug.Log(env + ": " + System.Environment.GetEnvironmentVariable(env));
         }
