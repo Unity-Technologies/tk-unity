@@ -9,14 +9,7 @@ using Python.Runtime;
 public class Bootstrap
 {
     static string ImportServerString = @"
-import os
-import sys
-server_path = os.path.dirname(os.environ['SHOTGUN_UNITY_BOOTSTRAP_LOCATION'])
-
-if server_path not in sys.path:
-  sys.path.append(server_path)
-
-import unity_server
+from unity_rpyc import unity_server as unity_server
 ";
 
     public static void RunPythonCodeOnClient(string pythonCodeToExecute)
