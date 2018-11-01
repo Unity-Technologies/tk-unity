@@ -31,50 +31,16 @@ unity_server.run_python_code_on_client('{0}')
         UnityEngine.Debug.Log("  Done running Python on Client");
     }
 
-    public static void RunPythonFileOnClient(string pythonCodeToExecute)
-    {
-        string serverCode = ImportServerString + string.Format(
-@"
-", pythonCodeToExecute);
-
-        UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
-        PythonRunner.RunString(serverCode);
-        UnityEngine.Debug.Log("  Done running Python on Client");
-    }
-
-    static string ImportServerString = @"
-import sys
-server_path = 'D:/GoogleDrive/ImgSpc/ut/Uni-67748 Brainstorm ideas SG integration, artist can use SG 247/rpyc/pollingServer'
-
-if server_path not in sys.path:
-  sys.path.append(server_path)
-
-import pollingServer_unity
-";
-
-    public static void RunPythonCodeOnClient(string pythonCodeToExecute)
-    {
-        string serverCode = ImportServerString + string.Format(
-@"
-pollingServer_unity.run_python_code_on_client('{0}')
-", pythonCodeToExecute);
-
-        UnityEngine.Debug.Log(string.Format("Running Python: {0}", pythonCodeToExecute));
-        PythonRunner.RunString(serverCode);
-        UnityEngine.Debug.Log("  Done running Python on Client");
-    }
-
-    public static void RunPythonFileOnClient(string pythonCodeToExecute)
+    public static void RunPythonFileOnClient(string pythonFileToExecute)
     {
         string serverCode = ImportServerString + string.Format(
 @"
 unity_server.run_python_file_on_client('{0}')
-",pythonCodeToExecute);
+",pythonFileToExecute);
 
-        UnityEngine.Debug.Log(string.Format("Running Python: {0}",pythonCodeToExecute));
-        UnityEngine.Debug.Log(string.Format("serverCode = {0}",serverCode));
+        UnityEngine.Debug.Log(string.Format("Running Python File: {0}",pythonFileToExecute));
         PythonRunner.RunString(serverCode);
-        UnityEngine.Debug.Log("  Done running Python on Client");
+        UnityEngine.Debug.Log("  Done running Python File on Client");
     }
 
 #if DEBUG
