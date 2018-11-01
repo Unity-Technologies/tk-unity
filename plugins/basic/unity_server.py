@@ -28,11 +28,10 @@ class MyService(polling_server.PollingSlaveService):
         stop()
 
 def onApplicationUpdate():
-    # It seems like this callback is not invoked frequently enough to get a good message pump rate.
-    # TODO: See if there is a higher-frequency / more reliable callback we can get 
-    polling_server.PollingServerUtil.dispatch_data()
-            
-    time.sleep(0.01)
+    dispatch_time = 0.006
+    start = time.time()
+    while (time.time() - start) < dispatch_time:
+        polling_server.PollingServerUtil.dispatch_data()
     
 def start():
     # We will "pump" the Python interpreter from this callback
@@ -66,8 +65,8 @@ def stop():
         # Let the client thread exit first
 
         with client_connection_lock:
-            # Unblock the client thread if required. It should finish since 
-            # the connection has been closed and set to none
+            # Unblock the client thread if required. This will make the client
+            # thread exit its loop since finish_client_thread is set to True
             client_connection_lock.notify()
         
         UnityEngine.Debug.Log('[rpyc-server] Finishing client thread')
