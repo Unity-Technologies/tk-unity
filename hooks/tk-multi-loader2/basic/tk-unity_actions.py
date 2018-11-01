@@ -204,6 +204,7 @@ class UnityActions(HookBaseClass):
                     UnityEngine.Debug.LogWarning("Shotgun: Could not find importer for asset {0}".format(asset))
                     return
                 modelImporter.userData = path
+                modelImporter.SaveAndReimport()
                 return
         except IOError as e:
             UnityEngine.Debug.LogError("IOError: {0}".format(str(e)))
