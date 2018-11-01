@@ -23,7 +23,7 @@ class MenuItemGenerator(object):
             [MenuItem("Shotgun/{menuName}", false, {priority})]
             public static void MenuItem{count}(){{
                 Bootstrap.RunPythonCodeOnClient("import sgtk");
-                Bootstrap.RunPythonCodeOnClient("sgtk.platform.current_engine().{callbackName}(\\\"{menuName}\\\")");
+                Bootstrap.RunPythonCodeOnClient("sgtk.platform.current_engine().{callbackName}(\\\"{submenuName}\\\")");
             }}
         """
         self._fileContentsTemplate = """
@@ -51,12 +51,15 @@ class MenuItemGenerator(object):
         count = len(self._functionList) + 1
         
         menuName = cmdName
+        
+        # Same as menuName but without the context (the name as known by toolkit)
+        submenuName = menuName
         if cmdType == "context_menu":
             menuName = self._contextMenuFormat.format(cmdName)
         
         self._functionList.append(
             self._functionTemplate.format(
-                count = count, menuName = menuName, callbackName = self._callbackName, priority = self._priorities[cmdType]
+                count = count, menuName = menuName, submenuName = submenuName, callbackName = self._callbackName, priority = self._priorities[cmdType]
                 )
             )
 
