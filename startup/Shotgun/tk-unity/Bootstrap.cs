@@ -123,7 +123,7 @@ ctx = tk.context_empty()
 engine = sgtk.platform.start_engine('tk-unity', tk, ctx)
         ";
 
-        pyScript = string.Format(pyScript,ProjectRoot);
+        pyScript = string.Format(pyScript, ProjectRoot);
 
         PythonRunner.RunString(pyScript);
     }
@@ -142,9 +142,9 @@ sgtk.platform.restart()
     [MenuItem("Shotgun/Debug/Print Engine Envs")]
     public static void CallPrintEnv()
     {
-        string[] envs = { "SHOTGUN_UNITY_BOOTSTRAP_LOCATION","BOOTSTRAP_SG_ON_UNITY_STARTUP",};
+        string[] envs = { "SHOTGUN_UNITY_BOOTSTRAP_LOCATION", "BOOTSTRAP_SG_ON_UNITY_STARTUP", };
 
-        foreach(string env in envs)
+        foreach (string env in envs)
         {
             UnityEngine.Debug.Log(env + ": " + System.Environment.GetEnvironmentVariable(env));
         }
