@@ -1,7 +1,6 @@
-import os
-import sys
-
 def plugin_startup():
+    import os
+    import sys
     """
     Initializes the Toolkit plugin for Unity.
     """

@@ -36,24 +36,30 @@ unity_server.run_python_file_on_client('{0}')
         UnityEngine.Debug.Log("  Done running Python File on Client");
     }
 
-#if DEBUG
-    [MenuItem("Python/Start RPyC server")]
-#endif // DEBUG
-    public static void CallStartServer()
+    public static void CallStartServer(string clientInitPath = null)
     {
+        string clientInitPathString;
+        if (clientInitPath != null)
+        {
+            clientInitPath = clientInitPath.Replace("\\","/");
+            clientInitPathString = string.Format("'{0}'",clientInitPath);
+        }
+        else
+        {
+            clientInitPathString = "None";
+        }
+
+
         string serverCode = ImportServerString +
-@"
-unity_server.start()
-";
+string.Format(@"
+unity_server.start({0})
+", clientInitPathString);
 
         UnityEngine.Debug.Log("Starting rpyc server...");
         PythonRunner.RunString(serverCode);
         UnityEngine.Debug.Log("rpyc server started");
     }
 
-#if DEBUG
-    [MenuItem("Python/Stop RPyC server")]
-#endif // DEBUG
     public static void CallStopServer()
     {
         string serverCode = ImportServerString +
@@ -68,8 +74,13 @@ unity_server.stop()
 
     public static void CallBootstrap()
     {
+        // Use the engine's rpyc client script
+        string clientInitPath = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
+        clientInitPath = Path.GetDirectoryName(clientInitPath);
+        clientInitPath = Path.Combine(clientInitPath,"sg_client_init.py");
+
         // First start the rpyc server
-        CallStartServer();
+        CallStartServer(clientInitPath);
 
         string bootstrapScript = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
         bootstrapScript = bootstrapScript.Replace(@"\","/");
@@ -123,7 +134,7 @@ ctx = tk.context_empty()
 engine = sgtk.platform.start_engine('tk-unity', tk, ctx)
         ";
 
-        pyScript = string.Format(pyScript, ProjectRoot);
+        pyScript = string.Format(pyScript,ProjectRoot);
 
         PythonRunner.RunString(pyScript);
     }
@@ -142,9 +153,9 @@ sgtk.platform.restart()
     [MenuItem("Shotgun/Debug/Print Engine Envs")]
     public static void CallPrintEnv()
     {
-        string[] envs = { "SHOTGUN_UNITY_BOOTSTRAP_LOCATION", "BOOTSTRAP_SG_ON_UNITY_STARTUP", };
+        string[] envs = { "SHOTGUN_UNITY_BOOTSTRAP_LOCATION","BOOTSTRAP_SG_ON_UNITY_STARTUP",};
 
-        foreach (string env in envs)
+        foreach(string env in envs)
         {
             UnityEngine.Debug.Log(env + ": " + System.Environment.GetEnvironmentVariable(env));
         }
