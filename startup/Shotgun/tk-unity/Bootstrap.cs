@@ -87,7 +87,7 @@ unity_server.stop()
 
         string serverCode = ImportServerString + string.Format(
 @"
-unity_server.bootstrap_shotgun_on_client('{0}')
+unity_server.call_remote_service('bootstrap_shotgun','{0}')
 ",bootstrapScript);
 
         UnityEngine.Debug.Log("Invoking Shotgun Toolkit bootstrap");
