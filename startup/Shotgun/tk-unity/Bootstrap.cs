@@ -8,103 +8,97 @@ using Python.Runtime;
 
 public class Bootstrap
 {
-    static string ImportServerString = @"
-from unity_rpyc import unity_server as unity_server
-";
-
+    static string ImportServerString = "from unity_rpyc import unity_server as unity_server\n";
+    
+    /// <summary>
+    /// Runs Python code on the Python client
+    /// </summary>
+    /// <param name="pythonCodeToExecute">The code to execute.</param>
     public static void RunPythonCodeOnClient(string pythonCodeToExecute)
     {
-        string serverCode = ImportServerString + string.Format(
-@"
-unity_server.run_python_code_on_client('{0}')
-",pythonCodeToExecute);
-
-        UnityEngine.Debug.Log(string.Format("Running Python: {0}",pythonCodeToExecute));
+        string serverCode = ImportServerString + string.Format(@"unity_server.run_python_code_on_client('{0}')",pythonCodeToExecute);
         PythonRunner.RunString(serverCode);
-        UnityEngine.Debug.Log("  Done running Python on Client");
     }
 
+    /// <summary>
+    /// Runs a Python script on the Python client
+    /// </summary>
+    /// <param name="pythonFileToExecute">The script to execute.</param>
     public static void RunPythonFileOnClient(string pythonFileToExecute)
     {
-        string serverCode = ImportServerString + string.Format(
-@"
-unity_server.run_python_file_on_client('{0}')
-",pythonFileToExecute);
-
-        UnityEngine.Debug.Log(string.Format("Running Python File: {0}",pythonFileToExecute));
+        string serverCode = ImportServerString + string.Format(@"unity_server.run_python_file_on_client('{0}')",pythonFileToExecute);
         PythonRunner.RunString(serverCode);
-        UnityEngine.Debug.Log("  Done running Python File on Client");
     }
 
-    public static void CallStartServer(string clientInitPath = null)
+    /// <summary>
+    /// Starts the Unity server (rpyc)
+    /// </summary>
+    /// <param name="clientInitModulePath">Path to the client init module that should be used when the Unity client starts.</param>
+    public static void CallStartServer(string clientInitModulePath = null)
     {
         string clientInitPathString;
-        if (clientInitPath != null)
+        if (clientInitModulePath != null)
         {
-            clientInitPath = clientInitPath.Replace("\\","/");
-            clientInitPathString = string.Format("'{0}'",clientInitPath);
+            clientInitModulePath = clientInitModulePath.Replace("\\","/");
+            clientInitPathString = string.Format("'{0}'",clientInitModulePath);
         }
         else
         {
             clientInitPathString = "None";
         }
 
-
-        string serverCode = ImportServerString +
-string.Format(@"
-unity_server.start({0})
-", clientInitPathString);
-
-        UnityEngine.Debug.Log("Starting rpyc server...");
+        string serverCode = ImportServerString + string.Format(@"unity_server.start({0})", clientInitPathString);
         PythonRunner.RunString(serverCode);
-        UnityEngine.Debug.Log("rpyc server started");
+
+        // We need to stop the server on Python shutdown 
+        // (which is triggered by domain unload)
+        PythonEngine.AddShutdownHandler(OnPythonShutdown);
     }
 
+    /// <summary>
+    /// Stops the Unity server
+    /// </summary>
+    /// <param name="clientInitModulePath">Path to the client init module that should be used when the Unity client starts.</param>
     public static void CallStopServer()
     {
-        string serverCode = ImportServerString +
-@"
-unity_server.stop()
-";
-
-        UnityEngine.Debug.Log("Stopped rpyc server...");
+        string serverCode = ImportServerString + @"unity_server.stop()";
         PythonRunner.RunString(serverCode);
-        UnityEngine.Debug.Log("rpyc server stopped");
     }
 
+    /// <summary>
+    /// Starts the Unity server, then bootstraps Shotgun on the Unity client
+    /// </summary>
     public static void CallBootstrap()
     {
         // Use the engine's rpyc client script
-        string clientInitPath = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
-        clientInitPath = Path.GetDirectoryName(clientInitPath);
+        string bootstrapScript = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
+        bootstrapScript = bootstrapScript.Replace(@"\","/");
+
+        string clientInitPath = Path.GetDirectoryName(bootstrapScript);
         clientInitPath = Path.Combine(clientInitPath,"sg_client_init.py");
 
         // First start the rpyc server
         CallStartServer(clientInitPath);
 
-        string bootstrapScript = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
-        bootstrapScript = bootstrapScript.Replace(@"\","/");
-
-        string serverCode = ImportServerString + string.Format(
-@"
-unity_server.call_remote_service('bootstrap_shotgun','{0}')
-",bootstrapScript);
-
-        UnityEngine.Debug.Log("Invoking Shotgun Toolkit bootstrap");
+        // Then bootstrap Shotgun on the client
+        string serverCode = ImportServerString + string.Format(@"unity_server.call_remote_service('bootstrap_shotgun','{0}')",bootstrapScript);
         PythonRunner.RunString(serverCode);
-
-        PythonEngine.AddShutdownHandler(OnPythonShutdown);
     }
 
+    /// <summary>
+    /// Bootstraps Shotgun when the domain is reloaded
+    /// </summary>
     [UnityEditor.Callbacks.DidReloadScripts]
     public static void OnReload()
     {
         CallBootstrap();
     }
 
+    /// <summary>
+    /// Stops the Unity server on Python
+    /// </summary>
     public static void OnPythonShutdown()
     {
-        UnityEngine.Debug.Log("In Bootstrap.OnPythonShutdown");
         CallStopServer();
         PythonEngine.RemoveShutdownHandler(OnPythonShutdown);
     }
@@ -123,33 +117,6 @@ unity_server.call_remote_service('bootstrap_shotgun','{0}')
         CallBootstrap();
     }
 
-    [MenuItem("Shotgun/Debug/Manually Start Engine")]
-    public static void CallStartEngine()
-    {
-        // TODO (fix) : PythonException: TankError : Missing required script user in config '/Users/inwoods/Library/Caches/Shotgun/imaginaryspaces/p120c45.basic.desktop/cfg/config/core/shotgun.yml'
-        string pyScript = @"
-import sgtk
-tk = sgtk.sgtk_from_path('{0}')
-ctx = tk.context_empty()
-engine = sgtk.platform.start_engine('tk-unity', tk, ctx)
-        ";
-
-        pyScript = string.Format(pyScript,ProjectRoot);
-
-        PythonRunner.RunString(pyScript);
-    }
-
-    [MenuItem("Shotgun/Debug/Restart Engine")]
-    public static void CallRestartEngine()
-    {
-        string pyScript = @"
-import sgtk
-sgtk.platform.restart()
-        ";
-
-        PythonRunner.RunString(pyScript);
-    }
-
     [MenuItem("Shotgun/Debug/Print Engine Envs")]
     public static void CallPrintEnv()
     {
@@ -161,5 +128,4 @@ sgtk.platform.restart()
         }
     }
 #endif
-
 }
