@@ -334,7 +334,6 @@ class UnityEditorEngine(Engine):
         if panel_id == "tk_multi_shotgunpanel_main":
             
             # get the Unity selection
-            import UnityEditor
             mainAsset = UnityEditor.Selection.activeObject
             if not mainAsset:
                 return dialog
