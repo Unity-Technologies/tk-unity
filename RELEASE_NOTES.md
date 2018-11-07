@@ -1,5 +1,14 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.3
+
+NEW FEATURES
+* Now using the Unity.Scripting.Python rpyc architecture. 
+  * Shotgun runs in a separate process
+  
+FIXES  
+* Shotgun now survives Unity's domain reload after reconnecting to a new server
+  
 **Version**: 0.2
 
 NEW FEATURES
