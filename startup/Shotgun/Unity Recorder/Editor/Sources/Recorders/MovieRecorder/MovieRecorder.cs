@@ -205,7 +205,6 @@ namespace UnityEditor.Recorder
         {
             if (state == PlayModeStateChange.EnteredEditMode)
             {
-                Bootstrap.CallBootstrap();
                 EditorApplication.ExecuteMenuItem("Shotgun/Publish...");
 
                 EditorApplication.playModeStateChanged -= OnExitPlaymode;

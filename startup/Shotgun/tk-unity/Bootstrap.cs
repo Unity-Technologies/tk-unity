@@ -4,25 +4,103 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using System.IO;
+using Python.Runtime;
 
 public class Bootstrap
 {
-    public static void CallBootstrap()
+    const string ImportServerString          = "from unity_rpyc import unity_server as unity_server\n";
+    const string ClientInitModuleFileName    = "sg_client_init.py";
+    
+    /// <summary>
+    /// Runs Python code on the Python client
+    /// </summary>
+    /// <param name="pythonCodeToExecute">The code to execute.</param>
+    public static void RunPythonCodeOnClient(string pythonCodeToExecute)
     {
-        UnityEngine.Debug.Log("Invoking Shotgun Toolkit bootstrap script.");
-        PythonRunner.RunFile(System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION"));
+        string serverCode = ImportServerString + string.Format(@"unity_server.run_python_code_on_client('{0}')",pythonCodeToExecute);
+        PythonRunner.RunString(serverCode);
     }
 
+    /// <summary>
+    /// Runs a Python script on the Python client
+    /// </summary>
+    /// <param name="pythonFileToExecute">The script to execute.</param>
+    public static void RunPythonFileOnClient(string pythonFileToExecute)
+    {
+        string serverCode = ImportServerString + string.Format(@"unity_server.run_python_file_on_client('{0}')",pythonFileToExecute);
+        PythonRunner.RunString(serverCode);
+    }
+
+    /// <summary>
+    /// Starts the Unity server (rpyc)
+    /// </summary>
+    /// <param name="clientInitModulePath">Path to the client init module that should be used when the Unity client starts.</param>
+    public static void CallStartServer(string clientInitModulePath = null)
+    {
+        string clientInitPathString;
+        if (clientInitModulePath != null)
+        {
+            clientInitModulePath = clientInitModulePath.Replace("\\","/");
+            clientInitPathString = string.Format("'{0}'",clientInitModulePath);
+        }
+        else
+        {
+            clientInitPathString = "None";
+        }
+
+        string serverCode = ImportServerString + string.Format(@"unity_server.start({0})", clientInitPathString);
+        PythonRunner.RunString(serverCode);
+
+        // We need to stop the server on Python shutdown 
+        // (which is triggered by domain unload)
+        PythonEngine.AddShutdownHandler(OnPythonShutdown);
+    }
+
+    /// <summary>
+    /// Stops the Unity server
+    /// </summary>
+    public static void CallStopServer()
+    {
+        string serverCode = ImportServerString + @"unity_server.stop()";
+        PythonRunner.RunString(serverCode);
+    }
+
+    /// <summary>
+    /// Starts the Unity server, then bootstraps Shotgun on the Unity client
+    /// </summary>
+    public static void CallBootstrap()
+    {
+        // Use the engine's rpyc client script
+        string bootstrapScript = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
+        bootstrapScript = bootstrapScript.Replace(@"\","/");
+
+        string clientInitModulePath = Path.GetDirectoryName(bootstrapScript);
+        clientInitModulePath = Path.Combine(clientInitModulePath,ClientInitModuleFileName);
+
+        // First start the rpyc server
+        CallStartServer(clientInitModulePath);
+
+        // Then bootstrap Shotgun on the client
+        string serverCode = ImportServerString + string.Format(@"unity_server.call_remote_service('bootstrap_shotgun','{0}')",bootstrapScript);
+        PythonRunner.RunString(serverCode);
+    }
+
+    /// <summary>
+    /// Bootstraps Shotgun when the domain is reloaded
+    /// </summary>
     [UnityEditor.Callbacks.DidReloadScripts]
     public static void OnReload()
     {
-        // check environment variable to see if we want to bootstrap
-        var bootstrap = System.Environment.GetEnvironmentVariable("BOOTSTRAP_SG_ON_UNITY_STARTUP");
-        if (bootstrap == null)
-        {
-            return;
-        }
         CallBootstrap();
+    }
+
+    /// <summary>
+    /// Stops the Unity server on Python
+    /// </summary>
+    public static void OnPythonShutdown()
+    {
+        CallStopServer();
+        PythonEngine.RemoveShutdownHandler(OnPythonShutdown);
     }
 
 #if DEBUG
@@ -39,43 +117,15 @@ public class Bootstrap
         CallBootstrap();
     }
 
-    [MenuItem("Shotgun/Debug/Manually Start Engine")]
-    public static void CallStartEngine()
-    {
-        // TODO (fix) : PythonException: TankError : Missing required script user in config '/Users/inwoods/Library/Caches/Shotgun/imaginaryspaces/p120c45.basic.desktop/cfg/config/core/shotgun.yml'
-        string pyScript = @"
-import sgtk
-tk = sgtk.sgtk_from_path('{0}')
-ctx = tk.context_empty()
-engine = sgtk.platform.start_engine('tk-unity', tk, ctx)
-        ";
-
-        pyScript = string.Format(pyScript, ProjectRoot);
-
-        PythonRunner.RunString(pyScript);
-    }
-
-    [MenuItem("Shotgun/Debug/Restart Engine")]
-    public static void CallRestartEngine()
-    {
-        string pyScript = @"
-import sgtk
-sgtk.platform.restart()
-        ";
-
-        PythonRunner.RunString(pyScript);
-    }
-
     [MenuItem("Shotgun/Debug/Print Engine Envs")]
     public static void CallPrintEnv()
     {
-        string[] envs = { "SHOTGUN_UNITY_BOOTSTRAP_LOCATION", "BOOTSTRAP_SG_ON_UNITY_STARTUP", };
+        string[] envs = { "SHOTGUN_UNITY_BOOTSTRAP_LOCATION","BOOTSTRAP_SG_ON_UNITY_STARTUP",};
 
-        foreach (string env in envs)
+        foreach(string env in envs)
         {
             UnityEngine.Debug.Log(env + ": " + System.Environment.GetEnvironmentVariable(env));
         }
     }
 #endif
-
 }

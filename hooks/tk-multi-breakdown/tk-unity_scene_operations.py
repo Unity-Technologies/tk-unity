@@ -39,7 +39,8 @@ class BreakdownSceneOperations(Hook):
         available. Any such versions are then displayed in the UI as out of date.
         """
         
-        import UnityEditor
+        import unity_connection
+        UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
         refs = []
         
         # check the meta data of all fbx files in the project to see if they contain a shotgun path, add them if they do
@@ -74,8 +75,10 @@ class BreakdownSceneOperations(Hook):
         """
         
         import shutil
-        import UnityEngine
-        import UnityEditor
+        import unity_connection
+        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+        UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
+
         for item in items:
             # replace the item in Assets with the updated version at path
             projectFolder = os.path.dirname(UnityEngine.Application.dataPath)

@@ -10,12 +10,9 @@
 
 import os
 import sys
+import unity_connection
 
-import clr
-
-clr.AddReference("UnityEngine")
-import UnityEngine
-
+UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
 
 def plugin_bootstrap(plugin_root_path):
     """
