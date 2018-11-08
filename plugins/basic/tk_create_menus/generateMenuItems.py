@@ -22,8 +22,8 @@ class MenuItemGenerator(object):
         self._functionTemplate = """
             [MenuItem("Shotgun/{menuName}", false, {priority})]
             public static void MenuItem{count}(){{
-                Bootstrap.RunPythonCodeOnClient("import sgtk");
-                Bootstrap.RunPythonCodeOnClient("sgtk.platform.current_engine().{callbackName}(\\\"{submenuName}\\\")");
+                PythonRunner.RunStringOnClient("import sgtk");
+                PythonRunner.RunStringOnClient("sgtk.platform.current_engine().{callbackName}(\\\"{submenuName}\\\")");
             }}
         """
         self._fileContentsTemplate = """
