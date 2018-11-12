@@ -8,7 +8,8 @@ using Python.Runtime;
 
 public class Bootstrap
 {
-    static string ImportServerString = "from unity_rpyc import unity_server as unity_server\n";
+    const string ImportServerString          = "from unity_rpyc import unity_server as unity_server\n";
+    const string ClientInitModuleFileName    = "sg_client_init.py";
     
     /// <summary>
     /// Runs Python code on the Python client
@@ -58,7 +59,6 @@ public class Bootstrap
     /// <summary>
     /// Stops the Unity server
     /// </summary>
-    /// <param name="clientInitModulePath">Path to the client init module that should be used when the Unity client starts.</param>
     public static void CallStopServer()
     {
         string serverCode = ImportServerString + @"unity_server.stop()";
@@ -74,11 +74,11 @@ public class Bootstrap
         string bootstrapScript = System.Environment.GetEnvironmentVariable("SHOTGUN_UNITY_BOOTSTRAP_LOCATION");
         bootstrapScript = bootstrapScript.Replace(@"\","/");
 
-        string clientInitPath = Path.GetDirectoryName(bootstrapScript);
-        clientInitPath = Path.Combine(clientInitPath,"sg_client_init.py");
+        string clientInitModulePath = Path.GetDirectoryName(bootstrapScript);
+        clientInitModulePath = Path.Combine(clientInitModulePath,ClientInitModuleFileName);
 
         // First start the rpyc server
-        CallStartServer(clientInitPath);
+        CallStartServer(clientInitModulePath);
 
         // Then bootstrap Shotgun on the client
         string serverCode = ImportServerString + string.Format(@"unity_server.call_remote_service('bootstrap_shotgun','{0}')",bootstrapScript);
