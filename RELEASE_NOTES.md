@@ -8,6 +8,7 @@ NEW FEATURES
   
 FIXES  
 * Shotgun now survives Unity's domain reload after reconnecting to a new server
+* Fixed scenarios where user data was not saved properly on loaded assets
   
 **Version**: 0.2
 
