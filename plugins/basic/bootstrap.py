@@ -1,14 +1,11 @@
-import os
-import sys
-import clr
-
-
 def plugin_startup():
+    import os
+    import sys
     """
     Initializes the Toolkit plugin for Unity.
     """
-    clr.AddReference("UnityEngine")
-    import UnityEngine
+    import unity_connection
+    UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
     try:
         # Ensure that we can find PySide on MacOS
         # TODO: move this to part of the python installation steps.
@@ -57,6 +54,4 @@ def plugin_startup():
         UnityEngine.Debug.LogError(message)
         UnityEngine.Debug.LogError(details)
 
-
-# Invoked on startup while Nuke is walking NUKE_PATH.
 plugin_startup()
