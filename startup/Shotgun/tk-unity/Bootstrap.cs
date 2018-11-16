@@ -8,9 +8,9 @@ using Python.Runtime;
 
 public class Bootstrap
 {
-    const string ImportServerString          = "from unity_rpyc import unity_server as unity_server\n";
-    const string ClientInitModuleFileName    = "sg_client_init.py";
-    
+    private const string ImportServerString          = "from unity_rpyc import unity_server as unity_server\n";
+    private const string ClientInitModuleFileName    = "sg_client_init.py";
+
     /// <summary>
     /// Runs Python code on the Python client
     /// </summary>
@@ -86,9 +86,9 @@ public class Bootstrap
     }
 
     /// <summary>
-    /// Bootstraps Shotgun when the domain is reloaded
+    /// Bootstraps Shotgun when the domain is loaded
     /// </summary>
-    [UnityEditor.Callbacks.DidReloadScripts]
+    [InitializeOnLoadMethod]
     public static void OnReload()
     {
         CallBootstrap();
