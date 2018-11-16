@@ -177,7 +177,8 @@ class UnityActions(HookBaseClass):
             
         # import into Unity
         # copy file to Unity project
-        import UnityEngine
+        import unity_connection
+        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
         projectPath = UnityEngine.Application.dataPath
         
         try:
@@ -192,7 +193,8 @@ class UnityActions(HookBaseClass):
                 shutil.copy2(path, filePath)
                 UnityEngine.Debug.Log("importing asset {0} to {1}".format(path, import_paths[0]))
             
-                import UnityEditor
+                import unity_connection
+                UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
                 UnityEditor.AssetDatabase.Refresh()
         
                 # store the path in the meta file
