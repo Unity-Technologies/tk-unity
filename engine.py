@@ -172,6 +172,8 @@ class UnityEditorEngine(Engine):
         context_name = str(self.context).decode("utf-8")
         generator = MenuItemGenerator(UnityEngine.Application.dataPath, self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
+
+        UnityEditor.AssetDatabase.Refresh()
         
         # Traditionally, the menu is built the following way:
         #
