@@ -11,8 +11,6 @@ import pprint
 from sgtk.platform import Engine
 
 import unity_connection
-UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
-UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
 
 ###############################################################################################
 # The Shotgun Unity engine
@@ -170,9 +168,12 @@ class UnityEditorEngine(Engine):
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context).decode("utf-8")
+        
+        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
         generator = MenuItemGenerator(UnityEngine.Application.dataPath, self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
 
+        UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
         UnityEditor.AssetDatabase.Refresh()
         
         # Traditionally, the menu is built the following way:
@@ -302,6 +303,8 @@ class UnityEditorEngine(Engine):
         # method on UnityEngine.Debug.
         
         import logging
+        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+        
         if record.levelno >= logging.ERROR:
             UnityEngine.Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:
@@ -336,6 +339,7 @@ class UnityEditorEngine(Engine):
         if panel_id == "tk_multi_shotgunpanel_main":
             
             # get the Unity selection
+            UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
             mainAsset = UnityEditor.Selection.activeObject
             if not mainAsset:
                 return dialog
