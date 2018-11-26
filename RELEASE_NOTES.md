@@ -1,5 +1,10 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.4
+FIXES
+* Shotgun now initializes on startup
+* The Shotgun menu is now refreshed after Shotgun initializes
+
 **Version**: 0.3
 
 NEW FEATURES
