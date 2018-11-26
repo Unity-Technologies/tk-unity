@@ -4,6 +4,7 @@
 FIXES
 * Shotgun now initializes on startup
 * The Shotgun menu is now refreshed after Shotgun initializes
+* Fixed a problem when importing UnityEditor/UnityEngine from engine.py
 
 **Version**: 0.3
 
