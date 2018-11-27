@@ -1,5 +1,11 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.4
+FIXES
+* Shotgun now initializes on startup
+* The Shotgun menu is now refreshed after Shotgun initializes
+* Fixed a problem when importing UnityEditor/UnityEngine from engine.py after domain reload
+
 **Version**: 0.3
 
 NEW FEATURES
