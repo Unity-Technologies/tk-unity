@@ -36,16 +36,44 @@ class MenuItemGenerator(object):
         }}
         """
         
+        self._assemblyTemplate = """
+        {{
+            "name": "{className}",
+            "references": [
+                "Unity.Integrations.Shotgun"
+            ],
+            "optionalUnityReferences": [],
+            "includePlatforms": [],
+            "excludePlatforms": [],
+            "allowUnsafeCode": false,
+            "overrideReferences": false,
+            "precompiledReferences": [],
+            "autoReferenced": true,
+            "defineConstraints": []
+        }}"""
+        
     def CreateCSharpFile(self):
         functionStr = "\n\n".join(self._functionList)
         fileContents = self._fileContentsTemplate.format(className = self._cSharpClass, functions = functionStr)
+        
+        # make sure directory already exists
+        if not os.path.isdir(self._projectPath):
+            os.makedirs(self._projectPath)
+        
         cSharpFile = None
+        assembly = None
         try:
             cSharpFile = open(os.path.join(self._projectPath, "{0}.cs".format(self._cSharpClass)), "w+")
             cSharpFile.write(fileContents)
+            
+            # also create assembly to access the Bootstrap code
+            assembly = open(os.path.join(self._projectPath, "{0}.asmdef".format(self._cSharpClass)), "w+")
+            assembly.write(self._assemblyTemplate.format(className = self._cSharpClass))
         finally:
             if cSharpFile:
                 cSharpFile.close()
+            if assembly:
+                assembly.close()
     
     def GenerateMenuItem(self, cmdName, cmdType):
         count = len(self._functionList) + 1
