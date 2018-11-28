@@ -1,0 +1,10 @@
+{
+    "name": "Unity.Integrations.Shotgun",
+    "references": [
+        "Unity.Scripting.Python.Runtime"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

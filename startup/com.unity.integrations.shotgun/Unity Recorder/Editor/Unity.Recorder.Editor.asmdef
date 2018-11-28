@@ -1,0 +1,17 @@
+{
+    "name": "Unity.Recorder.Editor",
+    "references": [
+        "Unity.Recorder",
+        "Unity.Integrations.Shotgun"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
