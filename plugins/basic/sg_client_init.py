@@ -19,7 +19,8 @@ if want_coverage:
     import coverage
 ######### Coverage, used for testing #########
 
-from unity_client import UnityClientService,log
+from unity_client import log
+from unity_client_service import UnityClientService
 
 # We only initialize Shotgun once in the client process
 _shotgun_is_initialized = False    
