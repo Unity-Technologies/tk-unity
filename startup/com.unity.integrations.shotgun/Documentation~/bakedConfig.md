@@ -3,7 +3,7 @@
 ## Baked configuration
 The easiest way to get started is to use our latest pipeline configuration. Simply follow these steps in order to use it:
 
-1. Download the baked configuration zip file. It is attached to its corresponding github release. For example, you can download the shotgun-au-demo configuration version 0.3 by following this link.
+1. Download the baked configuration zip file. It is attached to its corresponding github release. For example, you can download the shotgun-au-demo configuration version 0.3 by following [this link](https://github.com/Unity-Technologies/shotgun-au-demo/releases/download/v0.3/shotgun-au-demo-baked-v0.3.zip).
 2. In the Shotgun Web Client, go to “Your Avatar”/Default Layouts/Pipeline Configuration/Pipeline Configuration List
 3. Create a new Pipeline Configuration
 
