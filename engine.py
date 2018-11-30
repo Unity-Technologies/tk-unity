@@ -170,7 +170,7 @@ class UnityEditorEngine(Engine):
         context_name = str(self.context).decode("utf-8")
         
         UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
-        generator = MenuItemGenerator(UnityEngine.Application.dataPath, self._menu_cmd_items, context_name, "call_menu_item_callback")
+        generator = MenuItemGenerator(UnityEngine.Application.dataPath + "/Shotgun", self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
 
         UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')

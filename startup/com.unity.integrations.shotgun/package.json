@@ -1,0 +1,9 @@
+{
+    "name": "com.unity.integrations.shotgun",
+    "displayName" : "Shotgun",
+    "version" : "0.0.1-preview",
+    "dependencies" : { "com.unity.scripting.python" : "1.1.1-preview" },
+    "unity": "2018.2",
+    "description" : "Unity Shotgun Integration",
+    "keywords" : [ "shotgun" ]
+}
