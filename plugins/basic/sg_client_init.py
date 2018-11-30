@@ -82,7 +82,7 @@ class ShotgunClientService(UnityClientService):
         log('on_server_stop')
         super(ShotgunClientService, self).on_server_stop(terminate_client)
         
-        if want_coverage:
+        if terminate_client and want_coverage:
             global coverage_object
             global coverage_directory
             
