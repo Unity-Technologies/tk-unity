@@ -5,6 +5,20 @@ process in order to serve the Shotgun integration:
   function
 - Installs an idle callback that will process Qt events
 """
+
+######### Coverage, used for testing #########
+# Set TK_UNITY_WANT_COVERAGE to enable coverage
+import os
+import tempfile
+
+want_coverage = os.environ.has_key('TK_UNITY_WANT_COVERAGE')
+coverage_object = None
+coverage_directory = None
+
+if want_coverage:
+    import coverage
+######### Coverage, used for testing #########
+
 from unity_client import log
 from unity_client_service import UnityClientService
 
@@ -15,7 +29,19 @@ def on_init_client(client):
     """
     Registers the custom rpyc service and the idle callback
     """
+    global want_coverage
+    
     log('[sg] In on_init_client')
+    
+    if want_coverage:
+        global coverage_object
+        global coverage_directory
+        coverage_directory = tempfile.mkdtemp(suffix='-tk-unity-coverage')
+        log('Coverage results will be located in %s when the client terminates'%coverage_directory)
+        
+        coverage_object = coverage.Coverage(data_file=os.path.join(coverage_directory,'tk-unity.coverage'))
+        coverage_object.start()
+    
     client.register_idle_callback(on_idle)
     client.register_service(ShotgunClientService)
     
@@ -49,3 +75,17 @@ class ShotgunClientService(UnityClientService):
         _shotgun_is_initialized = True
 
         log('[sg] Shotgun has been initialized in the client process')
+
+    def on_server_stop(self, terminate_client):
+        global want_coverage
+        super(ShotgunClientService, self).on_server_stop(terminate_client)
+        
+        if terminate_client and want_coverage:
+            global coverage_object
+            global coverage_directory
+            
+            coverage_object.stop()
+            coverage_object.save()
+            
+            log('Writing coverage results, this could take a moment')
+            coverage_object.html_report(directory=coverage_directory)
