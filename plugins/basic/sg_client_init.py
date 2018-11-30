@@ -5,7 +5,8 @@ process in order to serve the Shotgun integration:
   function
 - Installs an idle callback that will process Qt events
 """
-from unity_client import UnityClientService,log
+from unity_client import log
+from unity_client_service import UnityClientService
 
 # We only initialize Shotgun once in the client process
 _shotgun_is_initialized = False    
