@@ -16,7 +16,7 @@ Before starting make sure your scene and Timeline are setup for recording the pl
 
 4. Hit "Start Recording" to record the playblast
 
-5. Once the playblast finishes recording, the Shotgun Publish window will automatically open, showing the session recording ready to upload
+5. Once the playblast finishes recording, and the editor exits playmode, the Shotgun Publish window will automatically open, showing the session recording ready to upload
 
 ![Publish to Shotgun Window](images/publish_playblast.png)
 
