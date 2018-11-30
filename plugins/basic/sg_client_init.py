@@ -78,8 +78,6 @@ class ShotgunClientService(UnityClientService):
 
     def on_server_stop(self, terminate_client):
         global want_coverage
-
-        log('on_server_stop')
         super(ShotgunClientService, self).on_server_stop(terminate_client)
         
         if terminate_client and want_coverage:
