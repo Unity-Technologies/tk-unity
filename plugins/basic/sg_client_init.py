@@ -88,4 +88,4 @@ class ShotgunClientService(UnityClientService):
             coverage_object.save()
             
             log('Writing coverage results, this could take a moment')
-            coverage_object.html_report(directory=coverage_directory)
+            coverage_object.html_report(directory=coverage_directory, ignore_errors=True)
