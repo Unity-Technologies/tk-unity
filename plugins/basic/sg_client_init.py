@@ -29,6 +29,8 @@ def on_init_client(client):
     """
     Registers the custom rpyc service and the idle callback
     """
+    global want_coverage
+    
     log('[sg] In on_init_client')
     
     if want_coverage:
@@ -75,6 +77,8 @@ class ShotgunClientService(UnityClientService):
         log('[sg] Shotgun has been initialized in the client process')
 
     def on_server_stop(self, terminate_client):
+        global want_coverage
+
         log('on_server_stop')
         super(ShotgunClientService, self).on_server_stop(terminate_client)
         
@@ -84,4 +88,6 @@ class ShotgunClientService(UnityClientService):
             
             coverage_object.stop()
             coverage_object.save()
-            cov.html_report(directory=coverage_directory)
+            
+            log('Writing coverage results, this could take a moment')
+            coverage_object.html_report(directory=coverage_directory)
