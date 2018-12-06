@@ -27,8 +27,6 @@ namespace Tests
 
             System.IO.File.Copy(videoFilePath, destinationPath, true);
 
-            Debug.Log(string.Format("destinationPath = {0}",destinationPath));
-            
             // Run the test script on client
             string standaloneScript = Path.Combine(TestsPath, "standalone_publish.py");
             PythonRunner.RunFileOnClient(standaloneScript);
