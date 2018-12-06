@@ -1,5 +1,9 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.5
+NEW FEATURES
+* The Shotgun integration is not installed as an Asset Store package anymore, but as a package
+
 **Version**: 0.4
 FIXES
 * Shotgun now initializes on startup
