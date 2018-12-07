@@ -3,7 +3,7 @@
 **Version**: 0.5
 
 NEW FEATURES
-* The Shotgun integration is not installed as an Asset Store package anymore, but as a package
+* The Shotgun integration is not installed as a unitypackage anymore, but as a Package Manager package
 
 **Version**: 0.4
 
