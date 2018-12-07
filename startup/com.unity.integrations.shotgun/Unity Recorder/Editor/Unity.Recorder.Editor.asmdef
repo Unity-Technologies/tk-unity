@@ -1,8 +1,7 @@
 {
     "name": "Unity.Recorder.Editor",
     "references": [
-        "Unity.Recorder",
-        "Unity.Integrations.Shotgun"
+        "Unity.Recorder"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
