@@ -5,6 +5,7 @@ success = False
 # need to have an engine running in a context where the publisher has been
 # configured.
 engine = sgtk.platform.current_engine()
+assert engine, 'There is no Shotgun engine'
 
 # get the publish app instance from the engine's list of configured apps
 publish_app = engine.apps.get("tk-multi-publish2")
@@ -27,6 +28,7 @@ for item in session:
 
 # validate the items to publish
 tasks_failed_validation = manager.validate()
+assert len(tasks_failed_validation) == 0, 'Validation failed'
 
 # Keep a list of all version entities prior to publishing
 sg = engine.shotgun
