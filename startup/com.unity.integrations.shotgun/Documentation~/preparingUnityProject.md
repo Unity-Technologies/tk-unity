@@ -12,7 +12,7 @@ You will need to add the Shotgun package to your Unity project’s Packages/mani
 
 ## Compatibility Matrix
 
-Please use the shotgun package version corresponding to your configuration version
+Please use the Shotgun package version corresponding to your configuration version
 
 | tk-config-unity version | com.unity.integrations.shotgunversion |
 | :---------------------- | :------------------------------------ |
