@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Recorder;
@@ -13,12 +12,6 @@ public class RecordTimeline
     [MenuItem("Shotgun/Record Timeline")]
     public static void Record()
     {
-        m_recorderSettings = GetRecorder();
-        if(m_recorderSettings == null)
-        {
-            Debug.LogError("Could not find a valid MovieRecorder");
-            return;
-        }
         m_origFilePath = RecorderPath;
 
         RecorderPath = GetTempFilePath();
@@ -64,11 +57,27 @@ public class RecordTimeline
         return propInfo.GetValue(from);
     }
 
+    private static MovieRecorderSettings RecorderSettings
+    {
+        get
+        {
+            if (m_recorderSettings == null)
+            {
+                m_recorderSettings = GetRecorder();
+                if (m_recorderSettings == null)
+                {
+                    Debug.LogError("Could not find a valid MovieRecorder");
+                }
+            }
+            return m_recorderSettings;
+        }
+    }
+
     private static string RecorderPath {
-        get { return m_recorderSettings.outputFile; }
+        get { return RecorderSettings.outputFile; }
         set
         {
-            var filenameGenerator = GetFieldValue("fileNameGenerator", m_recorderSettings);
+            var filenameGenerator = GetFieldValue("fileNameGenerator", RecorderSettings);
             MethodInfo mi = filenameGenerator.GetType().GetMethod("FromPath", BindingFlags.NonPublic | BindingFlags.Instance);
             mi.Invoke(filenameGenerator, new object[] { value });
         }
