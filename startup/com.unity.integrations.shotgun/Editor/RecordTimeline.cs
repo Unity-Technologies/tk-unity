@@ -16,10 +16,17 @@ public class RecordTimeline
 
         RecorderPath = GetTempFilePath();
 
-        // bootstrap shotgun and open publish window
-        EditorApplication.playModeStateChanged += OnExitPlaymode;
-
         StartRecording();
+    }
+
+    /// <summary>
+    /// Installs the play mode change delegate (needs to be installed whenever 
+    /// scripts recompile)
+    /// </summary>
+    [InitializeOnLoadMethod]
+    public static void OnReload()
+    {
+        EditorApplication.playModeStateChanged += OnExitPlaymode;
     }
 
     private static string GetTempFilePath()
@@ -37,6 +44,15 @@ public class RecordTimeline
     {
         if (state == PlayModeStateChange.EnteredEditMode)
         {
+            // Is there a movie file? 
+            // It is possible that we got here after a script reload unrelated to a recording session
+            string tempPath = GetTempFilePath();
+            string recorderPath = RecorderPath;
+/*            if (!System.IO.File.Exists(movieFilePath))
+            {
+                return;
+            }
+            */
             EditorApplication.ExecuteMenuItem("Shotgun/Publish...");
 
             EditorApplication.playModeStateChanged -= OnExitPlaymode;
