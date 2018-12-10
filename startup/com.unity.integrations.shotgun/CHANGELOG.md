@@ -2,6 +2,6 @@
 
 RELEASE NOTES
 
-## [0.0.1-preview] - 2018-11-28
+## [0.1.0-preview] - 2018-12-07
 NEW FEATURES
 * added Unity Shotgun Integration
