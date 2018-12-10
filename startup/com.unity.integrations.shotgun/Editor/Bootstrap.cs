@@ -111,7 +111,7 @@ public class Bootstrap
     const string ProjectRoot = "S:/imgspc";
 #endif
 
-    /*[MenuItem("Shotgun/Debug/Bootstrap Engine")]
+    [MenuItem("Shotgun/Debug/Bootstrap Engine")]
     public static void CallBootstrapEngine()
     {
         CallBootstrap();
@@ -126,6 +126,6 @@ public class Bootstrap
         {
             UnityEngine.Debug.Log(env + ": " + System.Environment.GetEnvironmentVariable(env));
         }
-    }*/
+    }
 #endif
 }
