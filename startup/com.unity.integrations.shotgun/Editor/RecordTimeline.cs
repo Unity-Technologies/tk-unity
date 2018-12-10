@@ -14,6 +14,11 @@ public class RecordTimeline
     public static void Record()
     {
         m_recorderSettings = GetRecorder();
+        if(m_recorderSettings == null)
+        {
+            Debug.LogError("Could not find a valid MovieRecorder");
+            return;
+        }
         m_origFilePath = RecorderPath;
 
         RecorderPath = GetTempFilePath();
@@ -92,11 +97,14 @@ public class RecordTimeline
         // then go through the list and try to find one that is called "Shotgun".
         // if there isn't one then just take one of the MovieRecorders.
         var selectedRecorder = GetFieldValue("m_SelectedRecorderItem", recorderWindow);
-        RecorderSettings recorderSettings = GetPropertyValue("settings", selectedRecorder, BindingFlags.Public | BindingFlags.Instance) as RecorderSettings;
-        if (recorderSettings.GetType().Equals(typeof(MovieRecorderSettings)))
+        if (selectedRecorder != null)
         {
-            // found movie recorder settings
-            return recorderSettings as MovieRecorderSettings;
+            RecorderSettings recorderSettings = GetPropertyValue("settings", selectedRecorder, BindingFlags.Public | BindingFlags.Instance) as RecorderSettings;
+            if (recorderSettings.GetType().Equals(typeof(MovieRecorderSettings)))
+            {
+                // found movie recorder settings
+                return recorderSettings as MovieRecorderSettings;
+            }
         }
         
         var recorderList = GetFieldValue("m_RecordingListItem", recorderWindow);
@@ -105,11 +113,12 @@ public class RecordTimeline
         foreach (var item in itemList)
         {
             RecorderSettings settings = GetPropertyValue("settings", item, BindingFlags.Public | BindingFlags.Instance) as RecorderSettings;
-            movieRecorder = settings as MovieRecorderSettings;
-            if(movieRecorder == null)
+            var recorder = settings as MovieRecorderSettings;
+            if(recorder == null)
             {
                 continue;
             }
+            movieRecorder = recorder;
 
             var editableLabel = GetFieldValue("m_EditableLabel", item);
             var labelText = (string)GetPropertyValue("text", editableLabel);
