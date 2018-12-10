@@ -14,9 +14,9 @@ You will need to add the Shotgun package to your Unity project’s Packages/mani
 
 Please use the Shotgun package version corresponding to your configuration version
 
-| tk-config-unity version | com.unity.integrations.shotgunversion |
-| :---------------------- | :------------------------------------ |
-| 1.1.15.1                | 0.1.0-preview                         |
+| tk-config-unity version | com.unity.integrations.shotgun version |
+| :---------------------- | :------------------------------------- |
+| 1.1.15.1                | 0.1.0-preview                          |
    
 Shotgun should automatically initialize on Unity startup. You should see Shotgun-related entries in the console (e.g. “[1] - Engine launched.”). If not use the Shotgun/Debug/Bootstrap Engine menu.
 
