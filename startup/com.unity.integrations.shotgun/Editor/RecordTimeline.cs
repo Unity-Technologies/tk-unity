@@ -13,7 +13,7 @@ public class RecordTimeline
     /// We must install the delegate on each domain reload
     /// </summary>
     [InitializeOnLoadMethod]
-    public static void OnReload()
+    private static void OnReload()
     {
         if (IsRecording)
         {
@@ -22,7 +22,7 @@ public class RecordTimeline
     }
 
     [MenuItem("Shotgun/Record Timeline")]
-    public static void Record()
+    private static void Record()
     {
         IsRecording = true;
 
@@ -36,7 +36,7 @@ public class RecordTimeline
     }
 
     private static string lockFilePath = GetTempFilePath() + ".RecordTimeline.lock";
-    public static bool IsRecording
+    private static bool IsRecording
     {
         get 
         {
