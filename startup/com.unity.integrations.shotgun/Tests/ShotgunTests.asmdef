@@ -2,7 +2,7 @@
     "name": "ShotgunTests",
     "references": [
         "Unity.Integrations.Shotgun",
-        "Unity.Scripting.Python.Runtime"
+        "Unity.Scripting.Python.Editor"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
