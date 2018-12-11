@@ -1,9 +1,9 @@
 # The Shotgun Configuration
 
 ## Baked configuration
-The easiest way to get started is to use our latest pipeline configuration. Simply follow these steps in order to use it:
+The easiest way to get started is to use our latest tk-config-unity pipeline configuration. It is constantly kept up-to-date with the tk-config-default2 configuration. Simply follow these steps in order to use it:
 
-1. Download the baked configuration zip file. It is attached to its corresponding github release. For example, you can download the shotgun-au-demo configuration version 0.3 by following [this link](https://github.com/Unity-Technologies/shotgun-au-demo/releases/download/v0.3/shotgun-au-demo-baked-v0.3.zip).
+1. Download the baked configuration zip file. It is attached to its corresponding github release. For example, you can download the tk-config-unity configuration version 1.1.15.1 by following [this link](https://github.com/Unity-Technologies/tk-config-unity/releases/download/v1.1.15.1/tk-config-unity-v1.1.15.1.zip).
 2. In the Shotgun Web Client, go to “Your Avatar”/Default Layouts/Pipeline Configuration/Pipeline Configuration List
 3. Create a new Pipeline Configuration
 
