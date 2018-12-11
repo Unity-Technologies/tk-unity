@@ -9,24 +9,53 @@ public class RecordTimeline
     private static string m_origFilePath = null;
     private static MovieRecorderSettings m_recorderSettings = null;
 
-    [MenuItem("Shotgun/Record Timeline")]
-    public static void Record()
-    {
-        m_origFilePath = RecorderPath;
-
-        RecorderPath = GetTempFilePath();
-
-        StartRecording();
-    }
-
     /// <summary>
-    /// Installs the play mode change delegate (needs to be installed whenever 
-    /// scripts recompile)
+    /// We must install the delegate on each domain reload
     /// </summary>
     [InitializeOnLoadMethod]
     public static void OnReload()
     {
-        EditorApplication.playModeStateChanged += OnExitPlaymode;
+        if (IsRecording)
+        {
+            EditorApplication.playModeStateChanged += OnPlayModeStateChange;
+        }
+    }
+
+    [MenuItem("Shotgun/Record Timeline")]
+    public static void Record()
+    {
+        IsRecording = true;
+
+        m_origFilePath = RecorderPath;
+
+        RecorderPath = GetTempFilePath();
+
+        EditorApplication.playModeStateChanged += OnPlayModeStateChange;
+
+        StartRecording();
+    }
+
+    private static string lockFilePath = GetTempFilePath() + ".RecordTimeline.lock";
+    public static bool IsRecording
+    {
+        get 
+        {
+            return System.IO.File.Exists(lockFilePath);
+        }
+        set
+        {
+            if (value == true)
+            {
+                System.IO.File.Create(lockFilePath);
+            }
+            else
+            {
+                if (System.IO.File.Exists(lockFilePath))
+                {
+                    System.IO.File.Delete(lockFilePath);
+                }
+            }
+        }
     }
 
     private static string GetTempFilePath()
@@ -40,24 +69,27 @@ public class RecordTimeline
         return tempPath;
     }
 
-    private static void OnExitPlaymode(PlayModeStateChange state)
+    private static void OnPlayModeStateChange(PlayModeStateChange state)
     {
-        if (state == PlayModeStateChange.EnteredEditMode)
+        if (IsRecording)
         {
-            // Is there a movie file? 
-            // It is possible that we got here after a script reload unrelated to a recording session
-            string tempPath = GetTempFilePath();
-            string recorderPath = RecorderPath;
-/*            if (!System.IO.File.Exists(movieFilePath))
+            // Domain reloads lose the overriden Recorder path. We know a 
+            // domain reload occurred if m_origFilePath is not set (cleared 
+            // by a domain reload)
+            if (null == m_origFilePath)
             {
-                return;
+                m_origFilePath = RecorderPath;
+                RecorderPath = GetTempFilePath();
             }
-            */
-            EditorApplication.ExecuteMenuItem("Shotgun/Publish...");
 
-            EditorApplication.playModeStateChanged -= OnExitPlaymode;
+            if (state == PlayModeStateChange.EnteredEditMode)
+            {
+                EditorApplication.ExecuteMenuItem("Shotgun/Publish...");
 
-            RecorderPath = m_origFilePath;
+                EditorApplication.playModeStateChanged -= OnPlayModeStateChange;
+                RecorderPath = m_origFilePath;
+                IsRecording = false;
+            }
         }
     }
 
