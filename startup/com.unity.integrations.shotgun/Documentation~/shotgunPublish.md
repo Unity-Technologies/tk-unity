@@ -10,17 +10,15 @@ Before starting make sure your scene and Timeline are setup for recording the pl
 
 2. Add a new Movie Recorder
 
-3. In the Movie recorder settings select "Publish to Shotgun"
-
 ![Publish to Shotgun Checkbox](images/unity_recorder.png)
 
-4. Hit "Start Recording" to record the playblast
+3. From the Unity menu, select Shotgun/Record Timeline
 
-5. Once the playblast finishes recording, and the editor exits playmode, the Shotgun Publish window will automatically open, showing the session recording ready to upload
+4. Once the playblast finishes recording, and the editor exits playmode, the Shotgun Publish window will automatically open, showing the session recording ready to upload
 
 ![Publish to Shotgun Window](images/publish_playblast.png)
 
-6. Select the "Task", "Link" and optionally add a thumbnail and description, then click "Publish" to publish the playblast to Shotgun
+5. Select the "Task", "Link" and optionally add a thumbnail and description, then click "Publish" to publish the playblast to Shotgun
 
 **Note:** The playblast will be saved to a temporary location on disk
 

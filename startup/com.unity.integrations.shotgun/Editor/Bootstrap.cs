@@ -104,13 +104,6 @@ public class Bootstrap
     }
 
 #if DEBUG
-
-#if UNITY_EDITOR_OSX
-    const string ProjectRoot = "/Volumes/shotgun_s_drive/imgspc";
-#else
-    const string ProjectRoot = "S:/imgspc";
-#endif
-
     [MenuItem("Shotgun/Debug/Bootstrap Engine")]
     public static void CallBootstrapEngine()
     {
