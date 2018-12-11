@@ -12,6 +12,7 @@ After opening Unity from Shotgun Desktop, a new top level Shotgun menu item will
 | Load... | Opens the [Shotgun Loader app](https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-Integrations-User-Guide#The%20Loader). |
 | Shotgun Panel... | Opens the [Shotgun Panel](https://support.shotgunsoftware.com/hc/en-us/articles/115000068574#The%20Shotgun%20Panel), a lightweight version of Shotgun that allows you to quickly and easily access Shotgun information such as Notes, Tasks, Versions and Publishes in Unity. | 
 | Publish... | Opens the [Shotgun Publish app](https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-Integrations-User-Guide#The%20Publisher). |
+| Record Timeline | Records the timeline and Opens the [Shotgun Publish app](https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-Integrations-User-Guide#The%20Publisher). |
 
 ## Project Specific Menu Items
 
