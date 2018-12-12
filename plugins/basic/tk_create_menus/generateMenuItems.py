@@ -22,12 +22,13 @@ class MenuItemGenerator(object):
         self._functionTemplate = """
             [MenuItem("Shotgun/{menuName}", false, {priority})]
             public static void MenuItem{count}(){{
-                Bootstrap.RunPythonCodeOnClient("import sgtk");
-                Bootstrap.RunPythonCodeOnClient("sgtk.platform.current_engine().{callbackName}(\\\"{submenuName}\\\")");
+                PythonRunner.RunStringOnClient("import sgtk");
+                PythonRunner.RunStringOnClient("sgtk.platform.current_engine().{callbackName}(\\\"{submenuName}\\\")");
             }}
         """
         self._fileContentsTemplate = """
         using UnityEditor;
+        using UnityEditor.Scripting.Python;
         using UnityEngine;
         using System.IO;
         
@@ -40,7 +41,8 @@ class MenuItemGenerator(object):
         {{
             "name": "{className}",
             "references": [
-                "Unity.Integrations.Shotgun"
+                "Unity.Integrations.Shotgun",
+                "Unity.Scripting.Python.Editor"
             ],
             "optionalUnityReferences": [],
             "includePlatforms": [],
