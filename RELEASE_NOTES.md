@@ -1,5 +1,10 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.6
+
+NEW FEATURES
+* Now using the Package Manager Recorder package instead of the asset store one
+
 **Version**: 0.5
 
 NEW FEATURES
