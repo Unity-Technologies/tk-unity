@@ -35,7 +35,7 @@ class UnityEditorEngine(Engine):
         """
         Whether the engine allows a context change without the need for a restart.
         """
-        return True
+        return False
 
     @property
     def host_info(self):
@@ -62,12 +62,6 @@ class UnityEditorEngine(Engine):
 
     ##########################################################################################
     # init and destroy
-
-    def pre_app_init(self):
-        """
-        Runs after the engine is set up but before any apps have been initialized.
-        """
-        pass
 
     def init_engine(self):
         """
@@ -110,7 +104,7 @@ class UnityEditorEngine(Engine):
         # and contains all commands that don't have an app or whose properties
         # key have the type set to context_menu.
         #
-        # Then each app has it's folder with all it's commands inserted inside it, unless
+        # Then each app has its folder with all its commands inserted inside it, unless
         # there is a single command for that app. In that case the menu
         # entry will be placed at the root level of the menu.
         #
@@ -167,44 +161,6 @@ class UnityEditorEngine(Engine):
             self.logger.error("Missing menu command {0}".format(name))
             return
         self._menu_cmd_items[name]["callback"]()
-        
-    def post_context_change(self, old_context, new_context):
-        """
-        Runs after a context change.
-
-        :param old_context: The context being changed away from.
-        :param new_context: The new context being changed to.
-        """
-        pass
-
-    def destroy_engine(self):
-        """
-        Stops watching scene events and tears down menu.
-        """
-        self.logger.debug("%s: Destroying...", self)
-        
-    def _get_dialog_parent(self):
-        """
-        Get the QWidget parent for all dialogs created through
-        show_dialog & show_modal.
-        """
-        return None
-
-    def _define_qt_base(self):
-        """
-        This will be called at initialization time and will allow
-        a user to control various aspects of how QT is being used
-        by Toolkit. The method returns a dictionary with a number
-        of specific keys, outlined below.
-
-        * qt_core - the QtCore module to use
-        * qt_gui - the QtGui module to use
-        * wrapper - the Qt wrapper root module, e.g. PySide
-        * dialog_base - base class for to use for Toolkit's dialog factory
-
-        :returns: dict
-        """
-        return super(UnityEditorEngine, self)._define_qt_base()
 
     @property
     def has_ui(self):
