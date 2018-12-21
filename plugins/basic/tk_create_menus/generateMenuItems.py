@@ -1,10 +1,11 @@
-# This script takes a list of cmd names and functions, and generates a C# script
-# that then populates a Unity menu with the cmd names, and calling the functions in python.
-
 import os
 from collections import defaultdict
 
 class MenuItemGenerator(object):
+    """
+    The MenuItemGenerator takes a list of command names and callbacks to create a C# script that will populate a
+    Unity menu with the commands. Selecting a command in the Unity menu will then call the appropriate callback in Python.
+    """
     def __init__(self, projectPath, cmdItems, contextName, callbackName):
         self._cSharpClass = "ShotgunMenuItems"
         self._cmdItems = cmdItems
