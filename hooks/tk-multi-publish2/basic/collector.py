@@ -38,7 +38,6 @@ class UnitySessionCollector(HookBaseClass):
 
         # get info for the extension
         item_info = self._get_item_info(path)
-        item_type = item_info["item_type"]
         type_display = item_info["type_display"]
         evaluated_path = path
         is_sequence = False
