@@ -276,6 +276,7 @@ class UnityEditorEngine(Engine):
         # Unless the Unity Editor can run in batch-mode (no-ui), this should
         # return True.
         return True
+    
 
     ##########################################################################################
     # logging
@@ -311,6 +312,69 @@ class UnityEditorEngine(Engine):
             UnityEngine.Debug.LogWarning(msg)
         else:
             UnityEngine.Debug.Log(msg)
+
+    ##########################################################################################
+    # dialog management (pop in front, single-instance apps)
+    def _create_dialog(self, title, bundle, widget, parent):
+        dialog = super(UnityEditorEngine, self)._create_dialog(title, bundle, widget, parent)
+        
+#        from sgtk.platform.qt import QtCore
+        
+#        dialog.raise_()
+#        dialog.activateWindow()
+        return dialog
+
+    def show_dialog(self, title, bundle, widget_class, *args, **kwargs):
+        widget = super(UnityEditorEngine, self).show_dialog(title, bundle, widget_class, *args, **kwargs)
+        
+        # Get the dialog
+        dialog = widget
+        while dialog.parent() is not None:
+            dialog = dialog.parent()
+
+#        widget.raise_()
+#        widget.setFocus()
+#        widget.activateWindow()
+        
+#        dialog.raise_()
+#        dialog.setFocus()
+#        dialog.activateWindow()
+
+        from sgtk.platform.qt import QtCore
+        original_flags = dialog.windowFlags()
+        dialog.setWindowFlags(original_flags | QtCore.Qt.WindowStaysOnTopHint)
+        dialog.show()
+        dialog.setWindowFlags(original_flags)
+        dialog.show()
+        dialog.raise_()
+        dialog.activateWindow()
+#        dialog.show()
+#        dialog.setWindowFlags(original_flags | QtCore.Qt.WindowStaysOnTopHint)
+#        dialog.show()
+        
+        #app = QtGui.QApplication.instance()
+        #dialog.showMinimized() 
+        #dialog.setWindowState(dialog.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        #dialog.showNormal()
+  #      dialog.raise_()
+   #     dialog.activateWindow()
+        
+        return widget
+        
+        
+        ###########dltrace##############
+        """
+        import sys
+        pydevd_path = 'D:/Program Files/eclipse/plugins/org.python.pydev.core_6.5.0.201809011628/pysrc'
+        
+        if pydevd_path not in sys.path:
+          sys.path.append(pydevd_path)
+        
+        import pydevd
+        pydevd.settrace()
+        """
+        ###########dltrace##############
+
 
     ##########################################################################################
     # panel support
