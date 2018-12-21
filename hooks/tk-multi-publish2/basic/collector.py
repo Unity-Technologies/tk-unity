@@ -27,7 +27,6 @@ class UnitySessionCollector(HookBaseClass):
 
         :param parent_item: parent item instance
         :param path: Path to analyze
-        :param frame_sequence: Treat the path as a part of a sequence
         :returns: The item that was created
         """
 
