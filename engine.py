@@ -162,6 +162,14 @@ class UnityEditorEngine(Engine):
             return
         self._menu_cmd_items[name]["callback"]()
 
+    def _get_dialog_parent(self):
+        """
+        Get the QWidget parent for all dialogs created through
+        show_dialog & show_modal.
+        """
+        # return None as the Qt dialog won't be parent-able on top of Unity.
+        return None        
+        
     @property
     def has_ui(self):
         """
