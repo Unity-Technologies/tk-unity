@@ -40,7 +40,7 @@ class BreakdownSceneOperations(Hook):
         """
         
         import unity_connection
-        UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
+        UnityEditor = unity_connection.get_module('UnityEditor')
         refs = []
         
         # check the meta data of all fbx files in the project to see if they contain a shotgun path, add them if they do
@@ -76,8 +76,8 @@ class BreakdownSceneOperations(Hook):
         
         import shutil
         import unity_connection
-        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
-        UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
+        UnityEngine = unity_connection.get_module('UnityEngine')
+        UnityEditor = unity_connection.get_module('UnityEditor')
 
         for item in items:
             # replace the item in Assets with the updated version at path

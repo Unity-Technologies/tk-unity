@@ -12,8 +12,6 @@ import os
 import sys
 import unity_connection
 
-UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
-
 def plugin_bootstrap(plugin_root_path):
     """
     Entry point for toolkit bootstrap in Nuke.
@@ -132,7 +130,9 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     sgtk_logger.debug("Will launch the engine with entity: %s" % entity)
 
     def progress_callback(value, message):
-        UnityEngine.Debug.Log("[%s] - %s" % (value, message))
+        # Make sure we have a valid connection to UnityEngine as the bootstrap 
+        # can be interrupted by a domain reload
+        unity_connection.get_module('UnityEngine').Debug.Log("[%s] - %s" % (value, message))
 
     toolkit_mgr.progress_callback = progress_callback
 
