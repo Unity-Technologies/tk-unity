@@ -7,11 +7,11 @@ process in order to serve the Shotgun integration:
 """
 
 ######### Coverage, used for testing #########
-# Set TK_UNITY_WANT_COVERAGE to enable coverage
+# Set WANT_UNITY_PYTHON_COVERAGE to enable coverage
 import os
 import tempfile
 
-want_coverage = os.environ.has_key('TK_UNITY_WANT_COVERAGE')
+want_coverage = os.environ.has_key('WANT_UNITY_PYTHON_COVERAGE')
 coverage_object = None
 coverage_directory = None
 
@@ -39,7 +39,10 @@ def on_init_client(client):
         coverage_directory = tempfile.mkdtemp(suffix='-tk-unity-coverage')
         log('Coverage results will be located in %s when the client terminates'%coverage_directory)
         
-        coverage_object = coverage.Coverage(data_file=os.path.join(coverage_directory,'tk-unity.coverage'))
+        # Use the temp folder name in the coverage file name to make it unique
+        coverage_file_name = os.path.split(coverage_directory)[-1]
+
+        coverage_object = coverage.Coverage(data_file=os.path.join(coverage_directory,coverage_file_name))
         coverage_object.start()
     
     client.register_idle_callback(on_idle)
