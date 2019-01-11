@@ -92,9 +92,6 @@ class ShotgunClientService(UnityClientService):
             log('Got an exception while bootstrapping: %s' % e)
             log('Stack trace:\n\n%s' % traceback.format_exc())
         
-        ##################dltrace#########################
-        log('************* ret_val = %s'%ret_val)
-        ##################dltrace#########################
         if ret_val == 0:
             _shotgun_is_initialized = True
             log('Shotgun has been initialized in the client process')

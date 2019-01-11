@@ -202,39 +202,3 @@ class UnityEditorEngine(Engine):
             UnityEngine.Debug.LogWarning(msg)
         else:
             UnityEngine.Debug.Log(msg)
-            UnityEditor = unity_connection.get_module('UnityEditor')
-            mainAsset = UnityEditor.Selection.activeObject
-            if not mainAsset:
-                return dialog
-            
-            # make sure to get the main asset in order to get the path
-            if not UnityEditor.AssetDatabase.IsMainAsset(mainAsset):
-                mainAsset = UnityEditor.EditorUtility.GetPrefabParent(mainAsset)
-                
-            assetPath = UnityEditor.AssetDatabase.GetAssetPath(mainAsset)
-            if not assetPath:
-                return dialog
-            
-            # get user data from model importer
-            modelImporter = UnityEditor.AssetImporter.GetAtPath(assetPath)
-            if not modelImporter:
-                return dialog
-                
-            shotgunPath = modelImporter.userData
-            if not shotgunPath: 
-                return dialog
-            
-            # get publish entity from asset if possible
-            import tank
-            sg_data = tank.util.find_publish(bundle.tank, [shotgunPath], fields=["entity"])
-            if not sg_data:
-                return dialog
-                
-            entity = sg_data[shotgunPath].get("entity", None)
-            if not entity:
-                return dialog
-            
-            dialog.navigate_to_entity(entity["type"], entity["id"])
-            return dialog
-        
-        return dialog
