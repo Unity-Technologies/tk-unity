@@ -44,8 +44,6 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         the <a href='%s'>Shotgun Review</a> mobile app.
         """ % (media_page_url, review_url, review_url)
 
-        # TODO: when settings editable, describe upload vs. link
-
     @property
     def settings(self):
         """

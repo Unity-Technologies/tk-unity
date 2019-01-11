@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 """
-Hook that loads defines all the available actions, broken down by publish type. 
+Hook that loads and defines all the available actions, broken down by publish type. 
 """
 
 import glob

@@ -5,6 +5,12 @@ from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 
 
 class UnityLauncher(SoftwareLauncher):
+    """
+    Handles launching Unity executables. Automatically starts up
+    a tk-unity engine with the current context in the new session
+    of Unity.
+    """
+    
     # Named regex strings to insert into the executable template paths when
     # matching against supplied versions and products. Similar to the glob
     # strings, these allow us to alter the regex matching for any of the
@@ -16,9 +22,7 @@ class UnityLauncher(SoftwareLauncher):
     # This dictionary defines a list of executable template strings for each
     # of the supported operating systems. The templates are used for both
     # globbing and regex matches by replacing the named format placeholders
-    # with an appropriate glob or regex string. As Side FX adds modifies the
-    # install path on a given OS for a new release, a new template will need
-    # to be added here.
+    # with an appropriate glob or regex string.
     EXECUTABLE_TEMPLATES = {
         "darwin": [
             "/Applications/Unity/Unity.app/Contents/MacOS/Unity",
@@ -54,11 +58,6 @@ class UnityLauncher(SoftwareLauncher):
         ]
     }
 
-    """
-    Handles launching Unity executables. Automatically starts up
-    a tk-unity engine with the current context in the new session
-    of Unity.
-    """
     @property
     def minimum_supported_version(self):
         """
@@ -71,7 +70,7 @@ class UnityLauncher(SoftwareLauncher):
         Prepares an environment to launch Unity in that will automatically
         load Toolkit and the tk-unity engine when Unity starts.
 
-        :param str exec_path: Path to Maya executable to launch.
+        :param str exec_path: Path to Unity executable to launch.
         :param str args: Command line arguments as strings.
         :param str file_to_open: (optional) Full path name of a file to open on launch.
         :returns: :class:`LaunchInformation` instance
@@ -108,16 +107,14 @@ class UnityLauncher(SoftwareLauncher):
 
     def scan_software(self):
         """
-        Scan the filesystem for maya executables.
+        Scan the filesystem for Unity executables.
 
         :return: A list of :class:`SoftwareVersion` objects.
         """
         self.logger.debug("Scanning for Unity executables...")
 
-        # This piece of boiler-plate code scans for software based and for every version
+        # This piece of boiler-plate code scans for software based on the supported versions, and for every version
         # returned checks if the engine actually supports it.
-        #
-        # You can look at other engines, which do pretty much the same thing.
         supported_sw_versions = []
         for sw_version in self._find_software():
             (supported, reason) = self._is_supported(sw_version)
