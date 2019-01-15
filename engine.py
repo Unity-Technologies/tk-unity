@@ -1,12 +1,6 @@
 """
 A Unity Editor engine for Sgtk.
 """
-
-# Note that the VFX Plaform states that in 2019 all DCCs need to support Python 3,
-# since Python 2.7 will be EOL in 2020. So it's a good idea to start writing your
-# engine with a Python 3 compatible syntax. Note that at the moment Toolkit
-# is not Python 3 compatible.
-
 import pprint
 from sgtk.platform import Engine
 
@@ -14,20 +8,16 @@ import unity_connection
 
 ###############################################################################################
 # The Shotgun Unity engine
-
-
 class UnityEditorEngine(Engine):
     """
     Toolkit engine for Unity.
 
     Note that when the engine starts up a log file is created at
 
-    Windows: %APPDATA%/Shotgun/logs/tk-Unity.log
-    macOS: ~/Library/Logs/Shotgun/tk-Unity.log
-    Linux: ~/.shotgun/logs/tk-Unity.log
-
+    Windows: %APPDATA%/Shotgun/Logs/tk-unity.log
+    macOS: ~/Library/Logs/Shotgun/tk-unity.log
+    Linux: ~/.shotgun/Logs/tk-unity.log
     and that all logging calls to Toolkit logging methods will be forwarded there.
-    It all uses the Python's logger under the hood.
     """
 
     @property
