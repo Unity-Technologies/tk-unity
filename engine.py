@@ -36,7 +36,7 @@ class UnityEditorEngine(Engine):
 
             {
                 "name": "Unity",
-                "version": "4.9",
+                "version": "2018.3",
             }
 
         The returned dictionary is of following form on an error preventing
@@ -47,7 +47,12 @@ class UnityEditorEngine(Engine):
                 "version: "unknown"
             }
         """
-        host_info = {"name": "Unity", "version": "unknown"}
+        try:
+            UnityEngine = unity_connection.get_module('UnityEngine')
+            host_info = {"name": "Unity", "version": UnityEngine.Application.unityVersion}
+        except:
+            host_info = {"name": "Unity", "version": "unknown"}
+            
         return host_info
 
     ##########################################################################################
