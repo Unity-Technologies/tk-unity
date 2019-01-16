@@ -80,15 +80,3 @@ class UnitySessionCollector(HookBaseClass):
         self.logger.info("Collected file: %s" % (evaluated_path,))
 
         return file_item    
-        UnityEngine = unity_connection.get_module('UnityEngine')
-        session_item = parent_item.create_item(
-            "unity.session",
-            "Unity Session",
-            UnityEngine.Application.productName
-        )
-        session_item.properties["project_root"] = UnityEngine.Application.dataPath
-        import tempfile
-        item = self._collect_file(
-                session_item,
-                os.path.join(tempfile.gettempdir(), UnityEngine.Application.productName + ".mp4")
-            )
