@@ -166,9 +166,12 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
                 self.logger.error('Could not find file "{}"'.format(full_file_name))
             
             return file_exists
-        except:
-            self.logger.error('Error while accessing file "{}"'.format(full_file_name))
-            return False
+        except Exception,e:
+            import traceback
+            self.logger.error('Exception while accessing file "{}":{}'.format(full_file_name,e))
+            self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+        
+        return False
 
     def publish(self, settings, item):
         """
