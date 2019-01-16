@@ -12,7 +12,7 @@ import os
 import sys
 import unity_connection
 
-UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+UnityEngine = unity_connection.get_module('UnityEngine')
 
 def plugin_bootstrap(plugin_root_path):
     """

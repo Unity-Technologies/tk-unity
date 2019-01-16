@@ -5,7 +5,7 @@ def plugin_startup():
     Initializes the Toolkit plugin for Unity.
     """
     import unity_connection
-    UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+    UnityEngine = unity_connection.get_module('UnityEngine')
     try:
         # Ensure that we can find PySide on MacOS
         # TODO: move this to part of the python installation steps.

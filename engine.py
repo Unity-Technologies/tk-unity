@@ -143,11 +143,11 @@ class UnityEditorEngine(Engine):
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context).decode("utf-8")
         
-        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+        UnityEngine = unity_connection.get_module('UnityEngine')
         generator = MenuItemGenerator(UnityEngine.Application.dataPath + "/Shotgun", self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
 
-        UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
+        UnityEditor = unity_connection.get_module('UnityEditor')
         UnityEditor.AssetDatabase.Refresh()
 
     # We call this function to then call the callbacks, so we can debug
@@ -189,7 +189,7 @@ class UnityEditorEngine(Engine):
         msg = handler.format(record)
         
         import logging
-        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+        UnityEngine = unity_connection.get_module('UnityEngine')
         
         if record.levelno >= logging.ERROR:
             UnityEngine.Debug.LogError(msg)

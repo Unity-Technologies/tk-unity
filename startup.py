@@ -3,7 +3,6 @@ import sys
 import pprint
 from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 
-
 class UnityLauncher(SoftwareLauncher):
     """
     Handles launching Unity executables. Automatically starts up
@@ -81,7 +80,8 @@ class UnityLauncher(SoftwareLauncher):
         # connect to, what context to load, etc.
         required_env.update(self.get_standard_plugin_environment())
 
-        # This will be read by bootstrap.cs from the C# plugin in UI to know where to pick up the
+        # This will be read by Bootstrap.cs (com.unity.integrations.shotgun) 
+        # from the C# plugin in UI to know where to pick up the
         # Toolkit code.
         required_env["SHOTGUN_UNITY_BOOTSTRAP_LOCATION"] = os.path.join(
             self.disk_location,
@@ -102,12 +102,9 @@ class UnityLauncher(SoftwareLauncher):
 
         return LaunchInformation(exec_path, args, required_env)
 
-    ##########################################################################################
-    # private methods
-
     def scan_software(self):
         """
-        Scan the filesystem for Unity executables.
+        Scan the file system for Unity executables.
 
         :return: A list of :class:`SoftwareVersion` objects.
         """
@@ -127,6 +124,9 @@ class UnityLauncher(SoftwareLauncher):
                 )
 
         return supported_sw_versions
+
+    ##########################################################################################
+    # private methods
 
     def _find_software(self):
         """
