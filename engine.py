@@ -46,7 +46,7 @@ class UnityEditorEngine(Engine):
 
             {
                 "name": "Unity",
-                "version": "4.9",
+                "version": "2018.3",
             }
 
         The returned dictionary is of following form on an error preventing
@@ -57,7 +57,16 @@ class UnityEditorEngine(Engine):
                 "version: "unknown"
             }
         """
-        host_info = {"name": "Unity", "version": "unknown"}
+        try:
+            UnityEngine = unity_connection.get_module('UnityEngine')
+            host_info = {"name": "Unity", "version": UnityEngine.Application.unityVersion}
+        except Exception, e:
+            import traceback
+            self.logger.error('Exception raised while getting the version for Unity: {}'.format(e))
+            self.logger.error('Stack trace:\n\n%s'%traceback.format_exc())
+            
+            host_info = {"name": "Unity", "version": "unknown"}
+            
         return host_info
 
     ##########################################################################################
