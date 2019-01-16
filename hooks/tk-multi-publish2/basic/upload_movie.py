@@ -173,11 +173,11 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         try:
             file_exists = os.path.isfile(full_file_name)
             if not file_exists:
-                self.logger.error('Could not find file "%s"'%full_file_name)
+                self.logger.error('Could not find file "{}"'.format(full_file_name))
             
             return file_exists
         except:
-            self.logger.error('Error while accessing file "%s"'%full_file_name)
+            self.logger.error('Error while accessing file "{}"'.format(full_file_name))
             return False
 
     def publish(self, settings, item):
@@ -320,8 +320,10 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         if os.path.isfile(full_file_name):
             try:
                 os.remove(full_file_name)
-            except:
-                pass
+            except Exception, e:
+                import traceback
+                self.logger.error('Exception while trying to delete temporary render file "{}":{}'.format(full_file_name,e))
+                self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
 
     def _get_version_entity(self, item):
         """

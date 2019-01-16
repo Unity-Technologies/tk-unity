@@ -37,7 +37,7 @@ class UnitySessionCollector(HookBaseClass):
         # Users need to use the "Record Timeline" menu item, not publish directly.
         # Otherwise the .mp4 file will not exist in the expected location
         if not os.path.isfile(path):
-            self.logger.error('Could not find movie file at "%s".'%path)
+            self.logger.error('Could not find movie file at {}.'.format(path))
             self.logger.error('Please use the "Record Timeline" menu item to record your videos (see documentation for more details)')
             return
 
