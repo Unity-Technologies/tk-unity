@@ -1,3 +1,4 @@
+# This script module is executed by Unity to bootstrap Shotgun
 def plugin_startup():
     import os
     import sys
@@ -8,7 +9,7 @@ def plugin_startup():
     UnityEngine = unity_connection.get_module('UnityEngine')
     try:
         # Ensure that we can find PySide on MacOS
-        # TODO: move this to part of the python installation steps.
+        # TODO: move this to part of the Python installation steps.
         if "darwin" in sys.platform:
             try:
                 sys.path.index('/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages')
