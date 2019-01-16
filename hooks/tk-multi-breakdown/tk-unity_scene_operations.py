@@ -85,4 +85,4 @@ class BreakdownSceneOperations(Hook):
                 modelImporter.userData = updatePath
                 UnityEditor.AssetDatabase.ImportAsset(assetRelPath)
             except IOError as e:
-                UnityEngine.Debug.LogError("IOError: {0}".format(str(e)))    
+                self.parent.engine.logger.debug("IOError: {0}".format(str(e)))

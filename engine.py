@@ -188,9 +188,9 @@ class UnityEditorEngine(Engine):
         """
         msg = handler.format(record)
         
-        import logging
         UnityEngine = unity_connection.get_module('UnityEngine')
         
+        import logging
         if record.levelno >= logging.ERROR:
             UnityEngine.Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:

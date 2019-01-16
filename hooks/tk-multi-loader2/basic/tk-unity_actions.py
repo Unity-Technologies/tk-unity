@@ -168,6 +168,7 @@ class UnityActions(HookBaseClass):
         UnityEngine = unity_connection.get_module('UnityEngine')
         projectPath = UnityEngine.Application.dataPath
         
+        app = self.parent
         try:
             import_paths = self._on_browse(projectPath)
             if import_paths and len(import_paths) > 0:
@@ -178,7 +179,8 @@ class UnityActions(HookBaseClass):
 
                 import shutil
                 shutil.copy2(path, filePath)
-                UnityEngine.Debug.Log("importing asset {0} to {1}".format(path, import_paths[0]))
+                
+                app.logger.info("importing asset {0} to {1}".format(path, import_paths[0]))
             
                 import unity_connection
                 UnityEditor = unity_connection.get_module('UnityEditor')
@@ -190,11 +192,11 @@ class UnityActions(HookBaseClass):
                 asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
                 modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
                 if not modelImporter:
-                    UnityEngine.Debug.LogWarning("Shotgun: Could not find importer for asset {0}".format(asset))
+                    app.logger.warning("Shotgun: Could not find importer for asset {0}".format(asset))
                     return
                 modelImporter.userData = path
                 modelImporter.SaveAndReimport()
                 return
         except IOError as e:
-            UnityEngine.Debug.LogError("IOError: {0}".format(str(e)))
-        UnityEngine.Debug.LogWarning("Shotgun: No import path selected, will not import asset")
+            app.logger.error("IOError: {0}".format(str(e)))
+        app.logger.warning("Shotgun: No import path selected, will not import asset")
