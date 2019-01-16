@@ -158,6 +158,7 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
     def validate(self, settings, item):
         """
         Validates the given item to check that it is ok to publish.
+        In this implementation we validate that the video recording file (.mp4) exists.
 
         Returns a boolean to indicate validity.
 
@@ -168,7 +169,16 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
 
         :returns: True if item is valid, False otherwise.
         """
-        return True
+        full_file_name = item.properties['path']
+        try:
+            file_exists = os.path.isfile(full_file_name)
+            if not file_exists:
+                self.logger.error('Could not find file "%s"'%full_file_name)
+            
+            return file_exists
+        except:
+            self.logger.error('Error while accessing file "%s"'%full_file_name)
+            return False
 
     def publish(self, settings, item):
         """
@@ -304,6 +314,14 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
                 }
             }
         )
+        
+        # Delete the temporary .mp4
+        full_file_name = item.properties['path']
+        if os.path.isfile(full_file_name):
+            try:
+                os.remove(full_file_name)
+            except:
+                pass
 
     def _get_version_entity(self, item):
         """
