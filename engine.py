@@ -50,7 +50,11 @@ class UnityEditorEngine(Engine):
         try:
             UnityEngine = unity_connection.get_module('UnityEngine')
             host_info = {"name": "Unity", "version": UnityEngine.Application.unityVersion}
-        except:
+        except Exception, e:
+            import traceback
+            self.logger.error('Exception raised while getting the version for Unity: {}'.format(e))
+            self.logger.error('Stack trace:\n\n%s'%traceback.format_exc())
+            
             host_info = {"name": "Unity", "version": "unknown"}
             
         return host_info
