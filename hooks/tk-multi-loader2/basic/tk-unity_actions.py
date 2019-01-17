@@ -182,6 +182,7 @@ class UnityActions(HookBaseClass):
             except IOError as e:
                 app.logger.error("IOError: {0}".format(str(e)))
                 app.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+                
             app.logger.info("importing asset {0} to {1}".format(path, import_paths[0]))
         
             import unity_connection
