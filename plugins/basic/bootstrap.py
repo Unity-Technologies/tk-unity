@@ -11,10 +11,9 @@ def plugin_startup():
         # Ensure that we can find PySide on MacOS
         # TODO: move this to part of the Python installation steps.
         if "darwin" in sys.platform:
-            try:
-                sys.path.index('/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages')
-            except ValueError:
-                sys.path.append('/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages')
+            site_packages_path = '/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages'
+            if site_packages_path not in sys.path:
+                sys.path.append(site_packages_path)
 
         # the plugin python path will be just below the root level. 
         # add it to sys.path
