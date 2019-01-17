@@ -1,13 +1,3 @@
-# Copyright (c) 2017 Shotgun Software Inc.
-# 
-# CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
-# Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
-# not expressly granted therein are reserved by Shotgun Software Inc.
-
 import os
 import pprint
 import sys
@@ -18,9 +8,10 @@ HookBaseClass = sgtk.get_hook_baseclass()
 
 class UnitySessionUploadVersionPlugin(HookBaseClass):
     """
-    Plugin for sending quicktimes and images to shotgun for review.
+    Plugin for sending .mp4 images to Shotgun for review.
     """
-    
+
+    # Public interface    
     @property
     def description(self):
         """
@@ -47,7 +38,7 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
     @property
     def settings(self):
         """
-        Dictionary defining the settings that this plugin expects to recieve
+        Dictionary defining the settings that this plugin expects to receive
         through the settings parameter in the accept, validate, publish and
         finalize methods.
 
@@ -66,7 +57,7 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         return {
             "File Extensions": {
                 "type": "str",
-                "default": "jpeg, jpg, png, mov, mp4",
+                "default": "mp4",
                 "description": "File Extensions of files to include"
             },
             "Upload": {
@@ -79,7 +70,6 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
                 "default": True,
                 "description": "Should the local file be referenced by Shotgun"
             },
-
         }
 
     @property
@@ -89,7 +79,7 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
 
         Only items matching entries in this list will be presented to the
         accept() method. Strings can contain glob patters such as *, for example
-        ["maya.*", "file.maya"]
+        ["unity.*", "unity.video"]
         """
 
         # we use "video" since that's the mimetype category.
@@ -176,9 +166,12 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
                 self.logger.error('Could not find file "{}"'.format(full_file_name))
             
             return file_exists
-        except:
-            self.logger.error('Error while accessing file "{}"'.format(full_file_name))
-            return False
+        except Exception,e:
+            import traceback
+            self.logger.error('Exception while accessing file "{}":{}'.format(full_file_name,e))
+            self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+        
+        return False
 
     def publish(self, settings, item):
         """
@@ -325,6 +318,7 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
                 self.logger.error('Exception while trying to delete temporary render file "{}":{}'.format(full_file_name,e))
                 self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
 
+    # Private interface
     def _get_version_entity(self, item):
         """
         Returns the best entity to link the version to.

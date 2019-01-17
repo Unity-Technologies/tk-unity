@@ -1,12 +1,6 @@
 """
 A Unity Editor engine for Sgtk.
 """
-
-# Note that the VFX Plaform states that in 2019 all DCCs need to support Python 3,
-# since Python 2.7 will be EOL in 2020. So it's a good idea to start writing your
-# engine with a Python 3 compatible syntax. Note that at the moment Toolkit
-# is not Python 3 compatible.
-
 import pprint
 from sgtk.platform import Engine
 
@@ -14,20 +8,16 @@ import unity_connection
 
 ###############################################################################################
 # The Shotgun Unity engine
-
-
 class UnityEditorEngine(Engine):
     """
     Toolkit engine for Unity.
 
     Note that when the engine starts up a log file is created at
 
-    Windows: %APPDATA%/Shotgun/logs/tk-Unity.log
-    macOS: ~/Library/Logs/Shotgun/tk-Unity.log
-    Linux: ~/.shotgun/logs/tk-Unity.log
-
+    Windows: %APPDATA%/Shotgun/Logs/tk-unity.log
+    macOS: ~/Library/Logs/Shotgun/tk-unity.log
+    Linux: ~/.shotgun/Logs/tk-unity.log
     and that all logging calls to Toolkit logging methods will be forwarded there.
-    It all uses the Python's logger under the hood.
     """
 
     @property
@@ -83,7 +73,7 @@ class UnityEditorEngine(Engine):
         Called when all apps have initialized
         """
 
-        # Create the Shotgun menu based on the actions available as well as any dockable views in the UI.
+        # Create the Shotgun menu based on the available actions
         #
         # Traditionally, the menu is built the following way:
         #
@@ -118,7 +108,7 @@ class UnityEditorEngine(Engine):
         # entry will be placed at the root level of the menu.
         #
 
-        self.logger.info("Here are the available Toolkit commands:")
+        self.logger.debug("Here are the available Toolkit commands:")
         
         # store the menu cmds so that we can access them later from C#
         self._menu_cmd_items = {}
@@ -147,7 +137,7 @@ class UnityEditorEngine(Engine):
             command = self.commands[menu_name]
 
             if command["properties"]["app"].instance_name != app_instance_name:
-                # The same action can be registered for different app instance
+                # The same action can be registered for different app instances
                 # so skip it.
                 continue
 
@@ -157,14 +147,14 @@ class UnityEditorEngine(Engine):
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context).decode("utf-8")
         
-        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+        UnityEngine = unity_connection.get_module('UnityEngine')
         generator = MenuItemGenerator(UnityEngine.Application.dataPath + "/Shotgun", self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
 
-        UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
+        UnityEditor = unity_connection.get_module('UnityEditor')
         UnityEditor.AssetDatabase.Refresh()
 
-    # call this function to then call the callbacks, so we can debug
+    # We call this function to then call the callbacks, so we can debug
     def call_menu_item_callback(self, name):
         if not self._menu_cmd_items or (not name in self._menu_cmd_items):
             self.logger.error("Missing menu command {0}".format(name))
@@ -202,9 +192,9 @@ class UnityEditorEngine(Engine):
         """
         msg = handler.format(record)
         
-        import logging
-        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+        UnityEngine = unity_connection.get_module('UnityEngine')
         
+        import logging
         if record.levelno >= logging.ERROR:
             UnityEngine.Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:

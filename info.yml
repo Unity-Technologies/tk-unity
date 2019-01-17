@@ -25,7 +25,7 @@ configuration:
                      is a dictionary with two keys: 'app_instance' and 'name'.  The app_instance
                      value connects this entry to a particular app instance defined in the
                      environment configuration file.  The name is the menu name of the command
-                     to run when the Maya engine starts up.  If name is '' then all commands from the
+                     to run when the Unity engine starts up.  If name is '' then all commands from the
                      given app instance are started."
         allows_empty: True
         default_value: []
@@ -37,9 +37,9 @@ configuration:
 
     launch_builtin_plugins:
         type: list
-        description: Comma-separated list of tk-maya plugins to load when launching Maya. Use
+        description: Comma-separated list of toolkit plugins to load when launching Unity. Use
                      of this feature disables the classic mechanism for bootstrapping Toolkit
-                     when Maya is launched.
+                     when Unity is launched.
         allows_empty: True
         default_value: []
         values:

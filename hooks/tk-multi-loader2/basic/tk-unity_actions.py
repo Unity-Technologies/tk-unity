@@ -1,29 +1,16 @@
-# Copyright (c) 2015 Shotgun Software Inc.
-# 
-# CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
-# Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
-# not expressly granted therein are reserved by Shotgun Software Inc.
-
 """
 Hook that loads and defines all the available actions, broken down by publish type. 
 """
 
-import glob
 import os
-import re
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
-
 class UnityActions(HookBaseClass):
     
     ##############################################################################################################
-    # public interface - to be overridden by deriving classes 
+    # public interface 
     
     def generate_actions(self, sg_publish_data, actions, ui_area):
         """
@@ -122,7 +109,7 @@ class UnityActions(HookBaseClass):
                       "Parameters: %s. Publish Data: %s" % (name, params, sg_publish_data))
         
         # resolve path
-        # toolkit uses utf-8 encoded strings internally and Maya API expects unicode
+        # toolkit uses utf-8 encoded strings internally and Unity expects unicode
         # so convert the path to ensure filenames containing complex characters are supported
         path = self.get_publish_path(sg_publish_data).decode("utf-8")
 
@@ -178,36 +165,40 @@ class UnityActions(HookBaseClass):
         # import into Unity
         # copy file to Unity project
         import unity_connection
-        UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+        UnityEngine = unity_connection.get_module('UnityEngine')
         projectPath = UnityEngine.Application.dataPath
         
-        try:
-            import_paths = self._on_browse(projectPath)
-            if import_paths and len(import_paths) > 0:
+        app = self.parent
+        import_paths = self._on_browse(projectPath)
+        if import_paths and len(import_paths) > 0:
 
-                # get filename without version number if possible
-                filename = sg_publish_data.get("name", os.path.basename(path))  
-                filePath = os.path.join(import_paths[0], filename)
+            # get filename without version number if possible
+            filename = sg_publish_data.get("name", os.path.basename(path))  
+            filePath = os.path.join(import_paths[0], filename)
 
-                import shutil
+            import shutil
+            try:
                 shutil.copy2(path, filePath)
-                UnityEngine.Debug.Log("importing asset {0} to {1}".format(path, import_paths[0]))
-            
-                import unity_connection
-                UnityEditor = unity_connection.get_unity_connection().getmodule('UnityEditor')
-                UnityEditor.AssetDatabase.Refresh()
-        
-                # store the path in the meta file
+            except IOError as e:
+                app.logger.error("IOError: {0}".format(str(e)))
+                app.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
                 
-                # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
-                asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
-                modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
-                if not modelImporter:
-                    UnityEngine.Debug.LogWarning("Shotgun: Could not find importer for asset {0}".format(asset))
-                    return
-                modelImporter.userData = path
-                modelImporter.SaveAndReimport()
+            app.logger.info("importing asset {0} to {1}".format(path, import_paths[0]))
+        
+            import unity_connection
+            UnityEditor = unity_connection.get_module('UnityEditor')
+            UnityEditor.AssetDatabase.Refresh()
+    
+            # store the path in the meta file
+            
+            # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
+            asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
+            modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
+            if not modelImporter:
+                app.logger.warning("Shotgun: Could not find importer for asset {0}".format(asset))
                 return
-        except IOError as e:
-            UnityEngine.Debug.LogError("IOError: {0}".format(str(e)))
-        UnityEngine.Debug.LogWarning("Shotgun: No import path selected, will not import asset")
+            modelImporter.userData = path
+            modelImporter.SaveAndReimport()
+            return
+
+        app.logger.warning("Shotgun: No import path selected, will not import asset")
