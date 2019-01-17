@@ -37,7 +37,7 @@ configuration:
 
     launch_builtin_plugins:
         type: list
-        description: Comma-separated list of plugins to load when launching Unity. Use
+        description: Comma-separated list of toolkit plugins to load when launching Unity. Use
                      of this feature disables the classic mechanism for bootstrapping Toolkit
                      when Unity is launched.
         allows_empty: True
