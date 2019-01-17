@@ -109,7 +109,7 @@ class UnityActions(HookBaseClass):
                       "Parameters: %s. Publish Data: %s" % (name, params, sg_publish_data))
         
         # resolve path
-        # toolkit uses utf-8 encoded strings internally and Unity
+        # toolkit uses utf-8 encoded strings internally and Unity expects unicode
         # so convert the path to ensure filenames containing complex characters are supported
         path = self.get_publish_path(sg_publish_data).decode("utf-8")
 
@@ -169,34 +169,35 @@ class UnityActions(HookBaseClass):
         projectPath = UnityEngine.Application.dataPath
         
         app = self.parent
-        try:
-            import_paths = self._on_browse(projectPath)
-            if import_paths and len(import_paths) > 0:
+        import_paths = self._on_browse(projectPath)
+        if import_paths and len(import_paths) > 0:
 
-                # get filename without version number if possible
-                filename = sg_publish_data.get("name", os.path.basename(path))  
-                filePath = os.path.join(import_paths[0], filename)
+            # get filename without version number if possible
+            filename = sg_publish_data.get("name", os.path.basename(path))  
+            filePath = os.path.join(import_paths[0], filename)
 
-                import shutil
+            import shutil
+            try:
                 shutil.copy2(path, filePath)
-                
-                app.logger.info("importing asset {0} to {1}".format(path, import_paths[0]))
-            
-                import unity_connection
-                UnityEditor = unity_connection.get_module('UnityEditor')
-                UnityEditor.AssetDatabase.Refresh()
+            except IOError as e:
+                app.logger.error("IOError: {0}".format(str(e)))
+                app.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+            app.logger.info("importing asset {0} to {1}".format(path, import_paths[0]))
         
-                # store the path in the meta file
-                
-                # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
-                asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
-                modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
-                if not modelImporter:
-                    app.logger.warning("Shotgun: Could not find importer for asset {0}".format(asset))
-                    return
-                modelImporter.userData = path
-                modelImporter.SaveAndReimport()
+            import unity_connection
+            UnityEditor = unity_connection.get_module('UnityEditor')
+            UnityEditor.AssetDatabase.Refresh()
+    
+            # store the path in the meta file
+            
+            # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
+            asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
+            modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
+            if not modelImporter:
+                app.logger.warning("Shotgun: Could not find importer for asset {0}".format(asset))
                 return
-        except IOError as e:
-            app.logger.error("IOError: {0}".format(str(e)))
+            modelImporter.userData = path
+            modelImporter.SaveAndReimport()
+            return
+
         app.logger.warning("Shotgun: No import path selected, will not import asset")

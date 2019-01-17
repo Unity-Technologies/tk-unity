@@ -2,6 +2,8 @@ import os
 import sys
 import unity_connection
 
+UnityEngine = unity_connection.get_module('UnityEngine')
+
 def plugin_bootstrap(plugin_root_path):
     """
     Entry point for toolkit bootstrap in Unity.

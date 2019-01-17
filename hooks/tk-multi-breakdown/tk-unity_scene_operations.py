@@ -75,14 +75,16 @@ class BreakdownSceneOperations(Hook):
             if not assetRelPath or not updatePath:
                 continue
             
+            assetRelPath = "{0}.fbx".format(assetRelPath)
             try:
-                assetRelPath = "{0}.fbx".format(assetRelPath)
                 shutil.copy2(updatePath, os.path.join(projectFolder, assetRelPath))
-                
-                # update the path in the meta file     
-                UnityEditor.AssetDatabase.ImportAsset(assetRelPath)
-                modelImporter = UnityEditor.AssetImporter.GetAtPath(assetRelPath)
-                modelImporter.userData = updatePath
-                UnityEditor.AssetDatabase.ImportAsset(assetRelPath)
             except IOError as e:
+                import traceback
                 self.parent.engine.logger.debug("IOError: {0}".format(str(e)))
+                self.parent.engine.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+                
+            # update the path in the meta file     
+            UnityEditor.AssetDatabase.ImportAsset(assetRelPath)
+            modelImporter = UnityEditor.AssetImporter.GetAtPath(assetRelPath)
+            modelImporter.userData = updatePath
+            UnityEditor.AssetDatabase.ImportAsset(assetRelPath)

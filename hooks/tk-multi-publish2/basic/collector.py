@@ -31,10 +31,10 @@ class UnitySessionCollector(HookBaseClass):
         )
         session_item.properties["project_root"] = UnityEngine.Application.dataPath
         import tempfile
-        item = self._collect_file(
-                session_item,
-                os.path.join(tempfile.gettempdir(), UnityEngine.Application.productName + ".mp4")
-            )
+        self._collect_file(
+            session_item,
+            os.path.join(tempfile.gettempdir(), UnityEngine.Application.productName + ".mp4")
+        )
         
     # Private interface
     def _collect_file(self, parent_item, path):
