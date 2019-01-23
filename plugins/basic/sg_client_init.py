@@ -83,24 +83,3 @@ class ShotgunClientService(UnityClientService):
             log('Shotgun has been initialized in the client process')
         else:
             log('Shotgun has not been initialized in the client process')
-        
-        ret_val = -1
-        try:
-            # Use the imp module to bootstrap in order to get a return value
-            (dir_name, file_name) = os.path.split(path_to_bootstrap)
-            module_name = file_name.split('.')[0]
-            
-            log('Invoking bootstrap script ("%s")'%path_to_bootstrap)        
-            (module_file, module_path, module_desc) = imp.find_module(module_name, [dir_name])
-            bootstrap_module = imp.load_module(module_name, module_file, module_path, module_desc)
-            ret_val = bootstrap_module.plugin_startup()
-        except Exception, e:
-            import traceback
-            log('Got an exception while bootstrapping: %s' % e)
-            log('Stack trace:\n\n%s' % traceback.format_exc())
-        
-        if ret_val == 0:
-            _shotgun_is_initialized = True
-            log('Shotgun has been initialized in the client process')
-        else:
-            log('Shotgun has not been initialized in the client process')
