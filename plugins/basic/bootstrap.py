@@ -42,7 +42,15 @@ def plugin_startup():
             qApp = importer.QtGui.QApplication(["Shotgun Engine for Unity"])
 
         import sgtk
-        sgtk.platform.current_engine()._initialize_dark_look_and_feel()
+        engine = sgtk.platform.current_engine()
+        engine._initialize_dark_look_and_feel()
+        
+        # Is there Unity-related metadata attached to the SG context?
+        ##############dltrace########################
+        import pprint
+        print('***********context = %s'%pprint.pformat(engine.context))
+        ##############dltrace########################
+        
 
     except Exception, e:
         import traceback

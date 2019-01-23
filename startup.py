@@ -100,6 +100,27 @@ class UnityLauncher(SoftwareLauncher):
         self.logger.debug("Launch environment: %s", pprint.pformat(required_env))
         self.logger.debug("Launch arguments: %s", args)
 
+        ###############dltrace################
+        #self.logger.warning('environment = {}'.format(pprint.pformat(os.environ)))
+        self.logger.warning('required_env = {}'.format(pprint.pformat(required_env)))
+        import sgtk
+        engine = sgtk.platform.current_engine()
+        sg = engine.shotgun
+        
+        entity_type = required_env['SHOTGUN_ENTITY_TYPE']
+        entity_id   = int(required_env['SHOTGUN_ENTITY_ID'])
+        
+        try:
+            entity = sg.find(entity_type,[["id", "is", entity_id]], ['sg_unity_metadata', 'description'])
+            project_path = entity['sg_unity_metadata'] 
+        except:
+            # No metadata for this entity
+            entity = None
+            pass
+        
+        self.logger.warning('entity = {}'.format(pprint.pformat(entity)))
+        ###############dltrace################
+
         return LaunchInformation(exec_path, args, required_env)
 
     def scan_software(self):
