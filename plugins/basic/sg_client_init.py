@@ -5,22 +5,9 @@ process in order to serve the Shotgun integration:
   function
 - Installs an idle callback that will process Qt events
 """
-
-import unity_client
-
-######### Coverage, used for testing #########
-# Set WANT_UNITY_PYTHON_COVERAGE to enable coverage
-import os
 import imp
-import tempfile
-
-want_coverage = os.environ.has_key('WANT_UNITY_PYTHON_COVERAGE')
-coverage_object = None
-coverage_directory = None
-
-if want_coverage:
-    import coverage
-######### Coverage, used for testing #########
+import os
+import unity_client
 
 from unity_client_service import UnityClientService
 
@@ -34,21 +21,7 @@ def on_init_client(client):
     """
     Registers the custom rpyc service and the idle callback
     """
-    global want_coverage
-    
     log('In on_init_client')
-    
-    if want_coverage:
-        global coverage_object
-        global coverage_directory
-        coverage_directory = tempfile.mkdtemp(suffix='-tk-unity-coverage')
-        log('Coverage results will be located in %s when the client terminates'%coverage_directory)
-        
-        # Use the temp folder name in the coverage file name to make it unique
-        coverage_file_name = os.path.split(coverage_directory)[-1]
-
-        coverage_object = coverage.Coverage(data_file=os.path.join(coverage_directory,coverage_file_name))
-        coverage_object.start()
     
     client.register_idle_callback(on_idle)
     client.register_service(ShotgunClientService)
@@ -98,17 +71,3 @@ class ShotgunClientService(UnityClientService):
             log('Shotgun has been initialized in the client process')
         else:
             log('Shotgun has not been initialized in the client process')
-
-    def on_server_stop(self, terminate_client):
-        global want_coverage
-        super(ShotgunClientService, self).on_server_stop(terminate_client)
-        
-        if terminate_client and want_coverage:
-            global coverage_object
-            global coverage_directory
-            
-            coverage_object.stop()
-            coverage_object.save()
-            
-            log('Writing coverage results, this could take a moment')
-            coverage_object.html_report(directory=coverage_directory, ignore_errors=True)
