@@ -122,7 +122,7 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     def progress_callback(value, message):
         # Make sure we have a valid connection to UnityEngine as the bootstrap 
         # can be interrupted by a domain reload
-        unity_connection.get_module('UnityEngine').Debug.Log("[%s] - %s" % (value, message))
+        unity_connection.get_module('UnityEngine').Debug.Log("[{}] - {}".format(value, message))
 
     toolkit_mgr.progress_callback = progress_callback
 
