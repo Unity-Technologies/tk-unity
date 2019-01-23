@@ -4,6 +4,8 @@ def plugin_startup():
     import sys
     """
     Initializes the Toolkit plugin for Unity.
+    Returns  0 on success 
+    Returns -1 on failure
     """
     import unity_connection
     UnityEngine = unity_connection.get_module('UnityEngine')
@@ -46,9 +48,11 @@ def plugin_startup():
 
     except Exception, e:
         import traceback
-        UnityEngine.Debug.LogError('Shotgun Toolkit Error: %s' % e)
-        UnityEngine.Debug.LogError('Error stack trace:\n\n%s' % traceback.format_exc())
+        UnityEngine.Debug.LogError('Shotgun Toolkit Error: {}'.format(e))
+        UnityEngine.Debug.LogError('Error stack trace:\n\n{}'.format(traceback.format_exc()))
         
+        # Failure to bootstrap
         return -1
 
+    # Success
     return 0
