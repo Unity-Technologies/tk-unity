@@ -5,21 +5,9 @@ process in order to serve the Shotgun integration:
   function
 - Installs an idle callback that will process Qt events
 """
-
-import unity_client
-
-######### Coverage, used for testing #########
-# Set WANT_UNITY_PYTHON_COVERAGE to enable coverage
-import os
 import imp
-
-want_coverage = os.environ.has_key('WANT_UNITY_PYTHON_COVERAGE')
-coverage_object = None
-coverage_directory = None
-
-if want_coverage:
-    import coverage
-######### Coverage, used for testing #########
+import os
+import unity_client
 
 from unity_client_service import UnityClientService
 
