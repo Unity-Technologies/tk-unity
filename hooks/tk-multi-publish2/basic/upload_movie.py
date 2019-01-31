@@ -78,7 +78,7 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         List of item types that this plugin is interested in.
 
         Only items matching entries in this list will be presented to the
-        accept() method. Strings can contain glob patters such as *, for example
+        accept() method. Strings can contain glob patterns such as *, for example
         ["unity.*", "unity.video"]
         """
 
@@ -160,18 +160,11 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
         full_file_name = item.properties['path']
-        try:
-            file_exists = os.path.isfile(full_file_name)
-            if not file_exists:
-                self.logger.error('Could not find file "{}"'.format(full_file_name))
+        file_exists = os.path.isfile(full_file_name)
+        if not file_exists:
+            self.logger.error('Could not find file "{}"'.format(full_file_name))
             
-            return file_exists
-        except Exception,e:
-            import traceback
-            self.logger.error('Exception while accessing file "{}":{}'.format(full_file_name,e))
-            self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
-        
-        return False
+        return file_exists
 
     def publish(self, settings, item):
         """

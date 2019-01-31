@@ -55,7 +55,7 @@ def on_idle():
     try:
         from sgtk.platform.qt import QtGui
         QtGui.QApplication.instance().processEvents() 
-    except:
+    except Exception:
         pass
 
 class ShotgunClientService(UnityClientService):

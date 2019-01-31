@@ -1,7 +1,9 @@
-from tank import Hook
+import sgtk
 import os
 
-class BreakdownSceneOperations(Hook):
+HookBaseClass = sgtk.get_hook_baseclass()
+
+class BreakdownSceneOperations(HookBaseClass):
     """
     Breakdown operations for Unity.
 
@@ -40,6 +42,7 @@ class BreakdownSceneOperations(Hook):
                 
             modelImporter = UnityEditor.AssetImporter.GetAtPath(path)
             if not modelImporter:
+                self.parent.engine.logger.warning('Ignoring file "{}" because there is no associated asset importer'.format(path))
                 continue
                 
             item = {}
@@ -70,8 +73,8 @@ class BreakdownSceneOperations(Hook):
             # replace the item in Assets with the updated version at path
             projectFolder = os.path.dirname(UnityEngine.Application.dataPath)
             
-            assetRelPath = item.get("node", None)
-            updatePath = item.get("path", None)
+            assetRelPath = item.get("node")
+            updatePath = item.get("path")
             if not assetRelPath or not updatePath:
                 continue
             

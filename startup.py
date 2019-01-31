@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import pprint
@@ -145,11 +146,9 @@ class UnityLauncher(SoftwareLauncher):
         editor_jsons = self.HUB_EXECUTABLES.get(sys.platform, [])
         import getpass
         username = getpass.getuser()
-        for i in range(len(editor_jsons)):
-            editor_json = editor_jsons[i].format(username = username)
+        for editor_json in [j.format(username=username) for j in editor_jsons]:
             if os.path.exists(editor_json):
                 with open(editor_json, "r") as f:
-                    import json
                     data = json.load(f)
                     if not data:
                         continue
@@ -187,11 +186,8 @@ class UnityLauncher(SoftwareLauncher):
 
                 # extract the matched keys form the key_dict (default to None if
                 # not included)
-                executable_version = key_dict.get("version")
-                
-                if not executable_version:
-                    executable_version = "Unknown"
-                
+                executable_version = key_dict.get("version", "Unknown")
+               
                 self.logger.warning("Software was found: " + executable_path + ", " + executable_version)
 
                 sw_versions.append(
