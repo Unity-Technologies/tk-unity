@@ -1,7 +1,9 @@
+import json
 import os
 import pprint
 import sys
 import sgtk
+import unity_connection
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -233,6 +235,14 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
 
         if settings["Link Local File"].value:
             version_data["sg_path_to_movie"] = path
+            
+        # Set the Unity Metadata 
+        UnityEngine = unity_connection.get_module('UnityEngine')
+        dataPath = UnityEngine.Application.dataPath
+        projectPath = os.path.dirname(dataPath)
+        
+        version_data['sg_unity_metadata'] = json.dumps({ 'projectPath' : projectPath })
+        
 
         # log the version data for debugging
         self.logger.debug(

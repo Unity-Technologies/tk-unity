@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import pprint
@@ -75,7 +76,7 @@ class UnityLauncher(SoftwareLauncher):
         :returns: :class:`LaunchInformation` instance
         """
         required_env = {}
-
+        
         # Add std context and site info to the env. This will add stuff like which site to
         # connect to, what context to load, etc.
         required_env.update(self.get_standard_plugin_environment())
@@ -93,33 +94,53 @@ class UnityLauncher(SoftwareLauncher):
         # Signals which engine instance from the environment is going to be used.
         required_env["SHOTGUN_ENGINE"] = self.engine_name
 
-        if file_to_open:
-            # Add the file name to open to the launch environment
-            required_env["SGTK_FILE_TO_OPEN"] = file_to_open
+        # We do not support the file_to_open logic. Its value comes from the 
+        # launch plug-in when users launch DCCs from a published file.
+        # https://github.com/shotgunsoftware/tk-shotgun-launchpublish
+        # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/publishedfile.yml#L27
+        # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/includes/settings/tk-shotgun-launchpublish.yml
 
-        self.logger.debug("Launch environment: %s", pprint.pformat(required_env))
-        self.logger.debug("Launch arguments: %s", args)
-
-        ###############dltrace################
-        #self.logger.warning('environment = {}'.format(pprint.pformat(os.environ)))
-        self.logger.warning('required_env = {}'.format(pprint.pformat(required_env)))
+        # Here we try to find unity metadata on the context entity.
+        # If the field exists and specifies a Unity project to open on startup,
+        # We skip the project selection dialog
         import sgtk
         engine = sgtk.platform.current_engine()
         sg = engine.shotgun
         
         entity_type = required_env['SHOTGUN_ENTITY_TYPE']
         entity_id   = int(required_env['SHOTGUN_ENTITY_ID'])
-        
         try:
-            entity = sg.find(entity_type,[["id", "is", entity_id]], ['sg_unity_metadata', 'description'])
-            project_path = entity['sg_unity_metadata'] 
+            entity = sg.find_one(entity_type,[["id", "is", entity_id]], ['sg_unity_metadata', 'description'])
+            self.logger.debug('The context entity is ' + str(entity))
+            unity_metadata_json = entity['sg_unity_metadata']
         except:
             # No metadata for this entity
-            entity = None
-            pass
-        
-        self.logger.warning('entity = {}'.format(pprint.pformat(entity)))
-        ###############dltrace################
+            unity_metadata_json = None
+
+        if unity_metadata_json and type(unity_metadata_json) != str:
+            self.logger.warning('The sg_unity_metadata field is expected to be of type "str". It is "{}" instead. Its value will be ignored'.format(type(unity_metadata_json)))
+            unity_metadata_json = None
+            
+        unity_metadata = None
+        if unity_metadata_json:
+            self.logger.debug('Found metadata on the entity: ' + pprint.pformat(unity_metadata_json))
+            
+            # Add the metadata to the environment for later, faster access
+            required_env["SHOTGUN_UNITY_METADATA"] = unity_metadata_json
+            
+            # Extract the dict
+            try:
+                unity_metadata = json.loads(unity_metadata_json)
+            except Exception, e:
+                self.logger.warning('Exception while parsing the sg_unity_metadata field: {}. The JSON data is probably invalid and will be ignored'.format(e))
+        else:
+            self.logger.debug('Could not find a "sg_unity_metadata" field for the context entity')
+
+        if unity_metadata and unity_metadata.has_key('projectPath'):
+            args += ' -projectPath "{}"'.format(unity_metadata['projectPath'])
+
+        self.logger.debug("Launch environment: %s", pprint.pformat(required_env))
+        self.logger.debug("Launch arguments: %s", args)
 
         return LaunchInformation(exec_path, args, required_env)
 
