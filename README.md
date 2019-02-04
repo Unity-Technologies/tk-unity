@@ -1,4 +1,4 @@
-# tk-unity
+# tk-unity (Shotgun engine for Unity)
 
 ## Documentation
 This repository provides a Shotgun engine for Unity. The full documentation is maintained as part of the com.unity.integrations.shotgun package and can be accessed through the Package Manager, in Unity.
