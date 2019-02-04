@@ -71,3 +71,6 @@ class ShotgunClientService(UnityClientService):
             log('Shotgun has been initialized in the client process')
         else:
             log('Shotgun has not been initialized in the client process')
+            
+        # Clear the progress bar in case we never got to 100%
+        UnityEditor.EditorUtility.ClearProgressBar()
