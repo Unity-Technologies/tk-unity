@@ -42,7 +42,7 @@ class BreakdownSceneOperations(HookBaseClass):
                 
             modelImporter = UnityEditor.AssetImporter.GetAtPath(path)
             if not modelImporter:
-                self.parent.engine.logger.warning('Ignoring file "{}" because there is no associated asset importer'.format(path))
+                self.logger.warning('Ignoring file "{}" because there is no associated asset importer'.format(path))
                 continue
                 
             item = {}
@@ -83,8 +83,8 @@ class BreakdownSceneOperations(HookBaseClass):
                 shutil.copy2(updatePath, os.path.join(projectFolder, assetRelPath))
             except IOError as e:
                 import traceback
-                self.parent.engine.logger.debug("IOError: {0}".format(str(e)))
-                self.parent.engine.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+                self.logger.debug("IOError: {0}".format(str(e)))
+                self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
                 
             # update the path in the meta file     
             UnityEditor.AssetDatabase.ImportAsset(assetRelPath)
