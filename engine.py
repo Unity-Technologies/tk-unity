@@ -126,7 +126,7 @@ class UnityEditorEngine(Engine):
             self._menu_cmd_items[cmd_name] = cmd_details
         
         # Check for favorites
-        for fav in self.get_setting("menu_favourites"):
+        for fav in self.get_setting("menu_favorites"):
             app_instance_name = fav["app_instance"]
             menu_name = fav["name"]
 
@@ -136,7 +136,8 @@ class UnityEditorEngine(Engine):
 
             command = self.commands[menu_name]
 
-            if command["properties"]["app"].instance_name != app_instance_name:
+            app_property = command["properties"].get("app")
+            if app_property and app_property.instance_name != app_instance_name:
                 # The same action can be registered for different app instances
                 # so skip it.
                 continue
@@ -161,14 +162,6 @@ class UnityEditorEngine(Engine):
             return
         self._menu_cmd_items[name]["callback"]()
 
-    def _get_dialog_parent(self):
-        """
-        Get the QWidget parent for all dialogs created through
-        show_dialog & show_modal.
-        """
-        # return None as the Qt dialog won't be parent-able on top of Unity.
-        return None        
-        
     @property
     def has_ui(self):
         """

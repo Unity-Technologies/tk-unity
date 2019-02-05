@@ -5,9 +5,9 @@ configuration:
         description: Controls whether debug messages should be emitted to the logger
         default_value: false
 
-    menu_favourites:
+    menu_favorites:
         type: list
-        description: "Controls the favourites section on the main menu. This is a list
+        description: "Controls the favorites section on the main menu. This is a list
                      and each menu item is a dictionary with keys app_instance and name.
                      The app_instance parameter connects this entry to a particular
                      app instance defined in the environment configuration file. The name
