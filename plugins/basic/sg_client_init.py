@@ -73,4 +73,10 @@ class ShotgunClientService(UnityClientService):
             log('Shotgun has not been initialized in the client process')
             
         # Clear the progress bar in case we never got to 100%
-        UnityEditor.EditorUtility.ClearProgressBar()
+        try:
+            UnityEditor.EditorUtility.ClearProgressBar()
+        except Exception:
+            # It is possible that the progress bar is not displayed anymore, 
+            # in which case we get an exception here
+            pass
+            
