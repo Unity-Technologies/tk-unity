@@ -241,7 +241,13 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         dataPath = UnityEngine.Application.dataPath
         projectPath = os.path.dirname(dataPath)
         
-        version_data['sg_unity_metadata'] = json.dumps({ 'projectPath' : projectPath })
+        # Get the currently open scene
+        scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene()
+        scenePath = None
+        if scene:
+            scenePath = scene.path
+        
+        version_data['sg_unity_metadata'] = json.dumps({ 'projectPath' : projectPath, 'scenePath' : scenePath })
         
 
         # log the version data for debugging
