@@ -145,11 +145,16 @@ class UnityEditorEngine(Engine):
             self.logger.debug("Favorite found: ", menu_name)
             self._menu_cmd_items[menu_name]["properties"]["type"] = "favorite"
         
+        # Remove the Assets/Shotgun folder (start fresh)
+        import shutil
+        UnityEngine = unity_connection.get_module('UnityEngine')
+        shotgun_asset_path = UnityEngine.Application.dataPath + "/Shotgun"
+        shutil.rmtree(path=shotgun_asset_path, ignore_errors=True)
+        
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context).decode("utf-8")
         
-        UnityEngine = unity_connection.get_module('UnityEngine')
-        generator = MenuItemGenerator(UnityEngine.Application.dataPath + "/Shotgun", self._menu_cmd_items, context_name, "call_menu_item_callback")
+        generator = MenuItemGenerator(shotgun_asset_path, self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
 
         UnityEditor = unity_connection.get_module('UnityEditor')
