@@ -107,22 +107,17 @@ class UnityLauncher(SoftwareLauncher):
         engine = sgtk.platform.current_engine()
         sg = engine.shotgun
         
-        required_env = self.set_context_from_entity(required_env)
-        
         entity_type = required_env['SHOTGUN_ENTITY_TYPE']
         entity_id   = int(required_env['SHOTGUN_ENTITY_ID'])
-        try:
-            entity = sg.find_one(entity_type,[["id", "is", entity_id]], ['sg_unity_metadata', 'description'])
-            self.logger.debug('The context entity is ' + str(entity))
-            unity_metadata_json = entity['sg_unity_metadata']
-        except:
-            # No metadata for this entity
-            unity_metadata_json = None
-
-        if unity_metadata_json and type(unity_metadata_json) != str:
-            self.logger.warning('The sg_unity_metadata field is expected to be of type "str". It is "{}" instead. Its value will be ignored'.format(type(unity_metadata_json)))
-            unity_metadata_json = None
+        
+        unity_metadata_json = None
+        if entity_type == "Note":
+            unity_metadata_json = self.get_metadata_from_version(sg, self.get_version_from_note(sg, entity_type, entity_id))
+        else:
+            unity_metadata_json = self.get_metadata_from_version(sg, {"type" : entity_type, "id" : entity_id})
             
+        required_env = self.set_context_from_entity(sg, required_env)    
+        
         unity_metadata = None
         if unity_metadata_json:
             self.logger.debug('Found metadata on the entity: ' + pprint.pformat(unity_metadata_json))
@@ -146,7 +141,35 @@ class UnityLauncher(SoftwareLauncher):
 
         return LaunchInformation(exec_path, args, required_env)
 
-    def set_context_from_entity(self, required_env):
+    def get_version_from_note(self, sg, entity_type, entity_id):
+        # 'note_links': [{'type': 'Shot', 'id': 1216, 'name': 'DavidShot'}, {'type': 'Version', 'id': 7199, 'name': 'DavidShot-Layout.mp4'}], 
+        entity = sg.find_one(entity_type, [["id", "is", entity_id]], ["note_links"])
+        note_links = entity.get("note_links", None)
+        if not note_links:
+            return None
+        
+        for i in range(0, len(note_links)):
+            if note_links[i]["type"] == "Version":
+                return note_links[i]
+        return None
+        
+    def get_metadata_from_version(self, sg, version_entity):
+        unity_metadata_json = None
+        try:
+            metadata_entity = sg.find_one(version_entity["type"],[["id", "is", version_entity["id"]]], ['sg_unity_metadata', 'description'])
+            self.logger.debug('The context entity is ' + str(metadata_entity))
+            unity_metadata_json = metadata_entity['sg_unity_metadata']
+        except:
+            # No metadata for this entity
+            return None
+            
+        if unity_metadata_json and type(unity_metadata_json) != str:
+            self.logger.warning('The sg_unity_metadata field is expected to be of type "str". It is "{}" instead. Its value will be ignored'.format(type(unity_metadata_json)))
+            return None
+
+        return unity_metadata_json
+        
+    def set_context_from_entity(self, sg, required_env):
         entity_type = required_env['SHOTGUN_ENTITY_TYPE']
         entity_id   = int(required_env['SHOTGUN_ENTITY_ID'])
         
@@ -162,10 +185,6 @@ class UnityLauncher(SoftwareLauncher):
         # - Else set the context to be the project
         if entity_type != "Note" and entity_type != "Version":
             return required_env
-        
-        import sgtk
-        engine = sgtk.platform.current_engine()
-        sg = engine.shotgun
         
         entity = None
         if entity_type == "Note":
