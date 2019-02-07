@@ -150,6 +150,10 @@ class UnityLauncher(SoftwareLauncher):
         entity_type = required_env['SHOTGUN_ENTITY_TYPE']
         entity_id   = int(required_env['SHOTGUN_ENTITY_ID'])
         
+        def set_entity(entity_dict):
+            required_env['SHOTGUN_ENTITY_TYPE'] = entity_dict["type"]
+            required_env['SHOTGUN_ENTITY_ID'] = str(entity_dict["id"])
+        
         # The context for version and note entities do not by themselves contain
         # enough information to get a useful context in Unity.
         # Therefore if this entity is a Version or Note, then do the following:
@@ -186,15 +190,12 @@ class UnityLauncher(SoftwareLauncher):
         # extract task
         tasks = entity.get("tasks", None)
         if tasks:
-            task_id = tasks[0]["id"] # take the first task
-            required_env['SHOTGUN_ENTITY_TYPE'] = tasks[0]["type"]
-            required_env['SHOTGUN_ENTITY_ID'] = str(task_id)
+            set_entity(tasks[0]) # just take the first task
             return required_env
         
         task = entity.get("sg_task", None)
         if task:
-            required_env['SHOTGUN_ENTITY_TYPE'] = task["type"]
-            required_env['SHOTGUN_ENTITY_ID'] = str(task["id"])
+            set_entity(task)
             return required_env
         
         if entity_type == "Note":
@@ -203,21 +204,18 @@ class UnityLauncher(SoftwareLauncher):
             if note_links:
                 for i in range(0, len(note_links)):
                     if note_links[i]["type"] == "Asset" or note_links[i]["type"] == "Shot":
-                        required_env['SHOTGUN_ENTITY_TYPE'] = note_links[i]["type"]
-                        required_env['SHOTGUN_ENTITY_ID'] = str(note_links[i]["id"])
+                        set_entity(note_links[i])
                         return required_env
         else:
             link = entity.get("entity", None)
             if link:
-                required_env['SHOTGUN_ENTITY_TYPE'] = link["type"]
-                required_env['SHOTGUN_ENTITY_ID'] = str(link["id"])
+                set_entity(link)
                 return required_env
         
         # settle with project context
         project = entity.get("project", None)
         if project:
-            required_env['SHOTGUN_ENTITY_TYPE'] = project["type"]
-            required_env['SHOTGUN_ENTITY_ID'] = str(project["id"])
+            set_entity(project)
         return required_env
         
     def scan_software(self):
