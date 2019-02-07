@@ -107,6 +107,8 @@ class UnityLauncher(SoftwareLauncher):
         engine = sgtk.platform.current_engine()
         sg = engine.shotgun
         
+        required_env = self.set_context_from_entity(required_env)
+        
         entity_type = required_env['SHOTGUN_ENTITY_TYPE']
         entity_id   = int(required_env['SHOTGUN_ENTITY_ID'])
         try:
@@ -144,6 +146,80 @@ class UnityLauncher(SoftwareLauncher):
 
         return LaunchInformation(exec_path, args, required_env)
 
+    def set_context_from_entity(self, required_env):
+        entity_type = required_env['SHOTGUN_ENTITY_TYPE']
+        entity_id   = int(required_env['SHOTGUN_ENTITY_ID'])
+        
+        # The context for version and note entities do not by themselves contain
+        # enough information to get a useful context in Unity.
+        # Therefore if this entity is a Version or Note, then do the following:
+        # - If linked to a task, set the task as the context
+        # - Else if linked to an asset/shot, set this as the context
+        # - Else set the context to be the project
+        if entity_type != "Note" and entity_type != "Version":
+            return required_env
+        
+        import sgtk
+        engine = sgtk.platform.current_engine()
+        sg = engine.shotgun
+        
+        entity = None
+        if entity_type == "Note":
+            # Example Note:
+            # {
+            #   'tasks': [{'type': 'Task', 'id': 5893, 'name': 'Layout'}], 
+            #   'note_links': [{'type': 'Shot', 'id': 1216, 'name': 'DavidShot'}, {'type': 'Version', 'id': 7199, 'name': 'DavidShot-Layout.mp4'}],
+            #   'project': {'type': 'Project', 'id': 86, 'name': 'Adagio'}, 'type': 'Note', 'id': 6464}
+            entity = sg.find_one(entity_type, [["id", "is", entity_id]], ["tasks", "note_links", "project"])
+        else:
+            # Example Version:
+            # {
+            #   'project': {'type': 'Project', 'id': 86, 'name': 'Adagio'},
+            #   'entity': {'type': 'Shot', 'id': 1216, 'name': 'DavidShot'},
+            #   'type': 'Version', 'sg_task': {'type': 'Task', 'id': 5893, 'name': 'Layout'}, 'id': 7199}
+            entity = sg.find_one(entity_type, [["id", "is", entity_id]], ["sg_task", "entity", "project"])
+        
+        # if something goes wrong, don't fail just keep the same context
+        if not entity:
+            return required_env
+            
+        # extract task
+        tasks = entity.get("tasks", None)
+        if tasks:
+            task_id = tasks[0]["id"] # take the first task
+            required_env['SHOTGUN_ENTITY_TYPE'] = tasks[0]["type"]
+            required_env['SHOTGUN_ENTITY_ID'] = str(task_id)
+            return required_env
+        
+        task = entity.get("sg_task", None)
+        if task:
+            required_env['SHOTGUN_ENTITY_TYPE'] = task["type"]
+            required_env['SHOTGUN_ENTITY_ID'] = str(task["id"])
+            return required_env
+        
+        if entity_type == "Note":
+            # try getting shot or asset context
+            note_links = entity.get("note_links", None)
+            if note_links:
+                for i in range(0, len(note_links)):
+                    if note_links[i]["type"] == "Asset" or note_links[i]["type"] == "Shot":
+                        required_env['SHOTGUN_ENTITY_TYPE'] = note_links[i]["type"]
+                        required_env['SHOTGUN_ENTITY_ID'] = str(note_links[i]["id"])
+                        return required_env
+        else:
+            link = entity.get("entity", None)
+            if link:
+                required_env['SHOTGUN_ENTITY_TYPE'] = link["type"]
+                required_env['SHOTGUN_ENTITY_ID'] = str(link["id"])
+                return required_env
+        
+        # settle with project context
+        project = entity.get("project", None)
+        if project:
+            required_env['SHOTGUN_ENTITY_TYPE'] = project["type"]
+            required_env['SHOTGUN_ENTITY_ID'] = str(project["id"])
+        return required_env
+        
     def scan_software(self):
         """
         Scan the file system for Unity executables.
