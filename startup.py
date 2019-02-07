@@ -120,6 +120,12 @@ class UnityLauncher(SoftwareLauncher):
         
         unity_metadata = None
         if unity_metadata_json:
+            frame_number = self.get_frame_from_note(sg, {"type" : entity_type, "id" : entity_id})
+            if frame_number:
+                temp_metadata = json.loads(unity_metadata_json)
+                temp_metadata["frameNumber"] = frame_number
+                unity_metadata_json = json.dumps(temp_metadata)
+            
             self.logger.debug('Found metadata on the entity: ' + pprint.pformat(unity_metadata_json))
             
             # Add the metadata to the environment for later, faster access
@@ -168,6 +174,24 @@ class UnityLauncher(SoftwareLauncher):
             return None
 
         return unity_metadata_json
+        
+    def get_frame_from_note(self, sg, note_entity):
+        #   'attachments': [{'type': 'Attachment', 'id': 1668, 'name': 'annot_version_7199.107.png'}], 
+        entity = sg.find_one(note_entity["type"], [["id", "is", note_entity["id"]]], ["attachments"])
+        
+        attachments = entity.get("attachments", None)
+        if not attachments:
+            return None
+            
+        name = attachments[0]["name"]
+        tokens = name.split(".")
+        if len(tokens) < 3:
+            return None
+        return tokens[1] # frame number
+        
+    def get_note_from_version(self):
+        # find the latest note in the version and return it
+        pass
         
     def set_context_from_entity(self, sg, required_env):
         entity_type = required_env['SHOTGUN_ENTITY_TYPE']
