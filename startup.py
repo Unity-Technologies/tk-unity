@@ -189,7 +189,7 @@ class UnityLauncher(SoftwareLauncher):
             return None
         return tokens[1] # frame number
         
-    def get_note_from_version(self):
+    def get_note_from_version(self, sg, ):
         # find the latest note in the version and return it
         pass
         
@@ -231,32 +231,32 @@ class UnityLauncher(SoftwareLauncher):
             return required_env
             
         # extract task
-        tasks = entity.get("tasks", None)
+        tasks = entity.get("tasks")
         if tasks:
             set_entity(tasks[0]) # just take the first task
             return required_env
         
-        task = entity.get("sg_task", None)
+        task = entity.get("sg_task")
         if task:
             set_entity(task)
             return required_env
         
         if entity_type == "Note":
             # try getting shot or asset context
-            note_links = entity.get("note_links", None)
+            note_links = entity.get("note_links")
             if note_links:
                 for i in range(0, len(note_links)):
                     if note_links[i]["type"] == "Asset" or note_links[i]["type"] == "Shot":
                         set_entity(note_links[i])
                         return required_env
         else:
-            link = entity.get("entity", None)
+            link = entity.get("entity")
             if link:
                 set_entity(link)
                 return required_env
         
         # settle with project context
-        project = entity.get("project", None)
+        project = entity.get("project")
         if project:
             set_entity(project)
         return required_env
