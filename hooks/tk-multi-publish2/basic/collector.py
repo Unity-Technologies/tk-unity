@@ -62,11 +62,9 @@ class UnitySessionCollector(HookBaseClass):
         # get info for the extension
         item_info = self._get_item_info(path)
         type_display = item_info["type_display"]
-        evaluated_path = path
-        is_sequence = False
 
         display_name = publisher.util.get_publish_name(
-            path, sequence=is_sequence)
+            path, sequence=False)
 
         # create and populate the item
         file_item = parent_item.create_item(
@@ -75,8 +73,8 @@ class UnitySessionCollector(HookBaseClass):
 
         # all we know about the file is its path. set the path in its
         # properties for the plugins to use for processing.
-        file_item.properties["path"] = evaluated_path
+        file_item.properties["path"] = path
 
-        self.logger.info("Collected file: %s" % (evaluated_path,))
+        self.logger.info("Collected file: %s" % (path,))
 
         return file_item    

@@ -126,7 +126,7 @@ class UnityEditorEngine(Engine):
             self._menu_cmd_items[cmd_name] = cmd_details
         
         # Check for favorites
-        for fav in self.get_setting("menu_favourites"):
+        for fav in self.get_setting("menu_favorites"):
             app_instance_name = fav["app_instance"]
             menu_name = fav["name"]
 
@@ -136,7 +136,8 @@ class UnityEditorEngine(Engine):
 
             command = self.commands[menu_name]
 
-            if command["properties"]["app"].instance_name != app_instance_name:
+            app_property = command["properties"].get("app")
+            if app_property and app_property.instance_name != app_instance_name:
                 # The same action can be registered for different app instances
                 # so skip it.
                 continue
@@ -144,11 +145,16 @@ class UnityEditorEngine(Engine):
             self.logger.debug("Favorite found: ", menu_name)
             self._menu_cmd_items[menu_name]["properties"]["type"] = "favorite"
         
+        # Remove the Assets/Shotgun folder (start fresh)
+        import shutil
+        UnityEngine = unity_connection.get_module('UnityEngine')
+        shotgun_asset_path = UnityEngine.Application.dataPath + "/Shotgun"
+        shutil.rmtree(path=shotgun_asset_path, ignore_errors=True)
+        
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context).decode("utf-8")
         
-        UnityEngine = unity_connection.get_module('UnityEngine')
-        generator = MenuItemGenerator(UnityEngine.Application.dataPath + "/Shotgun", self._menu_cmd_items, context_name, "call_menu_item_callback")
+        generator = MenuItemGenerator(shotgun_asset_path, self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
 
         UnityEditor = unity_connection.get_module('UnityEditor')
@@ -161,14 +167,6 @@ class UnityEditorEngine(Engine):
             return
         self._menu_cmd_items[name]["callback"]()
 
-    def _get_dialog_parent(self):
-        """
-        Get the QWidget parent for all dialogs created through
-        show_dialog & show_modal.
-        """
-        # return None as the Qt dialog won't be parent-able on top of Unity.
-        return None        
-        
     @property
     def has_ui(self):
         """

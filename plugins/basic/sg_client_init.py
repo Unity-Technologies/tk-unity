@@ -33,7 +33,7 @@ def on_idle():
     try:
         from sgtk.platform.qt import QtGui
         QtGui.QApplication.instance().processEvents() 
-    except:
+    except Exception:
         pass
 
 class ShotgunClientService(UnityClientService):
@@ -71,3 +71,12 @@ class ShotgunClientService(UnityClientService):
             log('Shotgun has been initialized in the client process')
         else:
             log('Shotgun has not been initialized in the client process')
+            
+        # Clear the progress bar in case we never got to 100%
+        try:
+            UnityEditor.EditorUtility.ClearProgressBar()
+        except Exception:
+            # It is possible that the progress bar is not displayed anymore, 
+            # in which case we get an exception here
+            pass
+            

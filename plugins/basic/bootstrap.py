@@ -12,6 +12,17 @@ def plugin_startup():
     try:
         # Ensure that we can find PySide on MacOS
         # TODO: move this to part of the Python installation steps.
+        # Notes from discussions with the SG team:
+        #   In the past, we have taken one of two different approaches:
+        #
+        #   We raise an intelligible error that makes it clear that PySide 
+        #   needs to be made available (PYTHONPATH being the easiest route 
+        #   to setup) if it can't be imported.
+        #
+        #   We include a build of Qt and PySide in a framework that accompanies 
+        #   the engine. This is what we do for our old Softimage integration, as 
+        #   an example. You can find that here 
+        #   (https://github.com/shotgunsoftware/tk-framework-softimageqt)
         if "darwin" in sys.platform:
             site_packages_path = '/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages'
             if site_packages_path not in sys.path:

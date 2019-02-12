@@ -50,7 +50,7 @@ class UnityActions(HookBaseClass):
         :returns List of dictionaries, each with keys name, params, caption and description
         """
         app = self.parent
-        app.log_debug("Generate actions called for UI element %s. "
+        self.logger.debug("Generate actions called for UI element %s. "
                       "Actions: %s. Publish Data: %s" % (ui_area, actions, sg_publish_data))
         
         action_instances = []
@@ -105,15 +105,14 @@ class UnityActions(HookBaseClass):
         :returns: No return value expected.
         """
         app = self.parent
-        app.log_debug("Execute action called for action %s. "
+        self.logger.debug("Execute action called for action %s. "
                       "Parameters: %s. Publish Data: %s" % (name, params, sg_publish_data))
         
-        # resolve path
-        # toolkit uses utf-8 encoded strings internally and Unity expects unicode
-        # so convert the path to ensure filenames containing complex characters are supported
-        path = self.get_publish_path(sg_publish_data).decode("utf-8")
-
         if name == "import":
+            # resolve path
+            # toolkit uses utf-8 encoded strings internally and Unity expects unicode
+            # so convert the path to ensure filenames containing complex characters are supported
+            path = self.get_publish_path(sg_publish_data).decode("utf-8")
             self._do_import(path, sg_publish_data)
 
     ##############################################################################################################
@@ -126,13 +125,13 @@ class UnityActions(HookBaseClass):
         # options for either browse type
         options = [
             QtGui.QFileDialog.DontResolveSymlinks,
-            QtGui.QFileDialog.DontUseNativeDialog
+            QtGui.QFileDialog.DontUseNativeDialog,
+            QtGui.QFileDialog.ShowDirsOnly
         ]
 
         # browse folders specifics
         caption = "Browse folder to import FBX into"
         file_mode = QtGui.QFileDialog.Directory
-        options.append(QtGui.QFileDialog.ShowDirsOnly)
 
         # create the dialog
         file_dialog = QtGui.QFileDialog(parent=QtGui.QApplication.instance().activeWindow(), caption=caption, directory=starting_dir)
@@ -146,7 +145,7 @@ class UnityActions(HookBaseClass):
 
         # browse!
         if not file_dialog.exec_():
-            return
+            return None
 
         # process the browsed files/folders for publishing
         return file_dialog.selectedFiles()
@@ -170,7 +169,7 @@ class UnityActions(HookBaseClass):
         
         app = self.parent
         import_paths = self._on_browse(projectPath)
-        if import_paths and len(import_paths) > 0:
+        if import_paths:
 
             # get filename without version number if possible
             filename = sg_publish_data.get("name", os.path.basename(path))  
@@ -190,13 +189,13 @@ class UnityActions(HookBaseClass):
             UnityEditor.AssetDatabase.Refresh()
     
             # store the path in the meta file
-            
             # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
             asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
             modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
             if not modelImporter:
                 app.logger.warning("Shotgun: Could not find importer for asset {0}".format(asset))
                 return
+                
             modelImporter.userData = path
             modelImporter.SaveAndReimport()
             return
