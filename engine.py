@@ -142,7 +142,7 @@ class UnityEditorEngine(Engine):
                 # so skip it.
                 continue
 
-            self.logger.debug("Favorite found: ", menu_name)
+            self.logger.debug("Favorite found: " + menu_name)
             self._menu_cmd_items[menu_name]["properties"]["type"] = "favorite"
         
         # Remove the Assets/Shotgun folder (start fresh)
