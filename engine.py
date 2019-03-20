@@ -156,6 +156,10 @@ class UnityEditorEngine(Engine):
         
         generator = MenuItemGenerator(shotgun_asset_path, self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
+        
+        # Add a README.txt file to the Shotgun Asset directory
+        with open(shotgun_asset_path + '/README.txt', 'w') as f:
+            f.write('This directory is automatically created and deleted by the Shotgun integration.\nUsers should never alter it or use it to store their files.')
 
         UnityEditor = unity_connection.get_module('UnityEditor')
         UnityEditor.AssetDatabase.Refresh()
