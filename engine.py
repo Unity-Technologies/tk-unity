@@ -167,12 +167,30 @@ class UnityEditorEngine(Engine):
             return
         self._menu_cmd_items[name]["callback"]()
 
+    ##########################################################################################
+    # ui
     @property
     def has_ui(self):
         """
         Detect and return if Unity is running in batch mode
         """
         return True
+
+    def _create_dialog(self, title, bundle, widget, parent):
+        """
+        Call the base class and set the "always on top" behavior on the created dialog
+        """
+        dialog = super(UnityEditorEngine, self)._create_dialog(title, bundle, widget, parent)
+        
+        try:
+            from sgtk.platform.qt import QtCore
+            dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
+        except Exception, e:
+            import traceback
+            self.logger.warning('Exception raised while trying to set WindowStaysOnTopHint on dialog "{}"'.format(title))
+            self.logger.warning('Stack trace:\n\n%s'%traceback.format_exc())
+            
+        return dialog
 
     ##########################################################################################
     # logging
