@@ -1,19 +1,32 @@
+# This script module is executed by Unity to bootstrap Shotgun
 def plugin_startup():
     import os
     import sys
     """
     Initializes the Toolkit plugin for Unity.
+    Returns  0 on success 
+    Returns -1 on failure
     """
     import unity_connection
-    UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
+    UnityEngine = unity_connection.get_module('UnityEngine')
     try:
         # Ensure that we can find PySide on MacOS
-        # TODO: move this to part of the python installation steps.
+        # TODO: move this to part of the Python installation steps.
+        # Notes from discussions with the SG team:
+        #   In the past, we have taken one of two different approaches:
+        #
+        #   We raise an intelligible error that makes it clear that PySide 
+        #   needs to be made available (PYTHONPATH being the easiest route 
+        #   to setup) if it can't be imported.
+        #
+        #   We include a build of Qt and PySide in a framework that accompanies 
+        #   the engine. This is what we do for our old Softimage integration, as 
+        #   an example. You can find that here 
+        #   (https://github.com/shotgunsoftware/tk-framework-softimageqt)
         if "darwin" in sys.platform:
-            try:
-                sys.path.index('/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages')
-            except ValueError:
-                sys.path.append('/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages')
+            site_packages_path = '/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages'
+            if site_packages_path not in sys.path:
+                sys.path.append(site_packages_path)
 
         # the plugin python path will be just below the root level. 
         # add it to sys.path
@@ -46,12 +59,11 @@ def plugin_startup():
 
     except Exception, e:
         import traceback
-        stack_trace = traceback.format_exc()
+        UnityEngine.Debug.LogError('Shotgun Toolkit Error: {}'.format(e))
+        UnityEngine.Debug.LogError('Error stack trace:\n\n{}'.format(traceback.format_exc()))
+        
+        # Failure to bootstrap
+        return -1
 
-        message = "Shotgun Toolkit Error: %s" % (e,)
-        details = "Error stack trace:\n\n%s" % (stack_trace)
-
-        UnityEngine.Debug.LogError(message)
-        UnityEngine.Debug.LogError(details)
-
-plugin_startup()
+    # Success
+    return 0

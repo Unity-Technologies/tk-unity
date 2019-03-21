@@ -5,42 +5,23 @@ process in order to serve the Shotgun integration:
   function
 - Installs an idle callback that will process Qt events
 """
-
-######### Coverage, used for testing #########
-# Set TK_UNITY_WANT_COVERAGE to enable coverage
+import imp
 import os
-import tempfile
+import unity_client
 
-want_coverage = os.environ.has_key('TK_UNITY_WANT_COVERAGE')
-coverage_object = None
-coverage_directory = None
-
-if want_coverage:
-    import coverage
-######### Coverage, used for testing #########
-
-from unity_client import log
 from unity_client_service import UnityClientService
 
 # We only initialize Shotgun once in the client process
 _shotgun_is_initialized = False    
 
+def log(msg):
+    unity_client.log('[sg] {}'.format(msg))
+
 def on_init_client(client):
     """
     Registers the custom rpyc service and the idle callback
     """
-    global want_coverage
-    
-    log('[sg] In on_init_client')
-    
-    if want_coverage:
-        global coverage_object
-        global coverage_directory
-        coverage_directory = tempfile.mkdtemp(suffix='-tk-unity-coverage')
-        log('Coverage results will be located in %s when the client terminates'%coverage_directory)
-        
-        coverage_object = coverage.Coverage(data_file=os.path.join(coverage_directory,'tk-unity.coverage'))
-        coverage_object.start()
+    log('In on_init_client')
     
     client.register_idle_callback(on_idle)
     client.register_service(ShotgunClientService)
@@ -52,7 +33,7 @@ def on_idle():
     try:
         from sgtk.platform.qt import QtGui
         QtGui.QApplication.instance().processEvents() 
-    except:
+    except Exception:
         pass
 
 class ShotgunClientService(UnityClientService):
@@ -65,27 +46,37 @@ class ShotgunClientService(UnityClientService):
         bootstrap script
         """
         global _shotgun_is_initialized
-        log('[sg] Got bootstrap_shotgun')
+        log('Got bootstrap_shotgun')
         if _shotgun_is_initialized:
-            log('[sg] Shotgun is already initialized in the client process')
+            log('Shotgun is already initialized in the client process')
             return
-
-        log('[sg] Invoking bootstrap script ("%s")'%path_to_bootstrap)        
-        execfile(path_to_bootstrap)
-        _shotgun_is_initialized = True
-
-        log('[sg] Shotgun has been initialized in the client process')
-
-    def on_server_stop(self, terminate_client):
-        global want_coverage
-        super(ShotgunClientService, self).on_server_stop(terminate_client)
         
-        if terminate_client and want_coverage:
-            global coverage_object
-            global coverage_directory
+        ret_val = -1
+        try:
+            # Use the imp module to bootstrap in order to get a return value
+            (dir_name, file_name) = os.path.split(path_to_bootstrap)
+            module_name = file_name.split('.')[0]
             
-            coverage_object.stop()
-            coverage_object.save()
+            log('Invoking bootstrap script ("{}")'.format(path_to_bootstrap))        
+            (module_file, module_path, module_desc) = imp.find_module(module_name, [dir_name])
+            bootstrap_module = imp.load_module(module_name, module_file, module_path, module_desc)
+            ret_val = bootstrap_module.plugin_startup()
+        except Exception, e:
+            import traceback
+            log('Got an exception while bootstrapping: {}'.format(e))
+            log('Stack trace:\n\n{}'.format(traceback.format_exc()))
+        
+        if ret_val == 0:
+            _shotgun_is_initialized = True
+            log('Shotgun has been initialized in the client process')
+        else:
+            log('Shotgun has not been initialized in the client process')
             
-            log('Writing coverage results, this could take a moment')
-            coverage_object.html_report(directory=coverage_directory, ignore_errors=True)
+        # Clear the progress bar in case we never got to 100%
+        try:
+            UnityEditor.EditorUtility.ClearProgressBar()
+        except Exception:
+            # It is possible that the progress bar is not displayed anymore, 
+            # in which case we get an exception here
+            pass
+            

@@ -1,10 +1,16 @@
+import json
 import os
 import sys
 import pprint
 from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 
-
 class UnityLauncher(SoftwareLauncher):
+    """
+    Handles launching Unity executables. Automatically starts up
+    a tk-unity engine with the current context in the new session
+    of Unity.
+    """
+    
     # Named regex strings to insert into the executable template paths when
     # matching against supplied versions and products. Similar to the glob
     # strings, these allow us to alter the regex matching for any of the
@@ -16,9 +22,7 @@ class UnityLauncher(SoftwareLauncher):
     # This dictionary defines a list of executable template strings for each
     # of the supported operating systems. The templates are used for both
     # globbing and regex matches by replacing the named format placeholders
-    # with an appropriate glob or regex string. As Side FX adds modifies the
-    # install path on a given OS for a new release, a new template will need
-    # to be added here.
+    # with an appropriate glob or regex string.
     EXECUTABLE_TEMPLATES = {
         "darwin": [
             "/Applications/Unity/Unity.app/Contents/MacOS/Unity",
@@ -54,11 +58,6 @@ class UnityLauncher(SoftwareLauncher):
         ]
     }
 
-    """
-    Handles launching Unity executables. Automatically starts up
-    a tk-unity engine with the current context in the new session
-    of Unity.
-    """
     @property
     def minimum_supported_version(self):
         """
@@ -71,7 +70,7 @@ class UnityLauncher(SoftwareLauncher):
         Prepares an environment to launch Unity in that will automatically
         load Toolkit and the tk-unity engine when Unity starts.
 
-        :param str exec_path: Path to Maya executable to launch.
+        :param str exec_path: Path to Unity executable to launch.
         :param str args: Command line arguments as strings.
         :param str file_to_open: (optional) Full path name of a file to open on launch.
         :returns: :class:`LaunchInformation` instance
@@ -82,7 +81,8 @@ class UnityLauncher(SoftwareLauncher):
         # connect to, what context to load, etc.
         required_env.update(self.get_standard_plugin_environment())
 
-        # This will be read by bootstrap.cs from the C# plugin in UI to know where to pick up the
+        # This will be read by Bootstrap.cs (com.unity.integrations.shotgun) 
+        # from the C# plugin in UI to know where to pick up the
         # Toolkit code.
         required_env["SHOTGUN_UNITY_BOOTSTRAP_LOCATION"] = os.path.join(
             self.disk_location,
@@ -103,21 +103,16 @@ class UnityLauncher(SoftwareLauncher):
 
         return LaunchInformation(exec_path, args, required_env)
 
-    ##########################################################################################
-    # private methods
-
     def scan_software(self):
         """
-        Scan the filesystem for maya executables.
+        Scan the file system for Unity executables.
 
         :return: A list of :class:`SoftwareVersion` objects.
         """
         self.logger.debug("Scanning for Unity executables...")
 
-        # This piece of boiler-plate code scans for software based and for every version
+        # This piece of boiler-plate code scans for software based on the supported versions, and for every version
         # returned checks if the engine actually supports it.
-        #
-        # You can look at other engines, which do pretty much the same thing.
         supported_sw_versions = []
         for sw_version in self._find_software():
             (supported, reason) = self._is_supported(sw_version)
@@ -130,6 +125,9 @@ class UnityLauncher(SoftwareLauncher):
                 )
 
         return supported_sw_versions
+
+    ##########################################################################################
+    # private methods
 
     def _find_software(self):
         """
@@ -148,11 +146,9 @@ class UnityLauncher(SoftwareLauncher):
         editor_jsons = self.HUB_EXECUTABLES.get(sys.platform, [])
         import getpass
         username = getpass.getuser()
-        for i in range(len(editor_jsons)):
-            editor_json = editor_jsons[i].format(username = username)
+        for editor_json in [j.format(username=username) for j in editor_jsons]:
             if os.path.exists(editor_json):
                 with open(editor_json, "r") as f:
-                    import json
                     data = json.load(f)
                     if not data:
                         continue
@@ -190,11 +186,8 @@ class UnityLauncher(SoftwareLauncher):
 
                 # extract the matched keys form the key_dict (default to None if
                 # not included)
-                executable_version = key_dict.get("version")
-                
-                if not executable_version:
-                    executable_version = "Unknown"
-                
+                executable_version = key_dict.get("version", "Unknown")
+               
                 self.logger.warning("Software was found: " + executable_path + ", " + executable_version)
 
                 sw_versions.append(

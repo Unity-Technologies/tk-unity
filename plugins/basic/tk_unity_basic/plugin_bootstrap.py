@@ -1,22 +1,10 @@
-# Copyright (c) 2017 Shotgun Software Inc.
-#
-# CONFIDENTIAL AND PROPRIETARY
-#
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
-# Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
-# not expressly granted therein are reserved by Shotgun Software Inc.
-
 import os
 import sys
 import unity_connection
 
-UnityEngine = unity_connection.get_unity_connection().getmodule('UnityEngine')
-
 def plugin_bootstrap(plugin_root_path):
     """
-    Entry point for toolkit bootstrap in Nuke.
+    Entry point for toolkit bootstrap in Unity.
 
     Called by the plugin/bootstrap.py file.
 
@@ -132,7 +120,14 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     sgtk_logger.debug("Will launch the engine with entity: %s" % entity)
 
     def progress_callback(value, message):
-        UnityEngine.Debug.Log("[%s] - %s" % (value, message))
+        # Make sure we have a valid connection to UnityEngine as the bootstrap 
+        # can be interrupted by a domain reload
+        UnityEditor = unity_connection.get_module('UnityEditor') 
+        if value != 1: 
+            UnityEditor.EditorUtility.DisplayProgressBar('Initializing Shotgun Toolkit', 'Please wait until initialization is complete', value)
+        else:
+            UnityEditor.EditorUtility.ClearProgressBar()
+            
 
     toolkit_mgr.progress_callback = progress_callback
 

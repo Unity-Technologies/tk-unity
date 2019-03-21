@@ -29,7 +29,7 @@ base_configuration:
 #
 # When the plugin is built, this file will be converted into a manifest.py file
 # and located in a python module named based on the plugin id in order to ensure
-# uniqueness. If your plugin_id is set to 'basic.nuke', the python module
-# will be called sgtk_plugin_basic_nuke and will be located in a python
+# uniqueness. Since the plugin_id is set to 'basic.unity', the python module
+# will be called sgtk_plugin_basic_unity and will be located in a python
 # subfolder once the plugin has been built.
-plugin_id: "basic.nuke"
+plugin_id: "basic.unity"

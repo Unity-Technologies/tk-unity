@@ -1,5 +1,14 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.7
+
+NEW FEATURES
+* A progress bar is displayed in Unity on engine bootstrap
+* Better logs when starting Unity outside of Shotgun Desktop
+
+FIXES
+* Engine bootstrap now survives Unity domain reloads
+
 **Version**: 0.6
 
 NEW FEATURES
