@@ -187,7 +187,7 @@ class UnityEditorEngine(Engine):
             dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
         except Exception, e:
             import traceback
-            self.logger.warning('Exception raised while trying to set WindowStaysOnTopHint on dialog "{}"'.format(title))
+            self.logger.warning('Exception raised while trying to set WindowStaysOnTopHint on dialog "{}". The dialog will use the default toolkit behavior.'.format(title))
             self.logger.warning('Stack trace:\n\n%s'%traceback.format_exc())
             
         return dialog
