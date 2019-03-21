@@ -173,7 +173,6 @@ class UnityEditorEngine(Engine):
         Detect and return if Unity is running in batch mode
         """
         return True
-    
 
     ##########################################################################################
     # logging
