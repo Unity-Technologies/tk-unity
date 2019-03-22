@@ -50,10 +50,10 @@ class UnityEditorEngine(Engine):
         try:
             UnityEngine = unity_connection.get_module('UnityEngine')
             host_info = {"name": "Unity", "version": UnityEngine.Application.unityVersion}
-        except Exception, e:
+        except Exception as e:
             import traceback
             self.logger.error('Exception raised while getting the version for Unity: {}'.format(e))
-            self.logger.error('Stack trace:\n\n%s'%traceback.format_exc())
+            self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
             
             host_info = {"name": "Unity", "version": "unknown"}
             
@@ -66,7 +66,7 @@ class UnityEditorEngine(Engine):
         """
         Initializes the engine.
         """
-        self.logger.debug("%s: Initializing...", self)
+        self.logger.debug("{}: Initializing...".format(self))
 
     def post_app_init(self):
         """
@@ -131,7 +131,7 @@ class UnityEditorEngine(Engine):
             menu_name = fav["name"]
 
             if menu_name not in self.commands:
-                self.logger.warning("Unknown command: %s/%s", app_instance_name, menu_name)
+                self.logger.warning("Unknown command: {}/{}".format(app_instance_name, menu_name))
                 continue
 
             command = self.commands[menu_name]
@@ -185,10 +185,10 @@ class UnityEditorEngine(Engine):
         try:
             from sgtk.platform.qt import QtCore
             dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
-        except Exception, e:
+        except Exception as e:
             import traceback
             self.logger.warning('Exception raised while trying to set WindowStaysOnTopHint on dialog "{}". The dialog will use the default toolkit behavior.'.format(title))
-            self.logger.warning('Stack trace:\n\n%s'%traceback.format_exc())
+            self.logger.warning('Stack trace:\n\n{}'.format(traceback.format_exc()))
             
         return dialog
 
