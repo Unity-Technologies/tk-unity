@@ -2,6 +2,7 @@
 A Unity Editor engine for Sgtk.
 """
 import pprint
+import os
 from sgtk.platform import Engine
 
 import unity_connection
@@ -156,6 +157,12 @@ class UnityEditorEngine(Engine):
         
         generator = MenuItemGenerator(shotgun_asset_path, self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
+        
+        # Add a README.txt file to the Shotgun Asset directory
+        readme_path = os.path.normpath(shotgun_asset_path)
+        readme_path = os.path.join(readme_path, 'README.txt') 
+        with open(readme_path, 'w') as f:
+            f.write('This directory is automatically created and deleted by the Shotgun integration.\nUsers should never alter it or use it to store their files.')
 
         UnityEditor = unity_connection.get_module('UnityEditor')
         UnityEditor.AssetDatabase.Refresh()
