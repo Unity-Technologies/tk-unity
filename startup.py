@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import pprint
+import getpass
 from sgtk.platform import SoftwareLauncher, SoftwareVersion, LaunchInformation
 
 class UnityLauncher(SoftwareLauncher):
@@ -16,7 +17,8 @@ class UnityLauncher(SoftwareLauncher):
     # strings, these allow us to alter the regex matching for any of the
     # variable components of the path in one place
     COMPONENT_REGEX_LOOKUP = {
-        "version": "[\d]+[\d.\[a-z\]]+"
+        "version": "[\d]+[\d.\[a-z\]]+",
+        "username" : getpass.getuser()
     }
 
     # This dictionary defines a list of executable template strings for each
@@ -42,7 +44,11 @@ class UnityLauncher(SoftwareLauncher):
             "D:/Unity Editors/{version}/Editor/Unity.exe"
         ],
         "linux2": [
-            # TODO
+            "/opt/Unity/Hub/Editor/Unity-{version}/Editor/Unity",
+            "/opt/Unity/{version}/Editor/Unity",
+            "/mnt/opt/Unity/{version}/Editor/Unity",
+            "/mnt/opt/Unity/Hub/Editor/Unity-{version}/Editor/Unity",
+            "/home/{username}/Unity/{version}/Editor/Unity",
         ]
     }
     
@@ -144,7 +150,6 @@ class UnityLauncher(SoftwareLauncher):
         
         # If Unity Hub is installed then try to get some of the versions from there
         editor_jsons = self.HUB_EXECUTABLES.get(sys.platform, [])
-        import getpass
         username = getpass.getuser()
         for editor_json in [j.format(username=username) for j in editor_jsons]:
             if os.path.exists(editor_json):
