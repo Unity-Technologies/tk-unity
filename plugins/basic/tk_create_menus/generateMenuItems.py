@@ -20,40 +20,45 @@ class MenuItemGenerator(object):
         self._priorities = defaultdict(lambda:22, context_menu=0, favorite=11)
         
         self._functionList = []
-        self._functionTemplate = """
-            [MenuItem("Shotgun/{menuName}", false, {priority})]
-            public static void MenuItem{count}(){{
-                PythonRunner.RunStringOnClient("import sgtk");
-                PythonRunner.RunStringOnClient("sgtk.platform.current_engine().{callbackName}(\\\"{submenuName}\\\")");
-            }}
-        """
+        self._functionTemplate ="""        [MenuItem("Shotgun/{menuName}", false, {priority})] 
+        public static void MenuItem{count}()
+        {{
+            PythonRunner.RunStringOnClient("import sgtk");
+            PythonRunner.RunStringOnClient("sgtk.platform.current_engine().{callbackName}(\\\"{submenuName}\\\")");
+        }}"""
+
         self._fileContentsTemplate = """
-        using UnityEditor;
-        using UnityEditor.Scripting.Python;
-        using UnityEngine;
-        using System.IO;
-        
-        class {className}{{
-            {functions}
-        }}
+using UnityEditor;
+using UnityEditor.Scripting.Python;
+using UnityEngine;
+using System.IO;
+
+namespace UnityEditor.Integrations.Shotgun
+{{
+    class {className}
+    {{
+        {functions}
+    }}
+}}
         """
         
         self._assemblyTemplate = """
-        {{
-            "name": "{className}",
-            "references": [
-                "Unity.Integrations.Shotgun",
-                "Unity.Scripting.Python.Editor"
-            ],
-            "optionalUnityReferences": [],
-            "includePlatforms": [],
-            "excludePlatforms": [],
-            "allowUnsafeCode": false,
-            "overrideReferences": false,
-            "precompiledReferences": [],
-            "autoReferenced": true,
-            "defineConstraints": []
-        }}"""
+{{
+    "name": "{className}",
+    "references": [
+        "Unity.Integrations.Shotgun",
+        "Unity.Scripting.Python.Editor"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}}
+"""
         
     def CreateCSharpFile(self):
         functionStr = "\n\n".join(self._functionList)
@@ -87,6 +92,11 @@ class MenuItemGenerator(object):
         submenuName = menuName
         if cmdType == "context_menu":
             menuName = self._contextMenuFormat.format(cmdName)
+
+        if cmdName == 'Publish...':
+            # We do not want the "Publish..." menu item in Unity. Users should use 
+            # the "Publish Recording..." menu item instead
+            return 
         
         self._functionList.append(
             self._functionTemplate.format(
