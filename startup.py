@@ -82,7 +82,7 @@ class UnityLauncher(SoftwareLauncher):
         :returns: :class:`LaunchInformation` instance
         """
         required_env = {}
-        
+
         # Add std context and site info to the env. This will add stuff like which site to
         # connect to, what context to load, etc.
         required_env.update(self.get_standard_plugin_environment())
@@ -106,24 +106,6 @@ class UnityLauncher(SoftwareLauncher):
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/publishedfile.yml#L27
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/includes/settings/tk-shotgun-launchpublish.yml
 
-        # Here we try to find unity metadata on the context entity.
-        # If the field exists and specifies a Unity project to open on startup,
-        # We skip the project selection dialog
-        
-        plugins_basic_dir = os.path.split(__file__)[0]
-        plugins_basic_dir = os.path.join(plugins_basic_dir,'plugins','basic')
-        if plugins_basic_dir not in sys.path:
-            sys.path.append(plugins_basic_dir) 
-        
-        
-        import unity_metadata
-        metadata = unity_metadata.get_metadata(self.logger, required_env)
-        
-        self.logger.debug('******************metadata = {}'.format(metadata))
-        self.logger.debug('******************required_env = {}'.format(required_env))
-        
-        if metadata and metadata.has_key('projectPath'):
-            args += ' -projectPath "{}"'.format(metadata['projectPath'])
 
         self.logger.debug("Launch environment: %s", pprint.pformat(required_env))
         self.logger.debug("Launch arguments: %s", args)
