@@ -239,10 +239,18 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         scenePath = None
         if scene:
             scenePath = scene.path
-        
-        version_data['sg_unity_metadata'] = json.dumps({ 'projectPath' : projectPath, 'scenePath' : scenePath })
-        
 
+        # get the tk-unity engine version            
+        engine_version = 'Undefined'
+        engine = sgtk.platform.current_engine()
+        if engine:
+            engine_version = engine.version
+        
+        version_data['sg_unity_metadata'] = json.dumps(
+            { 'projectPath' : projectPath, 
+              'scenePath'   : scenePath,
+              'tk-unity'    : engine_version } )
+        
         # log the version data for debugging
         self.logger.debug(
             "Populated Version data...",
