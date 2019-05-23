@@ -100,9 +100,12 @@ class UnityLauncher(SoftwareLauncher):
         # Signals which engine instance from the environment is going to be used.
         required_env["SHOTGUN_ENGINE"] = self.engine_name
 
-        if file_to_open:
-            # Add the file name to open to the launch environment
-            required_env["SGTK_FILE_TO_OPEN"] = file_to_open
+        # We do not support the file_to_open logic. Its value comes from the 
+        # launch plug-in when users launch DCCs from a published file.
+        # https://github.com/shotgunsoftware/tk-shotgun-launchpublish
+        # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/publishedfile.yml#L27
+        # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/includes/settings/tk-shotgun-launchpublish.yml
+
 
         self.logger.debug("Launch environment: %s", pprint.pformat(required_env))
         self.logger.debug("Launch arguments: %s", args)
@@ -193,7 +196,7 @@ class UnityLauncher(SoftwareLauncher):
                 # not included)
                 executable_version = key_dict.get("version", "Unknown")
                
-                self.logger.warning("Software was found: " + executable_path + ", " + executable_version)
+                self.logger.debug("Software was found: " + executable_path + ", " + executable_version)
 
                 sw_versions.append(
                     SoftwareVersion(
