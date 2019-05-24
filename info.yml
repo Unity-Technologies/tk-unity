@@ -45,6 +45,11 @@ configuration:
         values:
             type: str
 
+    post_init_hook:
+        type: hook
+        description: "Logic to execute after the Unity engine has been successfully bootstrapped."
+        default_value: "{self}/bootstrap/post_init.py"
+
 # the Shotgun fields that this engine needs in order to operate correctly
 requires_shotgun_fields:
         
