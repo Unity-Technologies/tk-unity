@@ -55,11 +55,11 @@ def plugin_startup():
             qApp = importer.QtGui.QApplication(["Shotgun Engine for Unity"])
 
         import sgtk
-        engine = sgtk.platform.current_engine()
-        engine._initialize_dark_look_and_feel()
+        sgtk.platform.current_engine()._initialize_dark_look_and_feel()
 
-        # Time to invoke the post_init hook
-        engine.execute_hook_method('post_init_hook', 'on_post_init', engine = engine)
+        # Engine is fully initialized. Let Unity know
+        UnityEditor = unity_connection.get_module('UnityEditor')
+        UnityEditor.Integrations.Shotgun.Bootstrap.OnEngineInitialized()
 
     except Exception, e:
         import traceback

@@ -164,9 +164,6 @@ class UnityEditorEngine(Engine):
         with open(readme_path, 'w') as f:
             f.write('This directory is automatically created and deleted by the Shotgun integration.\nUsers should never alter it or use it to store their files.')
 
-        UnityEditor = unity_connection.get_module('UnityEditor')
-        UnityEditor.AssetDatabase.Refresh()
-
     # We call this function to then call the callbacks, so we can debug
     def call_menu_item_callback(self, name):
         if not self._menu_cmd_items or (not name in self._menu_cmd_items):
