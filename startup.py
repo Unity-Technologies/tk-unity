@@ -49,6 +49,7 @@ class UnityLauncher(SoftwareLauncher):
             "/mnt/opt/Unity/{version}/Editor/Unity",
             "/mnt/opt/Unity/Hub/Editor/Unity-{version}/Editor/Unity",
             "/home/{username}/Unity/{version}/Editor/Unity",
+            "/home/{username}/Unity/Hub/Editor/{version}/Editor/Unity"
         ]
     }
     
