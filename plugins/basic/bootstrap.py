@@ -23,6 +23,18 @@ def plugin_startup():
         #   the engine. This is what we do for our old Softimage integration, as 
         #   an example. You can find that here 
         #   (https://github.com/shotgunsoftware/tk-framework-softimageqt)
+        
+        # Start by creating the QApplication object
+        from sgtk.util.qt_importer import QtImporter
+        qt = QtImporter()
+        if not qt.QtGui.QApplication.instance():
+            # Tell QApplication that we're running as a plugin and not to muck with Native menus
+            if "darwin" == sys.platform:
+                qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_DontUseNativeMenuBar,False);
+                qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_MacPluginApplication,True);
+    
+            qApp = qt.QtGui.QApplication(["Shotgun Engine for Unity"])
+        
         if "darwin" in sys.platform:
             site_packages_path = '/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages'
             if site_packages_path not in sys.path:
@@ -38,21 +50,6 @@ def plugin_startup():
         # now that the path is there, we can import the plugin bootstrap logic
         import tk_unity_basic
         tk_unity_basic.plugin_bootstrap(plugin_root_path)
-
-        # make sure there is a QApplication. We need to wait after the call to 
-        # plugin_bootstrap in order for sgtk.platform.qt to be properly 
-        # populated
-        from sgtk.platform.qt import QtGui
-        if not QtGui.QApplication.instance():
-            from sgtk.util.qt_importer import QtImporter
-            importer = QtImporter()
-
-            # Tell QApplication that we're running as a plugin and not to muck with Native menus
-            if "darwin" == sys.platform:
-                importer.QtGui.QApplication.setAttribute(importer.QtCore.Qt.AA_DontUseNativeMenuBar,False);
-                importer.QtGui.QApplication.setAttribute(importer.QtCore.Qt.AA_MacPluginApplication,True);
-
-            qApp = importer.QtGui.QApplication(["Shotgun Engine for Unity"])
 
         import sgtk
         sgtk.platform.current_engine()._initialize_dark_look_and_feel()
