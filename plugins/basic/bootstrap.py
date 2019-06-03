@@ -57,6 +57,10 @@ def plugin_startup():
         import sgtk
         sgtk.platform.current_engine()._initialize_dark_look_and_feel()
 
+        # Engine is fully initialized. Let Unity know
+        UnityEditor = unity_connection.get_module('UnityEditor')
+        UnityEditor.Integrations.Shotgun.Bootstrap.OnEngineInitialized()
+
     except Exception, e:
         import traceback
         UnityEngine.Debug.LogError('Shotgun Toolkit Error: {}'.format(e))

@@ -229,30 +229,6 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         if settings["Link Local File"].value:
             version_data["sg_path_to_movie"] = path
             
-        # Set the Unity Metadata if possible
-        engine = sgtk.platform.current_engine()
-        if engine:
-            # Make sure the 'sg_unity_metadata' field exists on Version entities
-            version_fields = engine.shotgun.schema_field_read('Version')
-            if version_fields.get('sg_unity_metadata'):
-                UnityEngine = unity_connection.get_module('UnityEngine')
-                data_path = UnityEngine.Application.dataPath
-                project_path = os.path.dirname(data_path)
-                
-                # Get the currently open scene
-                scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene()
-                scene_path = None
-                if scene:
-                    scene_path = scene.path
-        
-                # get the tk-unity engine version            
-                engine_version = engine.version
-                
-                version_data['sg_unity_metadata'] = json.dumps(
-                    { 'project_path': project_path, 
-                      'scene_path'  : scene_path,
-                      'tk-unity'    : engine_version } )
-        
         # log the version data for debugging
         self.logger.debug(
             "Populated Version data...",
