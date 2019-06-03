@@ -8,7 +8,7 @@ import sys
 
 # Fix-up sys.path so we can access our utils
 utils_path = os.path.split(__file__)[0]
-utils_path = os.path.join(utils_path, '..', 'utils')
+utils_path = os.path.join(utils_path, os.pardir, 'utils')
 utils_path = os.path.normpath(utils_path)
 if utils_path not in sys.path:
     sys.path.append(utils_path)
