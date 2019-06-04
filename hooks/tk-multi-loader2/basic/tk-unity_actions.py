@@ -1,9 +1,19 @@
 """
 Hook that loads and defines all the available actions, broken down by publish type. 
 """
+import sgtk
 
 import os
-import sgtk
+import sys
+
+# Fix-up sys.path so we can access our utils
+utils_path = os.path.split(__file__)[0]
+utils_path = os.path.join(utils_path, '..', '..', 'utils')
+utils_path = os.path.normpath(utils_path)
+if utils_path not in sys.path:
+    sys.path.append(utils_path)
+
+import asset_import
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -157,47 +167,26 @@ class UnityActions(HookBaseClass):
         :param path: Path to file.
         :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
         """
+        app = self.parent
         
         if not os.path.exists(path):
             raise Exception("File not found on disk - '%s'" % path)
             
         # import into Unity
-        # copy file to Unity project
+        # First ask the user for a destination folder
         import unity_connection
         UnityEngine = unity_connection.get_module('UnityEngine')
-        projectPath = UnityEngine.Application.dataPath
+        project_path = UnityEngine.Application.dataPath
         
-        app = self.parent
-        import_paths = self._on_browse(projectPath)
-        if import_paths:
-
-            # get filename without version number if possible
-            filename = sg_publish_data.get("name", os.path.basename(path))  
-            filePath = os.path.join(import_paths[0], filename)
-
-            import shutil
-            try:
-                shutil.copy2(path, filePath)
-            except IOError as e:
-                app.logger.error("IOError: {0}".format(str(e)))
-                app.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
-                
-            app.logger.info("importing asset {0} to {1}".format(path, import_paths[0]))
-        
-            import unity_connection
-            UnityEditor = unity_connection.get_module('UnityEditor')
-            UnityEditor.AssetDatabase.Refresh()
-    
-            # store the path in the meta file
-            # get the path relative to assets. e.g. Assets/test.fbx instead of C:/path/to/Assets/test.fbx
-            asset = os.path.join("Assets", os.path.relpath(filePath, projectPath))
-            modelImporter = UnityEditor.AssetImporter.GetAtPath(asset)
-            if not modelImporter:
-                app.logger.warning("Shotgun: Could not find importer for asset {0}".format(asset))
-                return
-                
-            modelImporter.userData = path
-            modelImporter.SaveAndReimport()
+        import_paths = self._on_browse(project_path)
+        if not import_paths:
+            app.logger.warning("Shotgun: No import path selected, will not import asset")
             return
 
-        app.logger.warning("Shotgun: No import path selected, will not import asset")
+        destination_dir = import_paths[0]
+
+        # Get filename without version number if possible
+        asset_name_with_ext = sg_publish_data.get("name", os.path.basename(path))
+        asset_name = os.path.splitext(asset_name_with_ext)[0]
+
+        asset_import.import_file(path, asset_name, destination_dir)

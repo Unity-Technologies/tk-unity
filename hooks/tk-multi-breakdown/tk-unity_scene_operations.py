@@ -1,5 +1,19 @@
+import unity_connection
+
 import sgtk
+
+import json
 import os
+import sys
+
+# Fix-up sys.path so we can access our utils
+utils_path = os.path.split(__file__)[0]
+utils_path = os.path.join(utils_path, '..', 'utils')
+utils_path = os.path.normpath(utils_path)
+if utils_path not in sys.path:
+    sys.path.append(utils_path)
+
+import asset_import
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -40,15 +54,25 @@ class BreakdownSceneOperations(HookBaseClass):
             if extension.lower() != ".fbx":
                 continue # ignore potentially finding other files
                 
-            modelImporter = UnityEditor.AssetImporter.GetAtPath(path)
-            if not modelImporter:
+            model_importer = UnityEditor.AssetImporter.GetAtPath(path)
+            if not model_importer:
                 self.logger.warning('Ignoring file "{}" because there is no associated asset importer'.format(path))
                 continue
+            
+            userdata_path = None
+            try:
+                userdata = json.loads(model_importer.userData)
+                userdata_path = userdata['path'] 
+            except:
+                # This might be an asset that was imported with the alpha 
+                # version of the engine, when userData was set to the path
+                # (instead of a json dictionary)
+                userdata_path = model_importer.userData
                 
             item = {}
             item["type"] = "file"
             item["node"] = os.path.splitext(path)[0]
-            item["path"] = modelImporter.userData
+            item["path"] = userdata_path
             refs.append(item)
         return refs
 
@@ -64,30 +88,14 @@ class BreakdownSceneOperations(HookBaseClass):
         the file that each node should be updated *to* rather than the current path.
         """
         
-        import shutil
-        import unity_connection
         UnityEngine = unity_connection.get_module('UnityEngine')
-        UnityEditor = unity_connection.get_module('UnityEditor')
-
+        project_folder = UnityEngine.Application.dataPath
         for item in items:
-            # replace the item in Assets with the updated version at path
-            projectFolder = os.path.dirname(UnityEngine.Application.dataPath)
-            
-            assetRelPath = item.get("node")
-            updatePath = item.get("path")
-            if not assetRelPath or not updatePath:
-                continue
-            
-            assetRelPath = "{0}.fbx".format(assetRelPath)
-            try:
-                shutil.copy2(updatePath, os.path.join(projectFolder, assetRelPath))
-            except IOError as e:
-                import traceback
-                self.logger.debug("IOError: {0}".format(str(e)))
-                self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
-                
-            # update the path in the meta file     
-            UnityEditor.AssetDatabase.ImportAsset(assetRelPath)
-            modelImporter = UnityEditor.AssetImporter.GetAtPath(assetRelPath)
-            modelImporter.userData = updatePath
-            UnityEditor.AssetDatabase.ImportAsset(assetRelPath)
+            src_file = item.get("path")
+            asset_rel_path = item.get("node")
+
+            asset_name = asset_rel_path.split('/')[-1]
+            asset_directory = '/'.join(asset_rel_path.split('/')[1:-1])
+            dst_dir = os.path.join(project_folder, asset_directory)
+
+            asset_import.import_file(src_file, asset_name, dst_dir)
