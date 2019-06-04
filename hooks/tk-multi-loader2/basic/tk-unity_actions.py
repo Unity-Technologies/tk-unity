@@ -182,6 +182,7 @@ class UnityActions(HookBaseClass):
         import_paths = self._on_browse(project_path)
         if not import_paths:
             app.logger.warning("Shotgun: No import path selected, will not import asset")
+            return
 
         destination_dir = import_paths[0]
 
