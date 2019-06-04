@@ -187,8 +187,9 @@ class UnityEditorEngine(Engine):
         dialog = super(UnityEditorEngine, self)._create_dialog(title, bundle, widget, parent)
         
         try:
-            from sgtk.platform.qt import QtCore
-            dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
+            from sgtk.util.qt_importer import QtImporter
+            qt = QtImporter()
+            dialog.setWindowFlags(dialog.windowFlags() | qt.QtCore.Qt.WindowStaysOnTopHint)
         except Exception as e:
             import traceback
             self.logger.warning('Exception raised while trying to set WindowStaysOnTopHint on dialog "{}". The dialog will use the default toolkit behavior.'.format(title))

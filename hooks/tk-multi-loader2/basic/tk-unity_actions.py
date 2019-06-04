@@ -8,7 +8,7 @@ import sys
 
 # Fix-up sys.path so we can access our utils
 utils_path = os.path.split(__file__)[0]
-utils_path = os.path.join(utils_path, '..', '..', 'utils')
+utils_path = os.path.join(utils_path, os.pardir, os.pardir, 'utils')
 utils_path = os.path.normpath(utils_path)
 if utils_path not in sys.path:
     sys.path.append(utils_path)
@@ -131,22 +131,23 @@ class UnityActions(HookBaseClass):
     def _on_browse(self, starting_dir):
         """Opens a file dialog to browse to folder for import."""
 
-        from sgtk.platform.qt import QtGui
+        from sgtk.util.qt_importer import QtImporter
+        qt = QtImporter()
         # options for either browse type
         options = [
-            QtGui.QFileDialog.DontResolveSymlinks,
-            QtGui.QFileDialog.DontUseNativeDialog,
-            QtGui.QFileDialog.ShowDirsOnly
+            qt.QtGui.QFileDialog.DontResolveSymlinks,
+            qt.QtGui.QFileDialog.DontUseNativeDialog,
+            qt.QtGui.QFileDialog.ShowDirsOnly
         ]
 
         # browse folders specifics
         caption = "Browse folder to import FBX into"
-        file_mode = QtGui.QFileDialog.Directory
+        file_mode = qt.QtGui.QFileDialog.Directory
 
         # create the dialog
-        file_dialog = QtGui.QFileDialog(parent=QtGui.QApplication.instance().activeWindow(), caption=caption, directory=starting_dir)
-        file_dialog.setLabelText(QtGui.QFileDialog.Accept, "Select")
-        file_dialog.setLabelText(QtGui.QFileDialog.Reject, "Cancel")
+        file_dialog = qt.QtGui.QFileDialog(parent=qt.QtGui.QApplication.instance().activeWindow(), caption=caption, directory=starting_dir)
+        file_dialog.setLabelText(qt.QtGui.QFileDialog.Accept, "Select")
+        file_dialog.setLabelText(qt.QtGui.QFileDialog.Reject, "Cancel")
         file_dialog.setFileMode(file_mode)
 
         # set the appropriate options

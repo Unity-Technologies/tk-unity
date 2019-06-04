@@ -31,8 +31,9 @@ def on_idle():
     Processes the Qt events, if there is an application
     """
     try:
-        from sgtk.platform.qt import QtGui
-        QtGui.QApplication.instance().processEvents() 
+        from sgtk.util.qt_importer import QtImporter
+        qt = QtImporter()
+        qt.QtGui.QApplication.instance().processEvents() 
     except Exception:
         pass
 
