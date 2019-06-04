@@ -66,6 +66,12 @@ def plugin_startup():
         UnityEngine.Debug.LogError('Shotgun Toolkit Error: {}'.format(e))
         UnityEngine.Debug.LogError('Error stack trace:\n\n{}'.format(traceback.format_exc()))
         
+        # Clean-up the engine
+        import sgtk
+        engine = sgtk.platform.current_engine()
+        if engine:
+            engine.destroy()
+
         # Failure to bootstrap
         return -1
 
