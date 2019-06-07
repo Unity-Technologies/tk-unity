@@ -1,5 +1,20 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.8
+
+NEW FEATURES
+* Toolkit app dialogs are now shown "always on top"
+* Addition of an engine `post_init_hook`, called when Unity is done initializing 
+toolkit
+* More flexible ModelImporter.userData (now using a JSON dictionary)
+* Renamed Shotgun menu item "Record Timeline..." to "Publish Recording..."
+* Removed Shotgun menu item "Publish..."
+* Credentials are now asked using the standard UI Shotgun login dialogs
+* Added discovery paths for Unity on CentOS
+
+FIXES
+- Fixed an edge case where the engine would not initialize on domain reload
+
 **Version**: 0.7
 
 NEW FEATURES
