@@ -5,11 +5,15 @@ process in order to serve the Shotgun integration:
   function
 - Installs an idle callback that will process Qt events
 """
+
+import unity_client
+from unity_client_service import UnityClientService
+
+from sgtk.util.qt_importer import QtImporter
+qt = QtImporter()
+
 import imp
 import os
-import unity_client
-
-from unity_client_service import UnityClientService
 
 # We only initialize Shotgun once in the client process
 _shotgun_is_initialized = False    
@@ -28,14 +32,9 @@ def on_init_client(client):
     
 def on_idle():
     """
-    Processes the Qt events, if there is an application
+    Processes the Qt events
     """
-    try:
-        from sgtk.util.qt_importer import QtImporter
-        qt = QtImporter()
-        qt.QtGui.QApplication.instance().processEvents() 
-    except Exception:
-        pass
+    qt.QtGui.QApplication.instance().processEvents() 
 
 class ShotgunClientService(UnityClientService):
     """
