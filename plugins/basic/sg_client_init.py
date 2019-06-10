@@ -9,14 +9,15 @@ process in order to serve the Shotgun integration:
 import unity_client
 from unity_client_service import UnityClientService
 
-from sgtk.util.qt_importer import QtImporter
-qt = QtImporter()
 
 import imp
 import os
 
 # We only initialize Shotgun once in the client process
 _shotgun_is_initialized = False    
+
+# The qapplication object, will be created during bootstrap
+_qapp = None
 
 def log(msg):
     unity_client.log('[sg] {}'.format(msg))
@@ -34,7 +35,14 @@ def on_idle():
     """
     Processes the Qt events
     """
-    qt.QtGui.QApplication.instance().processEvents() 
+    global _qapp
+    if not _qapp:
+        from sgtk.util.qt_importer import QtImporter
+        qt = QtImporter()
+        _qapp = qt.QtGui.QApplication.instance()
+        
+    if _qapp:
+        _qapp.processEvents() 
 
 class ShotgunClientService(UnityClientService):
     """
