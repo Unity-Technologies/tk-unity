@@ -47,6 +47,12 @@ def plugin_startup():
         if plugin_root_path not in sys.path:
             sys.path.insert(0, plugin_root_path)
 
+        # Make sure there is no running engine before bootstrapping
+        import sgtk
+        engine = sgtk.platform.current_engine()
+        if engine:
+            engine.destroy()
+
         # now that the path is there, we can import the plugin bootstrap logic
         import tk_unity_basic
         tk_unity_basic.plugin_bootstrap(plugin_root_path)
