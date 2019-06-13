@@ -66,8 +66,13 @@ def plugin_startup():
 
     except Exception, e:
         import traceback
-        UnityEngine.Debug.LogError('Shotgun Toolkit Error: {}'.format(e))
-        UnityEngine.Debug.LogError('Error stack trace:\n\n{}'.format(traceback.format_exc()))
+        
+        # Only log in the client as we might have gotten a "connection reset" 
+        # exception (we will be able to log in the Unity console with the new
+        # Python API, with async calls
+        import unity_client
+        unity_client.log('Shotgun Toolkit Error: {}'.format(e))
+        unity_client.log('Error stack trace:\n\n{}'.format(traceback.format_exc()))
         
         # Clean-up the engine
         import sgtk
