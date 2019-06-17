@@ -47,6 +47,12 @@ def plugin_startup():
         if plugin_root_path not in sys.path:
             sys.path.insert(0, plugin_root_path)
 
+        # Make sure there is no running engine before bootstrapping
+        import sgtk
+        engine = sgtk.platform.current_engine()
+        if engine:
+            engine.destroy()
+
         # now that the path is there, we can import the plugin bootstrap logic
         import tk_unity_basic
         tk_unity_basic.plugin_bootstrap(plugin_root_path)
@@ -60,8 +66,13 @@ def plugin_startup():
 
     except Exception, e:
         import traceback
-        UnityEngine.Debug.LogError('Shotgun Toolkit Error: {}'.format(e))
-        UnityEngine.Debug.LogError('Error stack trace:\n\n{}'.format(traceback.format_exc()))
+        
+        # Only log in the client as we might have gotten a "connection reset" 
+        # exception (we will be able to log in the Unity console with the new
+        # Python API, with async calls
+        import unity_client
+        unity_client.log('Shotgun Toolkit Error: {}'.format(e))
+        unity_client.log('Error stack trace:\n\n{}'.format(traceback.format_exc()))
         
         # Clean-up the engine
         import sgtk
