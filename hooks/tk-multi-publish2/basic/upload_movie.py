@@ -3,7 +3,6 @@ import os
 import pprint
 import sys
 import sgtk
-import unity_connection
 
 HookBaseClass = sgtk.get_hook_baseclass()
 

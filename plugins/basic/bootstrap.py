@@ -1,3 +1,5 @@
+from sg_client import UnityEditor
+
 # This script module is executed by Unity to bootstrap Shotgun
 def plugin_startup():
     import os
@@ -7,8 +9,6 @@ def plugin_startup():
     Returns  0 on success 
     Returns -1 on failure
     """
-    import unity_connection
-    UnityEngine = unity_connection.get_module('UnityEngine')
     try:
         # Ensure that we can find PySide on MacOS
         # TODO: move this to part of the Python installation steps.
@@ -61,8 +61,7 @@ def plugin_startup():
         sgtk.platform.current_engine()._initialize_dark_look_and_feel()
 
         # Engine is fully initialized. Let Unity know
-        UnityEditor = unity_connection.get_module('UnityEditor')
-        UnityEditor.Integrations.Shotgun.Bootstrap.OnEngineInitialized()
+        UnityEditor().Integrations.Shotgun.Bootstrap.OnEngineInitialized()
 
     except Exception, e:
         import traceback
@@ -70,9 +69,9 @@ def plugin_startup():
         # Only log in the client as we might have gotten a "connection reset" 
         # exception (we will be able to log in the Unity console with the new
         # Python API, with async calls
-        import unity_client
-        unity_client.log('Shotgun Toolkit Error: {}'.format(e))
-        unity_client.log('Error stack trace:\n\n{}'.format(traceback.format_exc()))
+        import sg_client
+        sg_client.log('Shotgun Toolkit Error: {}'.format(e))
+        sg_client.log('Error stack trace:\n\n{}'.format(traceback.format_exc()))
         
         # Clean-up the engine
         import sgtk

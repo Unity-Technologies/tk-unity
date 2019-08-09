@@ -1,11 +1,12 @@
 """
 A Unity Editor engine for Sgtk.
 """
-import pprint
-import os
+from sg_client import UnityEngine
+
 from sgtk.platform import Engine
 
-import unity_connection
+import pprint
+import os
 
 ###############################################################################################
 # The Shotgun Unity engine
@@ -49,8 +50,7 @@ class UnityEditorEngine(Engine):
             }
         """
         try:
-            UnityEngine = unity_connection.get_module('UnityEngine')
-            host_info = {"name": "Unity", "version": UnityEngine.Application.unityVersion}
+            host_info = {"name": "Unity", "version": UnityEngine().Application.unityVersion}
         except Exception as e:
             import traceback
             self.logger.error('Exception raised while getting the version for Unity: {}'.format(e))
@@ -148,9 +148,7 @@ class UnityEditorEngine(Engine):
         
         # Remove the Assets/Shotgun folder (start fresh)
         import shutil
-        UnityEngine = unity_connection.get_module('UnityEngine')
-        shotgun_asset_path = UnityEngine.Application.dataPath + "/Shotgun"
-        shutil.rmtree(path=shotgun_asset_path, ignore_errors=True)
+        shotgun_asset_path = UnityEngine().Application.dataPath + "/Shotgun"
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context).decode("utf-8")
@@ -213,12 +211,10 @@ class UnityEditorEngine(Engine):
         """
         msg = handler.format(record)
         
-        UnityEngine = unity_connection.get_module('UnityEngine')
-        
         import logging
         if record.levelno >= logging.ERROR:
-            UnityEngine.Debug.LogError(msg)
+            UnityEngine().Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:
-            UnityEngine.Debug.LogWarning(msg)
+            UnityEngine().Debug.LogWarning(msg)
         else:
-            UnityEngine.Debug.Log(msg)
+            UnityEngine().Debug.Log(msg)
