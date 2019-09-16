@@ -33,9 +33,9 @@ def log(msg):
 
     print(message)
 
-class Jobs(object):
+class JobDispatcher(object):
     """
-    The Jobs class allows the connection thread to dispatch work on the main 
+    The JobDispatcher class allows the connection thread to dispatch work on the main 
     thread. For example, SG toolkit uses PySide UIs that need to be created in
     the main thread. Typically, the Service class methods should use the 
     exec_on_main_thread decorator to dispatch the requests to the main thread
@@ -43,7 +43,7 @@ class Jobs(object):
     """
     def __init__(self):
         """
-        The Jobs object must be initialized from the main thread
+        The JobDispatcher object must be initialized from the main thread
         """
         self._main_thread_id = threading.get_ident()
 
@@ -83,8 +83,8 @@ _connection = None
 # We only initialize Shotgun once in the client process
 _shotgun_is_initialized = False
 
-# The jobs we want to execute on the main thread
-_jobs = Jobs() 
+# For jobs we want to execute on the main thread
+_job_dispatcher = JobDispatcher() 
 
 # The Shotgun service class instance
 _service = None
@@ -113,7 +113,7 @@ class ShotgunClientService(unity_client.UnityClientService):
         else:
             super(ShotgunClientService, self).exposed_on_server_shutdown(invite_retry)
     
-    @_jobs.exec_on_main_thread
+    @_job_dispatcher.exec_on_main_thread
     def exposed_execute_menu_item(self,menu_item):
         """
         Calls the menu item callback
@@ -125,7 +125,7 @@ class ShotgunClientService(unity_client.UnityClientService):
             log('Got exception while executing menu item "{}": {}'.format(menu_item,e))
             log('callstack = {}'.format(traceback.format_exc()))
 
-    @_jobs.exec_on_main_thread
+    @_job_dispatcher.exec_on_main_thread
     def exposed_invoke_post_init_hook(self):
         """
         Invokes the post init hook
@@ -137,7 +137,7 @@ class ShotgunClientService(unity_client.UnityClientService):
             log('Got exception while invoking the post init hook: {}'.format(e))
             log('callstack = {}'.format(traceback.format_exc()))
 
-@_jobs.exec_on_main_thread
+@_job_dispatcher.exec_on_main_thread
 def bootstrap_shotgun():
     """
     Checks if Shotgun is already initialized. If not, executes the 
@@ -180,7 +180,7 @@ def bootstrap_shotgun():
         # in which case we get an exception here
         pass
 
-@_jobs.exec_on_main_thread
+@_job_dispatcher.exec_on_main_thread
 def connect_to_unity(service, wait_for_server = False):
     global _connection
     if _connection:
@@ -213,7 +213,7 @@ def main_loop():
     """
     Processes the Qt events and jobs that were dispatched from other threads
     """
-    global _jobs
+    global _job_dispatcher
     
     qapp = None
     while True:
@@ -225,7 +225,7 @@ def main_loop():
             qapp.processEvents()
 
         # Process jobs scheduled for the main thread
-        _jobs.process_jobs()
+        _job_dispatcher.process_jobs()
         
         time.sleep(0.001) 
 
