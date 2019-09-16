@@ -54,7 +54,7 @@ class UnityEditorEngine(Engine):
         except Exception as e:
             import traceback
             self.logger.error('Exception raised while getting the version for Unity: {}'.format(e))
-            self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+            self.logger.error('Stack trace:\n\n{}'.format(traceback.format_tb()))
             
             host_info = {"name": "Unity", "version": "unknown"}
             
@@ -191,7 +191,7 @@ class UnityEditorEngine(Engine):
         except Exception as e:
             import traceback
             self.logger.warning('Exception raised while trying to set WindowStaysOnTopHint on dialog "{}". The dialog will use the default toolkit behavior.'.format(title))
-            self.logger.warning('Stack trace:\n\n{}'.format(traceback.format_exc()))
+            self.logger.warning('Stack trace:\n\n{}'.format(traceback.format_tb()))
             
         return dialog
 

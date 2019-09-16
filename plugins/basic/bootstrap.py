@@ -71,7 +71,7 @@ def plugin_startup():
         # Python API, with async calls
         import sg_client
         sg_client.log('Shotgun Toolkit Error: {}'.format(e))
-        sg_client.log('Error stack trace:\n\n{}'.format(traceback.format_exc()))
+        sg_client.log('Error stack trace:\n\n{}'.format(traceback.format_tb()))
         
         # Clean-up the engine
         import sgtk

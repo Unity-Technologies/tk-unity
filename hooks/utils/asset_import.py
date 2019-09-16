@@ -29,7 +29,7 @@ def import_file(src_file, asset_name, dst_dir):
         shutil.copy2(src_file, dst_file_path)
     except IOError as e:
         log.error("IOError: {}".format(str(e)))
-        log.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+        log.error('Stack trace:\n\n{}'.format(traceback.format_tb()))
         
     log.info("importing asset {} ({} --> {}".format(asset_name, src_file, dst_file_path))
 
