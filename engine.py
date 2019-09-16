@@ -146,7 +146,7 @@ class UnityEditorEngine(Engine):
             self.logger.debug("Favorite found: " + menu_name)
             self._menu_cmd_items[menu_name]["properties"]["type"] = "favorite"
         
-        # Remove the Assets/Shotgun folder (start fresh)
+        # Generate the Shotgun menu items
         import shutil
         shotgun_asset_path = UnityEngine().Application.dataPath + "/Shotgun"
         
