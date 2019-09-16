@@ -122,8 +122,9 @@ class ShotgunClientService(unity_client.UnityClientService):
             import sgtk
             sgtk.platform.current_engine().call_menu_item_callback(menu_item)
         except Exception as e:
+            import traceback, pprint
             log('Got exception while executing menu item "{}": {}'.format(menu_item,e))
-            log('callstack = {}'.format(traceback.format_tb()))
+            log('callstack = {}'.format(pprint.pformat(traceback.format_stack()))
 
     @_job_dispatcher.exec_on_main_thread
     def exposed_invoke_post_init_hook(self):
@@ -134,8 +135,9 @@ class ShotgunClientService(unity_client.UnityClientService):
             import sgtk
             sgtk.platform.current_engine().execute_hook_method('post_init_hook', 'on_post_init')
         except Exception as e:
+            import traceback, pprint
             log('Got exception while invoking the post init hook: {}'.format(e))
-            log('callstack = {}'.format(traceback.format_tb()))
+            log('callstack = {}'.format(pprint.pformat(traceback.format_stack())))
 
 @_job_dispatcher.exec_on_main_thread
 def bootstrap_shotgun():
@@ -163,8 +165,9 @@ def bootstrap_shotgun():
         bootstrap_module = imp.load_module(module_name, module_file, module_path, module_desc)
         ret_val = bootstrap_module.plugin_startup()
     except Exception as e:
+        import traceback, pprint
         log('Got an exception while bootstrapping: {}'.format(e))
-        log('Stack trace:\n\n{}'.format(traceback.format_tb()))
+        log('Stack trace:\n\n{}'.format(traceback.pprint.pformat(traceback.format_stack())))
     
     if ret_val == 0:
         _shotgun_is_initialized = True

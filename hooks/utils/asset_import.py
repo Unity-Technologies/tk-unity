@@ -28,8 +28,9 @@ def import_file(src_file, asset_name, dst_dir):
     try:
         shutil.copy2(src_file, dst_file_path)
     except IOError as e:
+        import traceback, pprint
         log.error("IOError: {}".format(str(e)))
-        log.error('Stack trace:\n\n{}'.format(traceback.format_tb()))
+        log.error('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
         
     log.info("importing asset {} ({} --> {}".format(asset_name, src_file, dst_file_path))
 
