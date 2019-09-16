@@ -61,7 +61,7 @@ def plugin_startup():
         sgtk.platform.current_engine()._initialize_dark_look_and_feel()
 
         # Engine is fully initialized. Let Unity know
-        UnityEditor().Integrations.Shotgun.Bootstrap.OnEngineInitialized()
+        UnityEditor.Integrations.Shotgun.Bootstrap.OnEngineInitialized()
 
     except Exception, e:
         import traceback

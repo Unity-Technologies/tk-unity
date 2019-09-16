@@ -121,9 +121,9 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
 
     def progress_callback(value, message):
         if value != 1: 
-            UnityEditor().EditorUtility.DisplayProgressBar('Initializing Shotgun Toolkit', 'Please wait until initialization is complete', value)
+            UnityEditor.EditorUtility.DisplayProgressBar('Initializing Shotgun Toolkit', 'Please wait until initialization is complete', value)
         else:
-            UnityEditor().EditorUtility.ClearProgressBar()
+            UnityEditor.EditorUtility.ClearProgressBar()
             
 
     toolkit_mgr.progress_callback = progress_callback

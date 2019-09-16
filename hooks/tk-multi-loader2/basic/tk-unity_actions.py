@@ -177,7 +177,7 @@ class UnityActions(HookBaseClass):
             
         # import into Unity
         # First ask the user for a destination folder
-        project_path = UnityEngine().Application.dataPath
+        project_path = UnityEngine.Application.dataPath
         
         import_paths = self._on_browse(project_path)
         if not import_paths:

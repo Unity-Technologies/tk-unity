@@ -50,7 +50,7 @@ class UnityEditorEngine(Engine):
             }
         """
         try:
-            host_info = {"name": "Unity", "version": UnityEngine().Application.unityVersion}
+            host_info = {"name": "Unity", "version": UnityEngine.Application.unityVersion}
         except Exception as e:
             import traceback
             self.logger.error('Exception raised while getting the version for Unity: {}'.format(e))
@@ -148,7 +148,7 @@ class UnityEditorEngine(Engine):
         
         # Remove the Assets/Shotgun folder (start fresh)
         import shutil
-        shotgun_asset_path = UnityEngine().Application.dataPath + "/Shotgun"
+        shotgun_asset_path = UnityEngine.Application.dataPath + "/Shotgun"
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context).decode("utf-8")
@@ -213,8 +213,8 @@ class UnityEditorEngine(Engine):
         
         import logging
         if record.levelno >= logging.ERROR:
-            UnityEngine().Debug.LogError(msg)
+            UnityEngine.Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:
-            UnityEngine().Debug.LogWarning(msg)
+            UnityEngine.Debug.LogWarning(msg)
         else:
-            UnityEngine().Debug.Log(msg)
+            UnityEngine.Debug.Log(msg)
