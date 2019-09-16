@@ -54,7 +54,7 @@ class UnityEditorEngine(Engine):
         except Exception as e:
             import traceback, pprint
             self.logger.error('Exception raised while getting the version for Unity: {}'.format(e))
-            self.logger.error('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack()))
+            self.logger.error('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
             
             host_info = {"name": "Unity", "version": "unknown"}
             

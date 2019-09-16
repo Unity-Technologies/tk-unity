@@ -45,6 +45,8 @@ class JobDispatcher(object):
         """
         The JobDispatcher object must be initialized from the main thread
         """
+        super(JobDispatcher, self).__init__()
+
         self._main_thread_id = threading.get_ident()
 
         self._jobs = queue.Queue()
@@ -124,7 +126,7 @@ class ShotgunClientService(unity_client.UnityClientService):
         except Exception as e:
             import traceback, pprint
             log('Got exception while executing menu item "{}": {}'.format(menu_item,e))
-            log('callstack = {}'.format(pprint.pformat(traceback.format_stack()))
+            log('callstack = {}'.format(pprint.pformat(traceback.format_stack())))
 
     @_job_dispatcher.exec_on_main_thread
     def exposed_invoke_post_init_hook(self):
