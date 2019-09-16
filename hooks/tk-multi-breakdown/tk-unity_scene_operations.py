@@ -44,14 +44,15 @@ class BreakdownSceneOperations(HookBaseClass):
         refs = []
         
         # check the meta data of all fbx files in the project to see if they contain a shotgun path, add them if they do
-        guids = UnityEditor.AssetDatabase.FindAssets("t:model")
+        unity_editor = UnityEditor()
+        guids = unity_editor.AssetDatabase.FindAssets("t:model")
         for guid in guids:
-            path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid)
+            path = unity_editor.AssetDatabase.GUIDToAssetPath(guid)
             extension = os.path.splitext(path)[1] 
             if extension.lower() != ".fbx":
                 continue # ignore potentially finding other files
                 
-            model_importer = UnityEditor.AssetImporter.GetAtPath(path)
+            model_importer = unity_editor.AssetImporter.GetAtPath(path)
             if not model_importer:
                 self.logger.warning('Ignoring file "{}" because there is no associated asset importer'.format(path))
                 continue
@@ -85,7 +86,7 @@ class BreakdownSceneOperations(HookBaseClass):
         the file that each node should be updated *to* rather than the current path.
         """
         
-        project_folder = UnityEngine.Application.dataPath
+        project_folder = UnityEngine().Application.dataPath
         for item in items:
             src_file = item.get("path")
             asset_rel_path = item.get("node")

@@ -33,16 +33,16 @@ def import_file(src_file, asset_name, dst_dir):
         
     log.info("importing asset {} ({} --> {}".format(asset_name, src_file, dst_file_path))
 
-    UnityEditor.AssetDatabase.Refresh()
+    UnityEditor().AssetDatabase.Refresh()
     
-    project_path = UnityEngine.Application.dataPath
+    project_path = UnityEngine().Application.dataPath
 
     # Store the src_file in the meta file
     # We use a json dictionary in order to allow studios to augment the metadata
      
     # get the src_file relative to assets. e.g. Assets/test.fbx instead of C:/src_file/to/Assets/test.fbx
     asset = os.path.join("Assets", os.path.relpath(dst_file_path, project_path))
-    model_importer = UnityEditor.AssetImporter.GetAtPath(asset)
+    model_importer = UnityEditor().AssetImporter.GetAtPath(asset)
     if not model_importer:
         log.warning("Shotgun: Could not find importer for asset {}. Cannot add userData".format(asset))
         return

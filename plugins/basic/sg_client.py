@@ -90,8 +90,11 @@ _jobs = Jobs()
 _service = None
 
 ### Unity API access
-UnityEngine = _service.UnityEngine
-UnityEditor = _service.UnityEditor
+def UnityEngine():
+    return _service.UnityEngine
+
+def UnityEditor():
+    return _service.UnityEditor
 
 class ShotgunClientService(unity_client.UnityClientService):
     """
@@ -171,7 +174,7 @@ def bootstrap_shotgun():
         
     # Clear the progress bar in case we never got to 100%
     try:
-        UnityEditor.EditorUtility.ClearProgressBar()
+        UnityEditor().EditorUtility.ClearProgressBar()
     except Exception:
         # It is possible that the progress bar is not displayed anymore, 
         # in which case we get an exception here
