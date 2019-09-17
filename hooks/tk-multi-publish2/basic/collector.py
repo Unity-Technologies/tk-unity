@@ -1,4 +1,4 @@
-from sg_client import UnityEngine
+from sg_client import GetUnityEngine
 
 import sgtk
 
@@ -24,7 +24,7 @@ class UnitySessionCollector(HookBaseClass):
         :param parent_item: Root item instance
 
         """
-        unity_engine = UnityEngine()
+        unity_engine = GetUnityEngine()
         session_item = parent_item.create_item(
             "unity.session",
             "Unity Session",

@@ -46,11 +46,8 @@ class JobDispatcher(object):
         The JobDispatcher object must be initialized from the main thread
         """
         super(JobDispatcher, self).__init__()
-
         self._main_thread_id = threading.get_ident()
-
         self._jobs = queue.Queue()
-        self._condition = threading.Condition()
 
     def exec_on_main_thread(self, f):
         """
@@ -65,8 +62,7 @@ class JobDispatcher(object):
                 f(*args, **kwargs)
                 return
             
-            with self._condition:
-                self._jobs.put(lambda: f(*args, **kwargs))
+            self._jobs.put(lambda: f(*args, **kwargs))
         
         return func_wrapper
     
@@ -74,10 +70,9 @@ class JobDispatcher(object):
         """
         Call this periodically from the main loop.
         """
-        with self._condition:
-            while not self._jobs.empty():
-                f = self._jobs.get()
-                f()
+        while not self._jobs.empty():
+            f = self._jobs.get()
+            f()
 
 # Keep a reference on the connection
 _connection = None
@@ -92,10 +87,10 @@ _job_dispatcher = JobDispatcher()
 _service = None
 
 ### Unity API access
-def UnityEngine():
+def GetUnityEngine():
     return _service.UnityEngine
 
-def UnityEditor():
+def GetUnityEditor():
     return _service.UnityEditor
 
 class ShotgunClientService(unity_client.UnityClientService):
@@ -104,7 +99,7 @@ class ShotgunClientService(unity_client.UnityClientService):
     Shotgun integration
     """
     def exposed_client_name(self):
-        return 'Shotgun'
+        return 'com.unity.integrations.shotgun'
     
     def exposed_on_server_shutdown(self, invite_retry):
         global _connection
@@ -156,7 +151,6 @@ def bootstrap_shotgun():
     path_to_bootstrap = os.environ.get('SHOTGUN_UNITY_BOOTSTRAP_LOCATION')
     path_to_bootstrap = os.path.normpath(path_to_bootstrap)
     
-    ret_val = -1
     try:
         # Use the imp module to bootstrap in order to get a return value
         (dir_name, file_name) = os.path.split(path_to_bootstrap)
@@ -165,27 +159,25 @@ def bootstrap_shotgun():
         log('Invoking bootstrap script ("{}")'.format(path_to_bootstrap))
         (module_file, module_path, module_desc) = imp.find_module(module_name, [dir_name])
         bootstrap_module = imp.load_module(module_name, module_file, module_path, module_desc)
-        ret_val = bootstrap_module.plugin_startup()
+        _shotgun_is_initialized = True if bootstrap_module.plugin_startup() == 0 else False
     except Exception as e:
         import traceback, pprint
         log('Got an exception while bootstrapping: {}'.format(e))
-        log('Stack trace:\n\n{}'.format(traceback.pprint.pformat(traceback.format_stack())))
+        log('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
     
-    if ret_val == 0:
-        _shotgun_is_initialized = True
+    if _shotgun_is_initialized:
         log('Shotgun has been initialized in the client process')
     else:
         log('Shotgun has not been initialized in the client process')
         
     # Clear the progress bar in case we never got to 100%
     try:
-        UnityEditor().EditorUtility.ClearProgressBar()
+        GetUnityEditor().EditorUtility.ClearProgressBar()
     except Exception:
         # It is possible that the progress bar is not displayed anymore, 
         # in which case we get an exception here
         pass
 
-@_job_dispatcher.exec_on_main_thread
 def connect_to_unity(service, wait_for_server = False):
     global _connection
     if _connection:
@@ -201,7 +193,9 @@ def connect_to_unity(service, wait_for_server = False):
             _connection = unity_client.connect(service)
         except Exception as e:
             # Give the server time to restart
+            import traceback, pprint
             log('Got Exception while connecting: {}. Waiting for 1 second before trying again'.format(e))
+            log('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
             time.sleep(1)
         else:
             log('Connected')
