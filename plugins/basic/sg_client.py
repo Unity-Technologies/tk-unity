@@ -83,7 +83,8 @@ _shotgun_is_initialized = False
 # For jobs we want to execute on the main thread
 _job_dispatcher = JobDispatcher() 
 
-# The Shotgun service class instance
+# The Shotgun service class and its instance
+_service_class = None
 _service = None
 
 ### Unity API access
@@ -106,7 +107,7 @@ class ShotgunClientService(unity_client.UnityClientService):
         _connection = None
 
         if invite_retry:
-            connect_to_unity(service = _service, wait_for_server=True)
+            connect_to_unity(wait_for_server=True)
         else:
             super(ShotgunClientService, self).exposed_on_server_shutdown(invite_retry)
     
@@ -178,19 +179,24 @@ def bootstrap_shotgun():
         # in which case we get an exception here
         pass
 
-def connect_to_unity(service, wait_for_server = False):
+def connect_to_unity(wait_for_server = False):
     global _connection
+    global _service
+
     if _connection:
         return
 
     if wait_for_server:
         time.sleep(1)
 
+    # Always use a fresh instance
+    _service = _service_class()
+
     # Try 10 times
     for i in range(10):
         try:
             log('Trying to connect ({}/10)'.format(i+1))
-            _connection = unity_client.connect(service)
+            _connection = unity_client.connect(_service)
         except Exception as e:
             # Give the server time to restart
             import traceback, pprint
@@ -228,10 +234,10 @@ def main_loop():
         
         time.sleep(0.001) 
 
-def main(service = ShotgunClientService):
-    global _service
-    _service = service()
-    connect_to_unity(service = _service, wait_for_server=False)    
+def main(service_class = ShotgunClientService):
+    global _service_class
+    _service_class = service_class
+    connect_to_unity(wait_for_server=False)    
     main_loop()
 
 if __name__ == '__main__':
