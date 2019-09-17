@@ -1,6 +1,9 @@
+from sg_client import GetUnityEngine
+
+import sgtk
+
 import glob
 import os
-import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -21,19 +24,17 @@ class UnitySessionCollector(HookBaseClass):
         :param parent_item: Root item instance
 
         """
-        
-        import unity_connection
-        UnityEngine = unity_connection.get_module('UnityEngine')
+        unity_engine = GetUnityEngine()
         session_item = parent_item.create_item(
             "unity.session",
             "Unity Session",
-            UnityEngine.Application.productName
+            unity_engine.Application.productName
         )
-        session_item.properties["project_root"] = UnityEngine.Application.dataPath
+        session_item.properties["project_root"] = unity_engine.Application.dataPath
         import tempfile
         self._collect_file(
             session_item,
-            os.path.join(tempfile.gettempdir(), UnityEngine.Application.productName + ".mp4")
+            os.path.join(tempfile.gettempdir(), unity_engine.Application.productName + ".mp4")
         )
         
     # Private interface

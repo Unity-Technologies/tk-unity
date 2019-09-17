@@ -1,4 +1,4 @@
-import unity_connection
+from sg_client import GetUnityEditor, GetUnityEngine
 
 import sgtk
 
@@ -28,24 +28,22 @@ def import_file(src_file, asset_name, dst_dir):
     try:
         shutil.copy2(src_file, dst_file_path)
     except IOError as e:
+        import traceback, pprint
         log.error("IOError: {}".format(str(e)))
-        log.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+        log.error('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
         
     log.info("importing asset {} ({} --> {}".format(asset_name, src_file, dst_file_path))
 
-    UnityEditor = unity_connection.get_module('UnityEditor')
-    UnityEngine = unity_connection.get_module('UnityEngine')
-
-    UnityEditor.AssetDatabase.Refresh()
+    GetUnityEditor().AssetDatabase.Refresh()
     
-    project_path = UnityEngine.Application.dataPath
+    project_path = GetUnityEngine().Application.dataPath
 
     # Store the src_file in the meta file
     # We use a json dictionary in order to allow studios to augment the metadata
      
     # get the src_file relative to assets. e.g. Assets/test.fbx instead of C:/src_file/to/Assets/test.fbx
     asset = os.path.join("Assets", os.path.relpath(dst_file_path, project_path))
-    model_importer = UnityEditor.AssetImporter.GetAtPath(asset)
+    model_importer = GetUnityEditor().AssetImporter.GetAtPath(asset)
     if not model_importer:
         log.warning("Shotgun: Could not find importer for asset {}. Cannot add userData".format(asset))
         return

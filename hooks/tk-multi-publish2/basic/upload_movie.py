@@ -3,7 +3,6 @@ import os
 import pprint
 import sys
 import sgtk
-import unity_connection
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -309,9 +308,9 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
             try:
                 os.remove(full_file_name)
             except Exception, e:
-                import traceback
+                import traceback, pprint
                 self.logger.error('Exception while trying to delete temporary render file "{}":{}'.format(full_file_name,e))
-                self.logger.error('Stack trace:\n\n{}'.format(traceback.format_exc()))
+                self.logger.error('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
 
     # Private interface
     def _get_version_entity(self, item):

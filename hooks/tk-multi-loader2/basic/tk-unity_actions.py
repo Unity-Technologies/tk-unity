@@ -1,6 +1,8 @@
 """
 Hook that loads and defines all the available actions, broken down by publish type. 
 """
+from sg_client import GetUnityEngine
+
 import sgtk
 
 import os
@@ -175,9 +177,7 @@ class UnityActions(HookBaseClass):
             
         # import into Unity
         # First ask the user for a destination folder
-        import unity_connection
-        UnityEngine = unity_connection.get_module('UnityEngine')
-        project_path = UnityEngine.Application.dataPath
+        project_path = GetUnityEngine().Application.dataPath
         
         import_paths = self._on_browse(project_path)
         if not import_paths:
