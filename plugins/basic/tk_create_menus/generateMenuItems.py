@@ -23,10 +23,17 @@ class MenuItemGenerator(object):
         self._functionTemplate ="""        [MenuItem("Shotgun/{menuName}", false, {priority})] 
         public static void MenuItem{count}()
         {{
-            Service.Call("execute_menu_item", "{submenuName}");
+            PythonRunner.CallAsyncServiceOnClient("com.unity.integrations.shotgun","execute_menu_item", "{submenuName}");
         }}"""
 
         self._fileContentsTemplate = """
+using UnityEditor;
+using UnityEditor.Scripting.Python;
+using UnityEngine;
+
+using System.Collections.Generic;
+using System.IO;
+
 namespace UnityEditor.Integrations.Shotgun
 {{
     class {className}
