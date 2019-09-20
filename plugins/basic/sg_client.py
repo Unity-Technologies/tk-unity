@@ -187,7 +187,7 @@ def connect_to_unity(wait_for_server = False):
         return
 
     if wait_for_server:
-        time.sleep(1)
+        time.sleep(2)
 
     # Always use a fresh instance
     _service = _service_class()
