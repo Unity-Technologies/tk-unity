@@ -201,7 +201,7 @@ def connect_to_unity(wait_for_server = False):
             # Give the server time to restart
             import traceback, pprint
             log('Got Exception while connecting: {}. Waiting for 1 second before trying again'.format(e))
-            log('Stack trace:\n\n{}'.format(traceback.format_exc()))
+            log('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
             time.sleep(1)
         else:
             log('Connected')
