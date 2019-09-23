@@ -137,6 +137,13 @@ class ShotgunClientService(unity_client.UnityClientService):
             log('Got exception while invoking the post init hook: {}'.format(e))
             log('callstack = {}'.format(pprint.pformat(traceback.format_stack())))
 
+    def exposed_tk_unity_version(self):
+        """
+        Returns a string representing the version of tk-unity, e.g. "v0.9"
+        """
+        import sgtk
+        return sgtk.platform.current_engine().version
+
 @_job_dispatcher.exec_on_main_thread
 def bootstrap_shotgun():
     """
