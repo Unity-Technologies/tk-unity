@@ -84,7 +84,6 @@ _shotgun_is_initialized = False
 _job_dispatcher = JobDispatcher() 
 
 # The Shotgun service class and its instance
-_service_class = None
 _service = None
 
 ### Unity API access
@@ -104,6 +103,7 @@ class ShotgunClientService(unity_client.UnityClientService):
     
     def exposed_on_server_shutdown(self, invite_retry):
         global _connection
+        _connection.close()
         _connection = None
 
         if invite_retry:
@@ -188,16 +188,12 @@ def bootstrap_shotgun():
 
 def connect_to_unity(wait_for_server = False):
     global _connection
-    global _service
 
     if _connection:
         return
 
     if wait_for_server:
         time.sleep(2)
-
-    # Always use a fresh instance
-    _service = _service_class()
 
     # Try 10 times
     for i in range(10):
@@ -242,8 +238,10 @@ def main_loop():
         time.sleep(0.001) 
 
 def main(service_class = ShotgunClientService):
-    global _service_class
-    _service_class = service_class
+    global _service
+
+    # The service instance
+    _service  = service_class()
     connect_to_unity(wait_for_server=False)    
     main_loop()
 
