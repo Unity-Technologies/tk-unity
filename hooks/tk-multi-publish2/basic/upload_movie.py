@@ -307,10 +307,10 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         if os.path.isfile(full_file_name):
             try:
                 os.remove(full_file_name)
-            except Exception, e:
-                import traceback, pprint
-                self.logger.error('Exception while trying to delete temporary render file "{}":{}'.format(full_file_name,e))
-                self.logger.error('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
+            except:
+                import traceback
+                self.logger.error('Exception while trying to delete temporary render file "{}"'.format(full_file_name))
+                self.logger.error('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
 
     # Private interface
     def _get_version_entity(self, item):
