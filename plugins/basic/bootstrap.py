@@ -63,14 +63,14 @@ def plugin_startup():
         # Engine is fully initialized. Let Unity know
         GetUnityEditor().Integrations.Shotgun.Bootstrap.OnEngineInitialized()
 
-    except Exception, e:
-        import traceback, pprint
+    except:
+        import traceback
         
         # Only log in the client as we might have gotten a "connection reset" 
         # exception
         import sg_client
-        sg_client.log('Shotgun Toolkit Error: {}'.format(e))
-        sg_client.log('Error stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
+        sg_client.log('Shotgun Toolkit Error:')
+        sg_client.log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
         
         # Clean-up the engine
         import sgtk

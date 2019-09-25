@@ -119,10 +119,10 @@ class ShotgunClientService(unity_client.UnityClientService):
         try:
             import sgtk
             sgtk.platform.current_engine().call_menu_item_callback(menu_item)
-        except Exception as e:
-            import traceback, pprint
-            log('Got exception while executing menu item "{}": {}'.format(menu_item,e))
-            log('callstack = {}'.format(pprint.pformat(traceback.format_stack())))
+        except:
+            import traceback
+            log('Got exception while executing menu item "{}"'.format(menu_item))
+            log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
 
     @_job_dispatcher.exec_on_main_thread
     def exposed_invoke_post_init_hook(self):
@@ -132,10 +132,10 @@ class ShotgunClientService(unity_client.UnityClientService):
         try:
             import sgtk
             sgtk.platform.current_engine().execute_hook_method('post_init_hook', 'on_post_init')
-        except Exception as e:
-            import traceback, pprint
-            log('Got exception while invoking the post init hook: {}'.format(e))
-            log('callstack = {}'.format(pprint.pformat(traceback.format_stack())))
+        except:
+            import traceback
+            log('Got exception while invoking the post init hook:')
+            log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
 
     def exposed_tk_unity_version(self):
         """
@@ -168,10 +168,10 @@ def bootstrap_shotgun():
         (module_file, module_path, module_desc) = imp.find_module(module_name, [dir_name])
         bootstrap_module = imp.load_module(module_name, module_file, module_path, module_desc)
         _shotgun_is_initialized = True if bootstrap_module.plugin_startup() == 0 else False
-    except Exception as e:
-        import traceback, pprint
-        log('Got an exception while bootstrapping: {}'.format(e))
-        log('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
+    except:
+        import traceback
+        log('Got an exception while bootstrapping:')
+        log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
     
     if _shotgun_is_initialized:
         log('Shotgun has been initialized in the client process')
@@ -200,11 +200,11 @@ def connect_to_unity(wait_for_server = False):
         try:
             log('Trying to connect ({}/10)'.format(i+1))
             _connection = unity_client.connect(_service)
-        except Exception as e:
+        except:
             # Give the server time to restart
-            import traceback, pprint
-            log('Got Exception while connecting: {}. Waiting for 1 second before trying again'.format(e))
-            log('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
+            import traceback
+            log('Got Exception while connecting. Waiting for 1 second before trying again'.format())
+            log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
             time.sleep(1)
         else:
             log('Connected')

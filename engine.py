@@ -51,10 +51,10 @@ class UnityEditorEngine(Engine):
         """
         try:
             host_info = {"name": "Unity", "version": GetUnityEngine().Application.unityVersion}
-        except Exception as e:
-            import traceback, pprint
-            self.logger.error('Exception raised while getting the version for Unity: {}'.format(e))
-            self.logger.error('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
+        except:
+            import traceback
+            self.logger.error('Exception raised while getting the version for Unity')
+            self.logger.error('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
             
             host_info = {"name": "Unity", "version": "unknown"}
             
@@ -188,10 +188,10 @@ class UnityEditorEngine(Engine):
             from sgtk.util.qt_importer import QtImporter
             qt = QtImporter()
             dialog.setWindowFlags(dialog.windowFlags() | qt.QtCore.Qt.WindowStaysOnTopHint)
-        except Exception as e:
-            import traceback, pprint
+        except:
+            import traceback
             self.logger.warning('Exception raised while trying to set WindowStaysOnTopHint on dialog "{}". The dialog will use the default toolkit behavior.'.format(title))
-            self.logger.warning('Stack trace:\n\n{}'.format(pprint.pformat(traceback.format_stack())))
+            self.logger.warning('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
             
         return dialog
 
