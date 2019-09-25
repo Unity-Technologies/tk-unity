@@ -86,6 +86,9 @@ _job_dispatcher = JobDispatcher()
 # The Shotgun service class and its instance
 _service = None
 
+# Number of attempts to reconnect to the server
+_nb_connection_attempts = 100
+
 ### Unity API access
 def GetUnityEngine():
     return _service.UnityEngine
@@ -196,9 +199,9 @@ def connect_to_unity(wait_for_server = False):
         time.sleep(2)
 
     # Try 10 times
-    for i in range(10):
+    for i in range(_nb_connection_attempts):
         try:
-            log('Trying to connect ({}/10)'.format(i+1))
+            log('Trying to connect ({}/{})'.format(i+1, _nb_connection_attempts))
             _connection = unity_client.connect(_service)
         except:
             # Give the server time to restart
