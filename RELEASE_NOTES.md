@@ -2,7 +2,7 @@
 
 **Version**: 0.9
 
-This version ports tk-unity to the Python Integrator API for Unity
+This version ports tk-unity to Python for Unity 2.0.0
 
 **Version**: 0.8
 
