@@ -1,5 +1,11 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.9
+
+This version requires:
+* Python for Unity 2.0.0
+* Shotgun for Unity 0.9.0
+
 **Version**: 0.8
 
 NEW FEATURES
