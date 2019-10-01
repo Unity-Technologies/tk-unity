@@ -2,7 +2,9 @@
 
 **Version**: 0.9
 
-This version ports tk-unity to Python for Unity 2.0.0
+This version requires:
+* Python for Unity 2.0.0
+* Shotgun for Unity 0.9.0
 
 **Version**: 0.8
 
