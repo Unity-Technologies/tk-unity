@@ -1,5 +1,9 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.9
+
+This version ports tk-unity to the Python Integrator API for Unity
+
 **Version**: 0.8
 
 NEW FEATURES
