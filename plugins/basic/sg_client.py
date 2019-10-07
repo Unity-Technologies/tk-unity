@@ -117,6 +117,9 @@ def bootstrap_shotgun():
 
     log('Requesting bootstrap')
     path_to_bootstrap = os.environ.get('SHOTGUN_UNITY_BOOTSTRAP_LOCATION')
+    if not path_to_bootstrap:
+        raise EnvironmentError('Unity was not launched from Shotgun (SHOTGUN_UNITY_BOOTSTRAP_LOCATION is not defined in the environment). Cannot bootstrap toolkit.')
+
     path_to_bootstrap = os.path.normpath(path_to_bootstrap)
     
     try:
