@@ -7,6 +7,7 @@ import unity_python.client.unity_client as unity_client
 
 import imp
 import os
+import unity_python.common.scheduling as scheduling
 import sys
 import threading
 import time
@@ -33,55 +34,11 @@ def log(msg):
 
     print(message)
 
-class JobDispatcher(object):
-    """
-    The JobDispatcher class allows the connection thread to dispatch work on the main 
-    thread. For example, SG toolkit uses PySide UIs that need to be created in
-    the main thread. Typically, the Service class methods should use the 
-    exec_on_main_thread decorator to dispatch the requests to the main thread
-    when required
-    """
-    def __init__(self):
-        """
-        The JobDispatcher object must be initialized from the main thread
-        """
-        super(JobDispatcher, self).__init__()
-        self._main_thread_id = threading.get_ident()
-        self._jobs = queue.Queue()
-
-    def exec_on_main_thread(self, f):
-        """
-        Decorator that will queue a job (function) for execution on the main thread.
-        Returns when the job has been queued
-        Does not provide a return value nor raises an exception if the queued job
-        raises an exception
-        """
-        def func_wrapper(*args, **kwargs):
-            # Optimization: if already in the main thread, execute right away
-            if threading.get_ident() == self._main_thread_id:
-                f(*args, **kwargs)
-                return
-            
-            self._jobs.put(lambda: f(*args, **kwargs))
-        
-        return func_wrapper
-    
-    def process_jobs(self):
-        """
-        Call this periodically from the main loop.
-        """
-        while not self._jobs.empty():
-            f = self._jobs.get()
-            f()
-
 # Keep a reference on the connection
 _connection = None
 
 # We only initialize Shotgun once in the client process
 _shotgun_is_initialized = False
-
-# For jobs we want to execute on the main thread
-_job_dispatcher = JobDispatcher() 
 
 # The Shotgun service class and its instance
 _service = None
@@ -114,7 +71,7 @@ class ShotgunClientService(unity_client.UnityClientService):
         else:
             super(ShotgunClientService, self).exposed_on_server_shutdown(invite_retry)
     
-    @_job_dispatcher.exec_on_main_thread
+    @scheduling.exec_on_main_thread
     def exposed_execute_menu_item(self,menu_item):
         """
         Calls the menu item callback
@@ -127,7 +84,7 @@ class ShotgunClientService(unity_client.UnityClientService):
             log('Got exception while executing menu item "{}"'.format(menu_item))
             log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
 
-    @_job_dispatcher.exec_on_main_thread
+    @scheduling.exec_on_main_thread
     def exposed_invoke_post_init_hook(self):
         """
         Invokes the post init hook
@@ -147,7 +104,7 @@ class ShotgunClientService(unity_client.UnityClientService):
         import sgtk
         return sgtk.platform.current_engine().version
 
-@_job_dispatcher.exec_on_main_thread
+@scheduling.exec_on_main_thread
 def bootstrap_shotgun():
     """
     Checks if Shotgun is already initialized. If not, executes the 
@@ -160,6 +117,9 @@ def bootstrap_shotgun():
 
     log('Requesting bootstrap')
     path_to_bootstrap = os.environ.get('SHOTGUN_UNITY_BOOTSTRAP_LOCATION')
+    if not path_to_bootstrap:
+        raise EnvironmentError('Unity was not launched from Shotgun (SHOTGUN_UNITY_BOOTSTRAP_LOCATION is not defined in the environment). Cannot bootstrap toolkit.')
+
     path_to_bootstrap = os.path.normpath(path_to_bootstrap)
     
     try:
@@ -224,8 +184,6 @@ def main_loop():
     """
     Processes the Qt events and jobs that were dispatched from other threads
     """
-    global _job_dispatcher
-    
     qapp = None
     while True:
         if not qapp:
@@ -236,12 +194,14 @@ def main_loop():
             qapp.processEvents()
 
         # Process jobs scheduled for the main thread
-        _job_dispatcher.process_jobs()
-        
+        scheduling.process_jobs()
         time.sleep(0.001) 
 
 def main(service_class = ShotgunClientService):
     global _service
+
+    # Initialize scheduling
+    scheduling.initialize()
 
     # The service instance
     _service  = service_class()
