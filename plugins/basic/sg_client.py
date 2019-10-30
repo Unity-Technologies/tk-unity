@@ -98,9 +98,6 @@ class ShotgunClientService(unity_client.UnityClientService):
             log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
 
     def exposed_tk_unity_version(self):
-        import sgtk
-        return sgtk.platform.current_engine().version
-
         """
         Returns a string representing the version of tk-unity, e.g. "v0.9"
         """
