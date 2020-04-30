@@ -162,7 +162,7 @@ class UnityLauncher(SoftwareLauncher):
                     if not data:
                         continue
                     
-                    for vals in data.values():
+                    for vals in list(data.values()):
                         version = vals["version"]
                         exec_paths = vals["location"] # list of locations
                         if len(exec_paths) < 1:

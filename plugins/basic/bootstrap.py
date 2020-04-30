@@ -1,4 +1,4 @@
-from sg_client import GetUnityEditor
+from .sg_client import GetUnityEditor
 
 # This script module is executed by Unity to bootstrap Shotgun
 def plugin_startup():
@@ -54,7 +54,7 @@ def plugin_startup():
             engine.destroy()
 
         # now that the path is there, we can import the plugin bootstrap logic
-        import tk_unity_basic
+        from . import tk_unity_basic
         tk_unity_basic.plugin_bootstrap(plugin_root_path)
 
         import sgtk
@@ -68,7 +68,7 @@ def plugin_startup():
         
         # Only log in the client as we might have gotten a "connection reset" 
         # exception
-        import sg_client
+        from . import sg_client
         sg_client.log('Shotgun Toolkit Error:')
         sg_client.log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
         

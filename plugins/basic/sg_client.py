@@ -210,5 +210,5 @@ def main(service_class = ShotgunClientService):
 
 if __name__ == '__main__':
     # Avoid working in the main module
-    import sg_client
+    from . import sg_client
     sg_client.main()

@@ -99,7 +99,7 @@ namespace UnityEditor.Integrations.Shotgun
             )
 
     def GenerateMenuItems(self):
-        for (key, value) in self._cmdItems.items():
+        for (key, value) in list(self._cmdItems.items()):
             type = value["properties"].get("type", "default")
             self.GenerateMenuItem(key, type)
         self.CreateCSharpFile()

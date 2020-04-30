@@ -113,7 +113,7 @@ class UnityEditorEngine(Engine):
         
         # store the menu cmds so that we can access them later from C#
         self._menu_cmd_items = {}
-        for (cmd_name, cmd_details) in self.commands.items():
+        for (cmd_name, cmd_details) in list(self.commands.items()):
             # Prints out the name of the Toolkit commands that can be invoked
             # and the method to invoke to launch them. The callbacks
             # do not take any parameters.
