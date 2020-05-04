@@ -252,7 +252,7 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         if settings["Upload"].value:
             self.logger.info("Uploading content...")
 
-           upload_path = path
+            upload_path = path
 
             self.parent.shotgun.upload(
                 "Version",
