@@ -5,7 +5,7 @@ process in order to serve the Shotgun integration
 
 import unity_python.client.unity_client as unity_client
 
-import importlib
+import importlib.util
 import os
 import unity_python.common.scheduling as scheduling
 import sys
