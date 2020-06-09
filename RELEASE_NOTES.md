@@ -2,7 +2,6 @@
 
 **Version**: 1.0
 This versions requires:
-* Python for Unity 3.0.0
 * Shotgun for Unity 1.0.0
 
 NEW FEATURES
