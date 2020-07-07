@@ -1,12 +1,21 @@
 ﻿RELEASE NOTES
 
-**Version**: 0.10
+**Version**: 1.0
+
+This versions requires:
+* Shotgun for Unity 1.0 (com.unity.integrations.shotgun)
 
 NEW FEATURES
-* New engine setting to control whether the standard publish app is displayed in the Shotgun menu (hide_publish_menu)
+* Porting tk-unity to Python 3
+* Python 2 is no longer supported
+
+**Version**: 0.10
 
 This version requires:
 * Shotgun for Unity 0.10 (com.unity.integrations.shotgun)
+
+NEW FEATURES
+* New engine setting to control whether the standard publish app is displayed in the Shotgun menu (hide_publish_menu)
 
 **Version**: 0.9
 
