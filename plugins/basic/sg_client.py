@@ -5,7 +5,7 @@ process in order to serve the Shotgun integration
 
 import unity_python.client.unity_client as unity_client
 
-import imp
+import importlib.util
 import os
 import unity_python.common.scheduling as scheduling
 import sys
@@ -128,8 +128,9 @@ def bootstrap_shotgun():
         module_name = file_name.split('.')[0]
         
         log('Invoking bootstrap script ("{}")'.format(path_to_bootstrap))
-        (module_file, module_path, module_desc) = imp.find_module(module_name, [dir_name])
-        bootstrap_module = imp.load_module(module_name, module_file, module_path, module_desc)
+        spec = importlib.util.spec_from_file_location("bootstrap", path_to_bootstrap)
+        bootstrap_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(bootstrap_module)
         _shotgun_is_initialized = True if bootstrap_module.plugin_startup() == 0 else False
     except:
         import traceback
