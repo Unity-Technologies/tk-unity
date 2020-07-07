@@ -1,12 +1,9 @@
 ﻿RELEASE NOTES
 
-**Version**: 1.0
-This versions requires:
-* Shotgun for Unity 1.0.0
+**Version**: 0.10
 
-NEW FEATURES
-* Porting tk-unity to Python 3
-* Python 2 is no longer supported
+This version requires:
+* Shotgun for Unity 0.10 (com.unity.integrations.shotgun)
 
 **Version**: 0.9
 
