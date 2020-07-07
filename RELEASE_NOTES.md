@@ -1,5 +1,10 @@
 ﻿RELEASE NOTES
 
+**Version**: 0.10
+
+This version requires:
+* Shotgun for Unity 0.10 (com.unity.integrations.shotgun)
+
 **Version**: 0.9
 
 This version requires:
