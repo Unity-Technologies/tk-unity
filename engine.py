@@ -50,22 +50,14 @@ class UnityEditorEngine(Engine):
             }
         """
         try:
-            host_info = {
-                "name": "Unity",
-                "version": GetUnityEngine().Application.unityVersion,
-            }
+            host_info = {"name": "Unity", "version": GetUnityEngine().Application.unityVersion}
         except:
             import traceback
-
-            self.logger.error(
-                'Exception raised while getting the version for Unity'
-            )
-            self.logger.error(
-                'Exception stack trace:\n\n{}'.format(traceback.format_exc())
-            )
-
+            self.logger.error('Exception raised while getting the version for Unity')
+            self.logger.error('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
+            
             host_info = {"name": "Unity", "version": "unknown"}
-
+            
         return host_info
 
     ##########################################################################################
@@ -102,7 +94,7 @@ class UnityEditorEngine(Engine):
         #   and lists them in the Shotgun menu.
         # - Add a separator.
         # - Sort the remaining actions into sub-menus, one per application. If an application
-        #   has a single action, then you have a single item instead of a sub-menu.
+        #   has a single action, then you have a single item instead of a sub-menu.        
         #
         # Not all commands are part of an app. For example, the Restart Engine and
         # Toggle Debug commands.
@@ -118,7 +110,7 @@ class UnityEditorEngine(Engine):
         #
 
         self.logger.debug("Here are the available Toolkit commands:")
-
+        
         # store the menu cmds so that we can access them later from C#
         self._menu_cmd_items = {}
         for (cmd_name, cmd_details) in self.commands.items():
@@ -131,20 +123,16 @@ class UnityEditorEngine(Engine):
             self.logger.debug("Command name: " + cmd_name)
             self.logger.debug("Command properties:")
             self.logger.debug(pprint.pformat(cmd_details["properties"]))
-
+            
             self._menu_cmd_items[cmd_name] = cmd_details
-
+        
         # Check for favorites
         for fav in self.get_setting("menu_favorites"):
             app_instance_name = fav["app_instance"]
             menu_name = fav["name"]
 
             if menu_name not in self.commands:
-                self.logger.warning(
-                    "Unknown command: {}/{}".format(
-                        app_instance_name, menu_name
-                    )
-                )
+                self.logger.warning("Unknown command: {}/{}".format(app_instance_name, menu_name))
                 continue
 
             command = self.commands[menu_name]
@@ -157,14 +145,12 @@ class UnityEditorEngine(Engine):
 
             self.logger.debug("Favorite found: " + menu_name)
             self._menu_cmd_items[menu_name]["properties"]["type"] = "favorite"
-
+        
         # Generate the Shotgun menu items
         import shutil
-
         shotgun_asset_path = GetUnityEngine().Application.dataPath + "/Shotgun"
-
+        
         from tk_create_menus.generateMenuItems import MenuItemGenerator
-
         context_name = str(self.context).decode("utf-8")
 
         generator = MenuItemGenerator(
@@ -175,14 +161,12 @@ class UnityEditorEngine(Engine):
             settings=self.settings,
         )
         generator.GenerateMenuItems()
-
+        
         # Add a README.txt file to the Shotgun Asset directory
         readme_path = os.path.normpath(shotgun_asset_path)
-        readme_path = os.path.join(readme_path, 'README.txt')
+        readme_path = os.path.join(readme_path, 'README.txt') 
         with open(readme_path, 'w') as f:
-            f.write(
-                'This directory is automatically created and deleted by the Shotgun integration.\nUsers should never alter it or use it to store their files.'
-            )
+            f.write('This directory is automatically created and deleted by the Shotgun integration.\nUsers should never alter it or use it to store their files.')
 
     # We call this function to then call the callbacks, so we can debug
     def call_menu_item_callback(self, name):
@@ -204,29 +188,17 @@ class UnityEditorEngine(Engine):
         """
         Call the base class and set the "always on top" behavior on the created dialog
         """
-        dialog = super(UnityEditorEngine, self)._create_dialog(
-            title, bundle, widget, parent
-        )
-
+        dialog = super(UnityEditorEngine, self)._create_dialog(title, bundle, widget, parent)
+        
         try:
             from sgtk.util.qt_importer import QtImporter
-
             qt = QtImporter()
-            dialog.setWindowFlags(
-                dialog.windowFlags() | qt.QtCore.Qt.WindowStaysOnTopHint
-            )
+            dialog.setWindowFlags(dialog.windowFlags() | qt.QtCore.Qt.WindowStaysOnTopHint)
         except:
             import traceback
-
-            self.logger.warning(
-                'Exception raised while trying to set WindowStaysOnTopHint on dialog "{}". The dialog will use the default toolkit behavior.'.format(
-                    title
-                )
-            )
-            self.logger.warning(
-                'Exception stack trace:\n\n{}'.format(traceback.format_exc())
-            )
-
+            self.logger.warning('Exception raised while trying to set WindowStaysOnTopHint on dialog "{}". The dialog will use the default toolkit behavior.'.format(title))
+            self.logger.warning('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
+            
         return dialog
 
     ##########################################################################################
@@ -244,9 +216,8 @@ class UnityEditorEngine(Engine):
         :type record: :class:`~python.logging.LogRecord`
         """
         msg = handler.format(record)
-
+        
         import logging
-
         if record.levelno >= logging.ERROR:
             GetUnityEngine().Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:
