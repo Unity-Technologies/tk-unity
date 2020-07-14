@@ -152,8 +152,14 @@ class UnityEditorEngine(Engine):
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context).decode("utf-8")
-        
-        generator = MenuItemGenerator(shotgun_asset_path, self._menu_cmd_items, context_name, "call_menu_item_callback")
+
+        generator = MenuItemGenerator(
+            projectPath=shotgun_asset_path,
+            cmdItems=self._menu_cmd_items,
+            contextName=context_name,
+            callbackName="call_menu_item_callback",
+            settings=self.settings,
+        )
         generator.GenerateMenuItems()
         
         # Add a README.txt file to the Shotgun Asset directory
