@@ -124,7 +124,7 @@ class UnityActions(HookBaseClass):
             # resolve path
             # toolkit uses utf-8 encoded strings internally and Unity expects unicode
             # so convert the path to ensure filenames containing complex characters are supported
-            path = self.get_publish_path(sg_publish_data)
+            path = self.get_publish_path(sg_publish_data).decode("utf-8")
             self._do_import(path, sg_publish_data)
 
     ##############################################################################################################

@@ -252,7 +252,12 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         if settings["Upload"].value:
             self.logger.info("Uploading content...")
 
-            upload_path = path
+            # on windows, ensure the path is utf-8 encoded to avoid issues with
+            # the shotgun api
+            if sys.platform.startswith("win"):
+                upload_path = path.decode("utf-8")
+            else:
+                upload_path = path
 
             self.parent.shotgun.upload(
                 "Version",

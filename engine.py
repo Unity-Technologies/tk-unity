@@ -151,7 +151,7 @@ class UnityEditorEngine(Engine):
         shotgun_asset_path = GetUnityEngine().Application.dataPath + "/Shotgun"
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
-        context_name = str(self.context)
+        context_name = str(self.context).decode("utf-8")
         
         generator = MenuItemGenerator(shotgun_asset_path, self._menu_cmd_items, context_name, "call_menu_item_callback")
         generator.GenerateMenuItems()
