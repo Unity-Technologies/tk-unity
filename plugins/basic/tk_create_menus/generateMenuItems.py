@@ -6,14 +6,18 @@ class MenuItemGenerator(object):
     The MenuItemGenerator takes a list of command names and callbacks to create a C# script that will populate a
     Unity menu with the commands. Selecting a command in the Unity menu will then call the appropriate callback in Python.
     """
-    def __init__(self, projectPath, cmdItems, contextName, callbackName):
+
+    def __init__(
+        self, projectPath, cmdItems, contextName, callbackName, settings
+    ):
         self._cSharpClass = "ShotgunMenuItems"
         self._cmdItems = cmdItems
         self._callbackName = callbackName
         self._projectPath = projectPath
         self._contextName = contextName # name for context menu item folder
         self._contextMenuFormat = self._contextName + "/{0}"
-        
+        self._settings = settings
+
         # The difference in priorities will add separators between the three menu sections
         # as a priority increase of 10 or more creates a separator.
         # Note: default dict will use 22 as the default value if the key doesn't match any of the other keys
@@ -88,10 +92,12 @@ namespace UnityEditor.Integrations.Shotgun
             menuName = self._contextMenuFormat.format(cmdName)
 
         if cmdName == 'Publish...':
-            # We do not want the "Publish..." menu item in Unity. Users should use 
+            # Should we hide the Publish menu? With the default config, we do
+            # not want the "Publish..." menu item in Unity. Users should use
             # the "Publish Recording..." menu item instead
-            return 
-        
+            if self._settings.get('hide_publish_menu', True):
+                return
+
         self._functionList.append(
             self._functionTemplate.format(
                 count = count, menuName = menuName, submenuName = submenuName, callbackName = self._callbackName, priority = self._priorities[cmdType]

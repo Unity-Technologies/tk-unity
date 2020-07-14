@@ -1,6 +1,7 @@
 ﻿RELEASE NOTES
 
 **Version**: 1.0
+
 This versions requires:
 * Shotgun for Unity 1.0 (com.unity.integrations.shotgun)
 
@@ -12,6 +13,9 @@ NEW FEATURES
 
 This version requires:
 * Shotgun for Unity 0.10 (com.unity.integrations.shotgun)
+
+NEW FEATURES
+* New engine setting to control whether the standard publish app is displayed in the Shotgun menu (hide_publish_menu)
 
 **Version**: 0.9
 
