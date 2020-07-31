@@ -12,6 +12,9 @@ import sys
 import threading
 import time
 import traceback
+import inspect
+
+from unity_python.common.utils import double_fork
 
 # Fix threading
 if sys.version_info.major < 3:
@@ -110,6 +113,20 @@ def bootstrap_shotgun():
     Checks if Shotgun is already initialized. If not, executes the 
     bootstrap script.
     """
+
+    # On macOS, since the process is double-forked to avoid zombies,
+    # wet set the Shotgun client's PID once the connection with the server is established.
+    if sys.platform == "darwin":
+        import time
+        #time.sleep(5)
+        pid = os.getpid()
+        _connection.root.execute(inspect.cleandoc(
+            f"""
+            from UnityEditor.Integrations.Shotgun import ClientPIDSetter
+            ClientPIDSetter.SetPID({pid})
+            """
+        ))
+
     global _shotgun_is_initialized
     if _shotgun_is_initialized:
         log('Shotgun is already initialized in the client process')
@@ -210,6 +227,9 @@ def main(service_class = ShotgunClientService):
     main_loop()
 
 if __name__ == '__main__':
+    if sys.platform == "darwin":
+        double_fork()
+
     # Avoid working in the main module
     import sg_client
     sg_client.main()
