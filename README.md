@@ -1,11 +1,17 @@
-# tk-unity (Shotgun engine for Unity)
+# Shotgun for Unity: the tk-unity engine
 
-## Documentation
-This repository is part of the [Shotgun for Unity](https://forum.unity.com/threads/introducing-autodesk-shotgun-for-unity-editor.815286/) system.
+This repository is part of the Shotgun for Unity system. This provides the
+Shotgun engine description to allow Shotgun to communicate with Unity.
 
-Refer to the setup documentation in the [`com.unity.integrations.shotgun`](https://docs.unity3d.com/Packages/com.unity.integrations.shotgun@0.9/manual/index.html) package.
+The full documentation is maintained as part of the [com.unity.integrations.shotgun](https://docs.unity3d.com/Packages/com.unity.integrations.shotgun@latest) package.
 
-The [`tk-unity`](https://github.com/Unity-Technologies/tk-unity) repository allows pipeline TDs to add support for Unity in a Shotgun pipeline configuration. You can see an example configuration using `tk-unity` by looking at the [`tk-config-unity`](https://github.com/Unity-Technologies/tk-config-unity) repository.
+Related repositories include:
+* [`com.unity.integrations.shotgun`](https://github.com/Unity-Technologies/com.unity.integrations.shotgun) lets Unity communicate with Shotgun
+* [`tk-unity`](https://github.com/Unity-Technologies/tk-unity) provides the engine description for Shotgun
+* [`tk-config-unity`](https://github.com/Unity-Technologies/tk-config-unity) is a sample pipeline config that includes Unity support
+
+Please be aware that the use of this package requires a [Shotgun](https://www.shotgunsoftware.com/) account and 
+acceptance of Autodesk's terms and conditions.
 
 [Contributions](CONTRIBUTING.md) are welcome.
 
