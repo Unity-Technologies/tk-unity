@@ -32,7 +32,11 @@ def plugin_startup():
             if "darwin" == sys.platform:
                 qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_DontUseNativeMenuBar,False);
                 qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_MacPluginApplication,True);
-    
+
+            # New in Qt5
+            # Qt WebEngine seems to be initialized from a plugin. Please set Qt::AA_ShareOpenGLContexts using QCoreApplication::setAttribute before constructing QGuiApplication.
+            qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_ShareOpenGLContexts,True);
+
             qApp = qt.QtGui.QApplication(["Shotgun Engine for Unity"])
         
         if "darwin" in sys.platform:
