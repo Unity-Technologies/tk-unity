@@ -23,6 +23,18 @@ class UnityEditorEngine(Engine):
     """
 
     @property
+    def metrics_dispatch_allowed(self):
+        """
+        Indicates this engine will allow the metrics worker threads to forward
+        the user metrics logged via core, this engine, or registered apps to
+        SG.
+
+        :returns: boolean value indicating that the engine allows user metrics
+            to be forwarded to SG.
+        """
+        return False
+    
+    @property
     def context_change_allowed(self):
         """
         Whether the engine allows a context change without the need for a restart.
