@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import sys
 import pprint
 import getpass
@@ -106,11 +107,47 @@ class UnityLauncher(SoftwareLauncher):
         # https://github.com/shotgunsoftware/tk-shotgun-launchpublish
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/publishedfile.yml#L27
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/includes/settings/tk-shotgun-launchpublish.yml
+        
+        #Get user project path with Qt File Dialog             
+        from sgtk.util.qt_importer import QtImporter
+        qt = QtImporter()
+        QFileDialog = qt.QtGui.QFileDialog
+        QMessageBox = qt.QtGui.QMessageBox
+        QApplication = qt.QtGui.QApplication
 
+        _PLUGINS_TO_COPY = [
+            "site-packages/pmt/writers/UnrealWriter",
+            "site-packages/UnrealMenuItem",
+        ]
+        # options for either browse type
+        options = [
+            QFileDialog.DontResolveSymlinks,
+            QFileDialog.ShowDirsOnly,
+        ]
+        # browse folders specifics
+        caption = "Select a Unity Project Directory"
+        file_mode = QFileDialog.Directory
+        # create the dialog
+        file_dialog = QFileDialog(
+            parent=QApplication.instance().activeWindow(), caption=caption
+        )
+        file_dialog.setLabelText(QFileDialog.Accept, "Select")
+        file_dialog.setLabelText(QFileDialog.Reject, "Cancel")
+        file_dialog.setFileMode(file_mode)
+        
+        # set the appropriate options
+        for option in options:
+            file_dialog.setOption(option)
+        # browse!
+        if file_dialog.exec_():
+            selected_file_path = file_dialog.selectedFiles()[0]
+            print("ue_project_dir = {}".format(selected_file_path))
 
+        args += "-projectPath " +  selected_file_path
         self.logger.debug("Launch environment: %s", pprint.pformat(required_env))
         self.logger.debug("Launch arguments: %s", args)
-
+         
+        
         return LaunchInformation(exec_path, args, required_env)
 
     def scan_software(self):
