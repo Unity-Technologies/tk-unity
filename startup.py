@@ -82,6 +82,7 @@ class UnityLauncher(SoftwareLauncher):
         :param str args: Command line arguments as strings.
         :param str file_to_open: (optional) Full path name of a file to open on launch.
         :returns: :class:`LaunchInformation` instance
+        
         """
         required_env = {}
 
@@ -108,17 +109,14 @@ class UnityLauncher(SoftwareLauncher):
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/publishedfile.yml#L27
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/includes/settings/tk-shotgun-launchpublish.yml
         
-        #Get user project path with Qt File Dialog             
+        #Get user project path with Qt File Dialog 
+                  
         from sgtk.util.qt_importer import QtImporter
         qt = QtImporter()
         QFileDialog = qt.QtGui.QFileDialog
         QMessageBox = qt.QtGui.QMessageBox
         QApplication = qt.QtGui.QApplication
-
-        _PLUGINS_TO_COPY = [
-            "site-packages/pmt/writers/UnrealWriter",
-            "site-packages/UnrealMenuItem",
-        ]
+        QErrorMessage = qt.QtGui.QErrorMessage
         # options for either browse type
         options = [
             QFileDialog.DontResolveSymlinks,
@@ -127,7 +125,7 @@ class UnityLauncher(SoftwareLauncher):
         # browse folders specifics
         caption = "Select a Unity Project Directory"
         file_mode = QFileDialog.Directory
-        # create the dialog
+        # create the dialog    
         file_dialog = QFileDialog(
             parent=QApplication.instance().activeWindow(), caption=caption
         )
@@ -139,16 +137,19 @@ class UnityLauncher(SoftwareLauncher):
         for option in options:
             file_dialog.setOption(option)
         # browse!
-        if file_dialog.exec_():
-            selected_file_path = file_dialog.selectedFiles()[0]
-            print("ue_project_dir = {}".format(selected_file_path))
-
-        args += "-projectPath " +  selected_file_path
-        self.logger.debug("Launch environment: %s", pprint.pformat(required_env))
-        self.logger.debug("Launch arguments: %s", args)
-         
-        
-        return LaunchInformation(exec_path, args, required_env)
+        while True and file_dialog.exec_():
+                selected_file_path = file_dialog.selectedFiles()[0]
+                if os.path.exists(selected_file_path+"\Assets"):
+                    args += "-projectPath " +  selected_file_path
+                    self.logger.debug("Launch environment: %s", pprint.pformat(required_env))                
+                    self.logger.debug("Launch arguments: %s", args)
+                    return LaunchInformation(exec_path, args, required_env)
+                else:
+                     error_message = QErrorMessage()
+                     error_message.showMessage("Invalid Unity Directory. Please Choose a Valid Unity Project")
+                     error_message.exec_()
+        raise KeyError("User terminated without choosing a Path.Unity launch aborted")
+       
 
     def scan_software(self):
         """
