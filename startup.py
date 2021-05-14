@@ -82,10 +82,8 @@ class UnityLauncher(SoftwareLauncher):
         :param str args: Command line arguments as strings.
         :param str file_to_open: (optional) Full path name of a file to open on launch.
         :returns: :class:`LaunchInformation` instance
-        
         """
         required_env = {}
-
         # Add std context and site info to the env. This will add stuff like which site to
         # connect to, what context to load, etc.
         required_env.update(self.get_standard_plugin_environment())
@@ -109,8 +107,7 @@ class UnityLauncher(SoftwareLauncher):
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/publishedfile.yml#L27
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/includes/settings/tk-shotgun-launchpublish.yml
         
-        #Get user project path with Qt File Dialog 
-                  
+        #Get user project path with Qt File Dialog          
         from sgtk.util.qt_importer import QtImporter
         qt = QtImporter()
         QFileDialog = qt.QtGui.QFileDialog
@@ -137,7 +134,7 @@ class UnityLauncher(SoftwareLauncher):
         for option in options:
             file_dialog.setOption(option)
         # browse!
-        while True and file_dialog.exec_():
+        while file_dialog.exec_():
                 selected_file_path = file_dialog.selectedFiles()[0]
                 if os.path.exists(selected_file_path+"\Assets"):
                     args += "-projectPath " +  selected_file_path
