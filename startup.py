@@ -136,16 +136,16 @@ class UnityLauncher(SoftwareLauncher):
         # browse!
         while file_dialog.exec_():
                 selected_file_path = file_dialog.selectedFiles()[0]
-                if os.path.exists(selected_file_path+"\Assets"):
+                if os.path.exists(os.path.join(selected_file_path,"Assets")):
                     args += "-projectPath " +  selected_file_path
                     self.logger.debug("Launch environment: %s", pprint.pformat(required_env))                
                     self.logger.debug("Launch arguments: %s", args)
                     return LaunchInformation(exec_path, args, required_env)
                 else:
                      error_message = QErrorMessage()
-                     error_message.showMessage("Invalid Unity Directory. Please Choose a Valid Unity Project")
+                     error_message.showMessage("The selected directory does not contain an Unity project. Please select a valid Unity project directory")
                      error_message.exec_()
-        raise KeyError("User terminated without choosing a Path.Unity launch aborted")
+        raise KeyError("User cancelled the Unity project directory selection. Launch aborted")
        
 
     def scan_software(self):
