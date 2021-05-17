@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import sys
 import pprint
 import getpass
@@ -83,7 +84,6 @@ class UnityLauncher(SoftwareLauncher):
         :returns: :class:`LaunchInformation` instance
         """
         required_env = {}
-
         # Add std context and site info to the env. This will add stuff like which site to
         # connect to, what context to load, etc.
         required_env.update(self.get_standard_plugin_environment())
@@ -106,12 +106,47 @@ class UnityLauncher(SoftwareLauncher):
         # https://github.com/shotgunsoftware/tk-shotgun-launchpublish
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/publishedfile.yml#L27
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/includes/settings/tk-shotgun-launchpublish.yml
-
-
-        self.logger.debug("Launch environment: %s", pprint.pformat(required_env))
-        self.logger.debug("Launch arguments: %s", args)
-
-        return LaunchInformation(exec_path, args, required_env)
+        
+        #Get user project path with Qt File Dialog          
+        from sgtk.util.qt_importer import QtImporter
+        qt = QtImporter()
+        QFileDialog = qt.QtGui.QFileDialog
+        QMessageBox = qt.QtGui.QMessageBox
+        QApplication = qt.QtGui.QApplication
+        QErrorMessage = qt.QtGui.QErrorMessage
+        # options for either browse type
+        options = [
+            QFileDialog.DontResolveSymlinks,
+            QFileDialog.ShowDirsOnly,
+        ]
+        # browse folders specifics
+        caption = "Select a Unity Project Directory"
+        file_mode = QFileDialog.Directory
+        # create the dialog    
+        file_dialog = QFileDialog(
+            parent=QApplication.instance().activeWindow(), caption=caption
+        )
+        file_dialog.setLabelText(QFileDialog.Accept, "Select")
+        file_dialog.setLabelText(QFileDialog.Reject, "Cancel")
+        file_dialog.setFileMode(file_mode)
+        
+        # set the appropriate options
+        for option in options:
+            file_dialog.setOption(option)
+        # browse!
+        while file_dialog.exec_():
+                selected_file_path = file_dialog.selectedFiles()[0]
+                if os.path.exists(os.path.join(selected_file_path,"Assets")):
+                    args += "-projectPath " +  selected_file_path
+                    self.logger.debug("Launch environment: %s", pprint.pformat(required_env))                
+                    self.logger.debug("Launch arguments: %s", args)
+                    return LaunchInformation(exec_path, args, required_env)
+                else:
+                     error_message = QErrorMessage()
+                     error_message.showMessage("The selected directory does not contain an Unity project. Please select a valid Unity project directory")
+                     error_message.exec_()
+        raise KeyError("User cancelled the Unity project directory selection. Launch aborted")
+       
 
     def scan_software(self):
         """
