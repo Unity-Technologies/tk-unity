@@ -22,9 +22,6 @@ def log(msg):
 # We only initialize Shotgun once in the client process
 _shotgun_is_initialized = False
 
-# Number of attempts to reconnect to the server
-_nb_connection_attempts = 100
-
 ### Unity API access
 def GetUnityEngine():
     import UnityEngine
@@ -84,7 +81,6 @@ def bootstrap_shotgun():
         raise EnvironmentError('Unity was not launched from Shotgun (SHOTGUN_UNITY_BOOTSTRAP_LOCATION is not defined in the environment). Cannot bootstrap toolkit.')
 
     path_to_bootstrap = os.path.normpath(path_to_bootstrap)
-    
     try:
         # Use the imp module to bootstrap in order to get a return value
         (dir_name, file_name) = os.path.split(path_to_bootstrap)
@@ -131,5 +127,4 @@ if __name__ == '__main__':
     UnityEngine.Debug.Log("entering main")
     # Avoid working in the main module
     import sg_client
-    #sg_client.main()
     sg_client.bootstrap_shotgun()
