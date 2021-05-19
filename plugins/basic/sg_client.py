@@ -30,8 +30,7 @@ def GetUnityEngine():
 def GetUnityEditor():
     import UnityEditor
     return UnityEditor
-    
-#### FUNCTIONS PREVIOUSLY IN CLIENT
+
 def test_invoke_post_init_hook():
     """
     Invokes the post init hook
@@ -62,9 +61,8 @@ def test_execute_menu_item(menu_item):
     except:
         import traceback
         log('Got exception while executing menu item "{}"'.format(menu_item))
-        log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
-#### --------------------    
-
+        log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))   
+        
 def bootstrap_shotgun():
     """
     Checks if Shotgun is already initialized. If not, executes the 

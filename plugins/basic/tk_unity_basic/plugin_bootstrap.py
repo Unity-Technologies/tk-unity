@@ -1,6 +1,6 @@
 import os
 import sys
-from sg_client import GetUnityEditor
+import UnityEditor
 
 def plugin_bootstrap(plugin_root_path):
     """
@@ -121,9 +121,9 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
 
     def progress_callback(value, message):
         if value != 1: 
-            GetUnityEditor().EditorUtility.DisplayProgressBar('Initializing Shotgun Toolkit', 'Please wait until initialization is complete', value)
+            UnityEditor.EditorUtility.DisplayProgressBar('Initializing Shotgun Toolkit', 'Please wait until initialization is complete', value)
         else:
-            GetUnityEditor().EditorUtility.ClearProgressBar()
+            UnityEditor.EditorUtility.ClearProgressBar()
             
 
     toolkit_mgr.progress_callback = progress_callback
