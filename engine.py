@@ -1,7 +1,7 @@
 """
 A Unity Editor engine for Sgtk.
 """
-from sg_client import GetUnityEngine
+import UnityEngine
 
 from sgtk.platform import Engine
 
@@ -19,9 +19,20 @@ class UnityEditorEngine(Engine):
     Windows: %APPDATA%/Shotgun/Logs/tk-unity.log
     macOS: ~/Library/Logs/Shotgun/tk-unity.log
     Linux: ~/.shotgun/Logs/tk-unity.log
-    and that all logging calls to Toolkit logging methods will be forwarded there.
     """
 
+    @property
+    def metrics_dispatch_allowed(self):
+        """
+        Indicates this engine will allow the metrics worker threads to forward
+        the user metrics logged via core, this engine, or registered apps to
+        SG.
+
+        :returns: boolean value indicating that the engine allows user metrics
+            to be forwarded to SG.
+        """
+        return False
+    
     @property
     def context_change_allowed(self):
         """
@@ -50,7 +61,7 @@ class UnityEditorEngine(Engine):
             }
         """
         try:
-            host_info = {"name": "Unity", "version": GetUnityEngine().Application.unityVersion}
+            host_info = {"name": "Unity", "version": UnityEngine.Application.unityVersion}
         except:
             import traceback
             self.logger.error('Exception raised while getting the version for Unity')
@@ -148,7 +159,7 @@ class UnityEditorEngine(Engine):
         
         # Generate the Shotgun menu items
         import shutil
-        shotgun_asset_path = GetUnityEngine().Application.dataPath + "/Shotgun"
+        shotgun_asset_path = UnityEngine.Application.dataPath + "/Shotgun"
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context)
@@ -219,8 +230,8 @@ class UnityEditorEngine(Engine):
         
         import logging
         if record.levelno >= logging.ERROR:
-            GetUnityEngine().Debug.LogError(msg)
+            UnityEngine.Debug.LogError(msg)
         elif record.levelno >= logging.WARNING:
-            GetUnityEngine().Debug.LogWarning(msg)
+            UnityEngine.Debug.LogWarning(msg)
         else:
-            GetUnityEngine().Debug.Log(msg)
+            UnityEngine.Debug.Log(msg)

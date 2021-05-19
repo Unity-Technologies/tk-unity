@@ -1,4 +1,4 @@
-from sg_client import GetUnityEditor
+import UnityEditor
 
 # This script module is executed by Unity to bootstrap Shotgun
 def plugin_startup():
@@ -61,7 +61,7 @@ def plugin_startup():
         sgtk.platform.current_engine()._initialize_dark_look_and_feel()
 
         # Engine is fully initialized. Let Unity know
-        GetUnityEditor().Integrations.Shotgun.Bootstrap.OnEngineInitialized()
+        UnityEditor.Integrations.Shotgun.Bootstrap.OnEngineInitialized()
 
     except:
         import traceback
