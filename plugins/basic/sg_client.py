@@ -8,6 +8,8 @@ import os
 import sys
 import time
 import traceback
+import UnityEditor
+import UnityEngine
 
 # Logging
 _log_to_file = os.environ.get('UNITY_SHOTGUN_CLIENT_LOGFILE')
@@ -21,15 +23,6 @@ def log(msg):
 
 # We only initialize Shotgun once in the client process
 _shotgun_is_initialized = False
-
-### Unity API access
-def GetUnityEngine():
-    import UnityEngine
-    return UnityEngine
-
-def GetUnityEditor():
-    import UnityEditor
-    return UnityEditor
 
 def test_invoke_post_init_hook():
     """
@@ -101,7 +94,7 @@ def bootstrap_shotgun():
         
     # Clear the progress bar in case we never got to 100%
     try:
-        GetUnityEditor().EditorUtility.ClearProgressBar()
+        UnityEditor.EditorUtility.ClearProgressBar()
     except Exception:
         # It is possible that the progress bar is not displayed anymore, 
         # in which case we get an exception here
