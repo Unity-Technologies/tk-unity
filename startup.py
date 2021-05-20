@@ -97,7 +97,16 @@ class UnityLauncher(SoftwareLauncher):
             "basic",
             "bootstrap.py"
         )
-
+        #To be removed when Python Package is integrated properly
+        #Code is passing a PySide2 environment variable to Shotgun unity to use for install
+        #A proper integration would simple Pip install Pyside
+        from sgtk.util.qt_importer import QtImporter
+        r = QtImporter()._import_pyside2()
+        PySideInstance = r[2].__path__[0]
+        PySideInstance=PySideInstance.replace("Python","Python3")
+        PySideInstance=os.path.dirname(PySideInstance)
+        required_env["SHOTGUN_UNITY_PYSIDE_LOCATION"] = PySideInstance
+        
         # Signals which engine instance from the environment is going to be used.
         required_env["SHOTGUN_ENGINE"] = self.engine_name
 
