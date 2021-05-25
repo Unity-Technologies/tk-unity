@@ -239,6 +239,8 @@ class UnityEditorEngine(Engine):
     def show_panel(self, panel_id, title, bundle, widget_class, *args, **kwargs):
         """
         tk-unity engine panel support, this function is an override of show_panel() from sgtk.
+        This override bypasses the show_panel() warnings from the original function in sgtk 
+        and gives more control over panel functionality.
         any panel functionality for tk-unity engine should be added to this function.
         """
         return self.show_dialog(title, bundle, widget_class, *args, **kwargs)
