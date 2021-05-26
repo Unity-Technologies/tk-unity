@@ -31,6 +31,7 @@ class MenuItemGenerator(object):
         }}"""
 
         self._fileContentsTemplate = """
+#if SHOTGUN_INSTALLED
 namespace UnityEditor.Integrations.Shotgun
 {{
     class {className}
@@ -38,6 +39,7 @@ namespace UnityEditor.Integrations.Shotgun
         {functions}
     }}
 }}
+#endif
         """
         
         self._assemblyTemplate = """
@@ -54,7 +56,15 @@ namespace UnityEditor.Integrations.Shotgun
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [
+        {{
+            "name": "com.unity.integrations.shotgun",
+            "expression": "",
+            "define": "SHOTGUN_INSTALLED"
+        }}
+    ],
+    "noEngineReferences": false
 }}
 """
         
