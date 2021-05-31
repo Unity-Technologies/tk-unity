@@ -31,6 +31,9 @@ class MenuItemGenerator(object):
         }}"""
 
         self._fileContentsTemplate = """
+#if SHOTGUN_INSTALLED
+//If Unity version for this project is lower than v2020.3,Removing the Shotgun for Unity package leaves this script in the assets/Shotgun directory.
+// It is recommended to manually delete the assets/Shotgun directory after removing the Shotgun for Unity package from a project.
 namespace UnityEditor.Integrations.Shotgun
 {{
     class {className}
@@ -38,6 +41,7 @@ namespace UnityEditor.Integrations.Shotgun
         {functions}
     }}
 }}
+#endif
         """
         
         self._assemblyTemplate = """
@@ -54,7 +58,15 @@ namespace UnityEditor.Integrations.Shotgun
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [
+        {{
+            "name": "com.unity.integrations.shotgun",
+            "expression": "",
+            "define": "SHOTGUN_INSTALLED"
+        }}
+    ],
+    "noEngineReferences": false
 }}
 """
         
