@@ -103,7 +103,7 @@ class UnityLauncher(SoftwareLauncher):
         from sgtk.util.qt_importer import QtImporter
         pyside_importer = QtImporter()._import_pyside2()
         pysideFilePath = pyside_importer[2].__path__[0]
-        pysideFilePath=pysideFilePath.replace("Python","Python3")
+        pysideFilePath=pysideFilePath.replace("Python","Python3").replace("python2.7","python3.7")
         pysideFilePath=os.path.dirname(pysideFilePath)
         required_env["SHOTGUN_UNITY_PYSIDE_LOCATION"] = pysideFilePath
         
