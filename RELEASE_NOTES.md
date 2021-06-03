@@ -6,10 +6,9 @@ This versions requires:
 * Shotgun for Unity 1.1 (com.unity.integrations.shotgun)
 
 NEW FEATURES
-* Direct Unity project launch(no need for Unity Hub)
-* Now working in-process
-* One-click install for Mac/Win
-* Clean uninstall for Mac/Win
+* Direct Unity project launch (no need for Unity Hub)
+* API usage of python package updated to run in-process
+
 
 **Version**: 1.0
 
