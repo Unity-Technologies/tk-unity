@@ -1,5 +1,16 @@
 ﻿RELEASE NOTES
 
+**Version**: 1.1
+
+This versions requires:
+* Shotgun for Unity 1.1 (com.unity.integrations.shotgun)
+
+NEW FEATURES
+* Direct Unity project launch(no need for Unity Hub)
+* Now working in-process
+* One-click install for Mac/Win
+* Clean uninstall for Mac/Win
+
 **Version**: 1.0
 
 This versions requires:
