@@ -3,7 +3,7 @@
 **Version**: 1.1
 
 This versions requires:
-* Shotgun for Unity 1.1 (com.unity.integrations.shotgun)
+* Shotgun for Unity 1.0 (com.unity.integrations.shotgun)
 
 NEW FEATURES
 * Direct Unity project launch (no need for Unity Hub)
