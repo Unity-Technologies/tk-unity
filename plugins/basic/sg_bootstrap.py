@@ -24,7 +24,7 @@ def log(msg):
 # We only initialize Shotgun once in the bootstrap process
 _shotgun_is_initialized = False
 
-def test_invoke_post_init_hook():
+def invoke_post_init_hook():
     """
     Invokes the post init hook
     """
@@ -36,7 +36,7 @@ def test_invoke_post_init_hook():
         log('Got exception while invoking the post init hook:')
         log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
 
-def test_tk_unity_version():
+def tk_unity_version():
     """
     Returns a string representing the version of tk-unity, e.g. "v0.9"
     """
