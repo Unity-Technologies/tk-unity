@@ -44,7 +44,7 @@ def tk_unity_version():
     version = sgtk.platform.current_engine().version
     return version
     
-def test_execute_menu_item(menu_item):
+def execute_menu_item(menu_item):
     """
     Calls the menu item callback
     """

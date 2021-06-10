@@ -46,7 +46,7 @@ namespace UnityEditor.Integrations.Shotgun
             using (Py.GIL())
             {{
                 dynamic sg_bootstrap = PythonEngine.ImportModule("sg_bootstrap");
-                sg_bootstrap.test_execute_menu_item(menuItem);
+                sg_bootstrap.execute_menu_item(menuItem);
             }}
 
         }}
