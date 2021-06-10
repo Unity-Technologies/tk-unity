@@ -27,17 +27,29 @@ class MenuItemGenerator(object):
         self._functionTemplate ="""        [MenuItem("Shotgun/{menuName}", false, {priority})] 
         public static void MenuItem{count}()
         {{
-            Service.Call("execute_menu_item", "{submenuName}");
+            Call("{submenuName}");
         }}"""
 
         self._fileContentsTemplate = """
 #if SHOTGUN_INSTALLED
 //If Unity version for this project is lower than v2020.3,Removing the Shotgun for Unity package leaves this script in the assets/Shotgun directory.
 // It is recommended to manually delete the assets/Shotgun directory after removing the Shotgun for Unity package from a project.
+using Python.Runtime;
+using UnityEditor.Scripting.Python;
 namespace UnityEditor.Integrations.Shotgun
 {{
     class {className}
     {{
+        public static void Call(string menuItem)
+        {{
+            PythonRunner.EnsureInitialized();
+            using (Py.GIL())
+            {{
+                dynamic sg_bootstrap = PythonEngine.ImportModule("sg_bootstrap");
+                sg_bootstrap.execute_menu_item(menuItem);
+            }}
+
+        }}
         {functions}
     }}
 }}
@@ -52,7 +64,9 @@ namespace UnityEditor.Integrations.Shotgun
         "Unity.Scripting.Python.Editor"
     ],
     "optionalUnityReferences": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

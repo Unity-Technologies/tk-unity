@@ -1,5 +1,5 @@
 """
-The Unity client module for Shotgun. Responsible of customizing the client 
+The Unity bootstrap module for Shotgun.
 process in order to serve the Shotgun integration
 """
 
@@ -21,10 +21,10 @@ def log(msg):
 
     print(message)
 
-# We only initialize Shotgun once in the client process
+# We only initialize Shotgun once
 _shotgun_is_initialized = False
 
-def test_invoke_post_init_hook():
+def invoke_post_init_hook():
     """
     Invokes the post init hook
     """
@@ -36,7 +36,7 @@ def test_invoke_post_init_hook():
         log('Got exception while invoking the post init hook:')
         log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
 
-def test_tk_unity_version():
+def tk_unity_version():
     """
     Returns a string representing the version of tk-unity, e.g. "v0.9"
     """
@@ -44,7 +44,7 @@ def test_tk_unity_version():
     version = sgtk.platform.current_engine().version
     return version
     
-def test_execute_menu_item(menu_item):
+def execute_menu_item(menu_item):
     """
     Calls the menu item callback
     """
@@ -63,7 +63,7 @@ def bootstrap_shotgun():
     """
     global _shotgun_is_initialized
     if _shotgun_is_initialized:
-        log('Shotgun is already initialized in the client process')
+        log('Shotgun is already initialized')
         return
 
     log('Requesting bootstrap')
@@ -88,9 +88,9 @@ def bootstrap_shotgun():
         log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
     
     if _shotgun_is_initialized:
-        log('Shotgun has been initialized in the client process')
+        log('Shotgun has been initialized')
     else:
-        log('Shotgun has not been initialized in the client process')
+        log('Shotgun has not been initialized')
         
     # Clear the progress bar in case we never got to 100%
     try:
@@ -117,5 +117,5 @@ if __name__ == '__main__':
     import UnityEngine
     UnityEngine.Debug.Log("entering main")
     # Avoid working in the main module
-    import sg_client
-    sg_client.bootstrap_shotgun()
+    import sg_bootstrap
+    sg_bootstrap.bootstrap_shotgun()

@@ -66,11 +66,9 @@ def plugin_startup():
     except:
         import traceback
         
-        # Only log in the client as we might have gotten a "connection reset" 
-        # exception
-        import sg_client
-        sg_client.log('Shotgun Toolkit Error:')
-        sg_client.log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
+        import sg_bootstrap
+        sg_bootstrap.log('Shotgun Toolkit Error:')
+        sg_bootstrap.log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
         
         # Clean-up the engine
         import sgtk
