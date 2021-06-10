@@ -66,7 +66,6 @@ def plugin_startup():
     except:
         import traceback
         
-        # Only log in bootstrap incase of an exception
         import sg_bootstrap
         sg_bootstrap.log('Shotgun Toolkit Error:')
         sg_bootstrap.log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))

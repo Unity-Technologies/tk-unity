@@ -1,5 +1,5 @@
 """
-The Unity bootstrap module for Shotgun. Responsible of customizing the bootstrap
+The Unity bootstrap module for Shotgun.
 process in order to serve the Shotgun integration
 """
 
@@ -21,7 +21,7 @@ def log(msg):
 
     print(message)
 
-# We only initialize Shotgun once in the bootstrap process
+# We only initialize Shotgun once
 _shotgun_is_initialized = False
 
 def invoke_post_init_hook():
@@ -63,7 +63,7 @@ def bootstrap_shotgun():
     """
     global _shotgun_is_initialized
     if _shotgun_is_initialized:
-        log('Shotgun is already initialized in the bootstrap process')
+        log('Shotgun is already initialized')
         return
 
     log('Requesting bootstrap')
@@ -88,9 +88,9 @@ def bootstrap_shotgun():
         log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
     
     if _shotgun_is_initialized:
-        log('Shotgun has been initialized in the bootstrap process')
+        log('Shotgun has been initialized')
     else:
-        log('Shotgun has not been initialized in the bootstrap process')
+        log('Shotgun has not been initialized')
         
     # Clear the progress bar in case we never got to 100%
     try:
