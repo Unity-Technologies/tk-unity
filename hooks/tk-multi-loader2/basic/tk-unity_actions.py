@@ -56,7 +56,7 @@ class UnityActions(HookBaseClass):
         one object is returned for an action, use the params key to pass additional 
         data into the run_action hook.
         
-        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data: Shotgrid data dictionary with all the standard publish fields.
         :param actions: List of action strings which have been defined in the app configuration.
         :param ui_area: String denoting the UI Area (see above).
         :returns List of dictionaries, each with keys name, params, caption and description
@@ -86,7 +86,7 @@ class UnityActions(HookBaseClass):
         Each entry will have the following values:
 
             name: Name of the action to execute
-            sg_publish_data: Publish information coming from Shotgun
+            sg_publish_data: Publish information coming from Shotgrid
             params: Parameters passed down from the generate_actions hook.
 
         .. note::
@@ -113,7 +113,7 @@ class UnityActions(HookBaseClass):
         
         :param name: Action name string representing one of the items returned by generate_actions.
         :param params: Params data, as specified by generate_actions.
-        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data: Shotgrid data dictionary with all the standard publish fields.
         :returns: No return value expected.
         """
         app = self.parent
@@ -168,7 +168,7 @@ class UnityActions(HookBaseClass):
         Import file at path into Unity project.
         
         :param path: Path to file.
-        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        :param sg_publish_data: Shotgrid data dictionary with all the standard publish fields.
         """
         app = self.parent
         
@@ -181,7 +181,7 @@ class UnityActions(HookBaseClass):
         
         import_paths = self._on_browse(project_path)
         if not import_paths:
-            app.logger.warning("Shotgun: No import path selected, will not import asset")
+            app.logger.warning("Shotgrid: No import path selected, will not import asset")
             return
 
         destination_dir = import_paths[0]

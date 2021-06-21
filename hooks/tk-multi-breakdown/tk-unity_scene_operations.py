@@ -22,7 +22,7 @@ class BreakdownSceneOperations(HookBaseClass):
     """
     Breakdown operations for Unity.
 
-    This implementation handles detection of fbx files in Unity that contain Shotgun meta data.
+    This implementation handles detection of fbx files in Unity that contain Shotgrid meta data.
     """
 
     def scan_scene(self):
@@ -44,7 +44,7 @@ class BreakdownSceneOperations(HookBaseClass):
         """
         refs = []
         
-        # check the meta data of all fbx files in the project to see if they contain a shotgun path, add them if they do
+        # check the meta data of all fbx files in the project to see if they contain a shotgrid path, add them if they do
         guids = UnityEditor.AssetDatabase.FindAssets("t:model")
         for guid in guids:
             path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid)

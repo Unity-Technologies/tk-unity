@@ -9,7 +9,7 @@ import pprint
 import os
 
 ###############################################################################################
-# The Shotgun Unity engine
+# The Shotgrid Unity engine
 class UnityEditorEngine(Engine):
     """
     Toolkit engine for Unity.
@@ -85,7 +85,7 @@ class UnityEditorEngine(Engine):
         Called when all apps have initialized
         """
 
-        # Create the Shotgun menu based on the available actions
+        # Create the Shotgrid menu based on the available actions
         #
         # Traditionally, the menu is built the following way:
         #
@@ -102,7 +102,7 @@ class UnityEditorEngine(Engine):
         #   Context menu.
         # - Add a separator.
         # - The second pass takes every favorites and, removes them from the list of commands
-        #   and lists them in the Shotgun menu.
+        #   and lists them in the Shotgrid menu.
         # - Add a separator.
         # - Sort the remaining actions into sub-menus, one per application. If an application
         #   has a single action, then you have a single item instead of a sub-menu.        
@@ -110,7 +110,7 @@ class UnityEditorEngine(Engine):
         # Not all commands are part of an app. For example, the Restart Engine and
         # Toggle Debug commands.
         #
-        # The first entry of the Shotgun menu is a sub-menu named after
+        # The first entry of the Shotgrid menu is a sub-menu named after
         # the current context (calling str on self.context will generate a human readable string),
         # and contains all commands that don't have an app or whose properties
         # key have the type set to context_menu.
@@ -157,15 +157,15 @@ class UnityEditorEngine(Engine):
             self.logger.debug("Favorite found: " + menu_name)
             self._menu_cmd_items[menu_name]["properties"]["type"] = "favorite"
         
-        # Generate the Shotgun menu items
+        # Generate the Shotgrid menu items
         import shutil
-        shotgun_asset_path = UnityEngine.Application.dataPath + "/Shotgun"
+        shotgrid_asset_path = UnityEngine.Application.dataPath + "/Shotgrid"
         
         from tk_create_menus.generateMenuItems import MenuItemGenerator
         context_name = str(self.context)
 
         generator = MenuItemGenerator(
-            projectPath=shotgun_asset_path,
+            projectPath=shotgrid_asset_path,
             cmdItems=self._menu_cmd_items,
             contextName=context_name,
             callbackName="call_menu_item_callback",
@@ -173,11 +173,11 @@ class UnityEditorEngine(Engine):
         )
         generator.GenerateMenuItems()
         
-        # Add a README.txt file to the Shotgun Asset directory
-        readme_path = os.path.normpath(shotgun_asset_path)
+        # Add a README.txt file to the Shotgrid Asset directory
+        readme_path = os.path.normpath(shotgrid_asset_path)
         readme_path = os.path.join(readme_path, 'README.txt') 
         with open(readme_path, 'w') as f:
-            f.write('This directory is automatically created and deleted by the Shotgun integration.\nUsers should never alter it or use it to store their files.')
+            f.write('This directory is automatically created and deleted by the Shotgrid integration.\nUsers should never alter it or use it to store their files.')
 
     # We call this function to then call the callbacks, so we can debug
     def call_menu_item_callback(self, name):

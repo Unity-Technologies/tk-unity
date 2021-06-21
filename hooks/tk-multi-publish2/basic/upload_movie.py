@@ -9,7 +9,7 @@ HookBaseClass = sgtk.get_hook_baseclass()
 
 class UnitySessionUploadVersionPlugin(HookBaseClass):
     """
-    Plugin for sending .mp4 images to Shotgun for review.
+    Plugin for sending .mp4 images to Shotgrid for review.
     """
 
     # Public interface    
@@ -22,18 +22,18 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
 
         publisher = self.parent
 
-        shotgun_url = publisher.sgtk.shotgun_url
+        shotgrid_url = publisher.sgtk.shotgun_url
 
-        media_page_url = "%s/page/media_center" % (shotgun_url,)
-        review_url = "https://www.shotgunsoftware.com/features/#review"
+        media_page_url = "%s/page/media_center" % (shotgrid_url,)
+        review_url = "https://www.shotgridsoftware.com/features/#review"
 
         return """
-        Upload the file to Shotgun for review.<br><br>
+        Upload the file to Shotgrid for review.<br><br>
 
-        A <b>Version</b> entry will be created in Shotgun and a transcoded
+        A <b>Version</b> entry will be created in Shotgrid and a transcoded
         copy of the file will be attached to it. The file can then be reviewed
         via the project's <a href='%s'>Media</a> page, <a href='%s'>RV</a>, or
-        the <a href='%s'>Shotgun Review</a> mobile app.
+        the <a href='%s'>Shotgrid Review</a> mobile app.
         """ % (media_page_url, review_url, review_url)
 
     @property
@@ -64,12 +64,12 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
             "Upload": {
                 "type": "bool",
                 "default": True,
-                "description": "Upload content to Shotgun?"
+                "description": "Upload content to Shotgrid?"
             },
             "Link Local File": {
                 "type": "bool",
                 "default": True,
-                "description": "Should the local file be referenced by Shotgun"
+                "description": "Should the local file be referenced by Shotgrid"
             },
         }
 
@@ -289,9 +289,9 @@ class UnitySessionUploadVersionPlugin(HookBaseClass):
         self.logger.info(
             "Version uploaded for file: %s" % (path,),
             extra={
-                "action_show_in_shotgun": {
+                "action_show_in_shotgrid": {
                     "label": "Show Version",
-                    "tooltip": "Reveal the version in Shotgun.",
+                    "tooltip": "Reveal the version in Shotgrid.",
                     "entity": version
                 }
             }

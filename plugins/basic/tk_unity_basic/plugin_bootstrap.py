@@ -35,7 +35,7 @@ def plugin_bootstrap(plugin_root_path):
         # running stand alone. import core from the manifest's core path and
         # extract the plugin info from the manifest
 
-        # Retrieve the Shotgun toolkit core included with the plug-in and
+        # Retrieve the Shotgrid toolkit core included with the plug-in and
         # prepend its python package path to the python module search path.
         # this will allow us to import sgtk
         tk_core_python_path = manifest.get_sgtk_pythonpath(plugin_root_path)
@@ -93,13 +93,13 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     sgtk_logger.debug("Executable: %s", sys.executable)
 
     try:
-        # When the user is not yet authenticated, pop up the Shotgun login
+        # When the user is not yet authenticated, pop up the Shotgrid login
         # dialog to get the user's credentials, otherwise, get the cached user's
         # credentials.
         user = sgtk.authentication.ShotgunAuthenticator().get_user()
     except sgtk.authentication.AuthenticationCancelled:
-        # TODO: show a "Shotgun > Login" menu in Unity
-        sgtk_logger.info("Shotgun login was cancelled by the user.")
+        # TODO: show a "Shotgrid > Login" menu in Unity
+        sgtk_logger.info("Shotgrid login was cancelled by the user.")
         return
 
     # Create a bootstrap manager for the logged in user with the plug-in
@@ -113,7 +113,7 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     if bundle_cache:
         toolkit_mgr.bundle_cache_fallback_paths = [bundle_cache]
 
-    # Retrieve the Shotgun entity type and id when they exist in the
+    # Retrieve the Shotgrid entity type and id when they exist in the
     # environment. These are passed down through the app launcher when running
     # in zero config
     entity = toolkit_mgr.get_entity_from_environment()
@@ -121,7 +121,7 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
 
     def progress_callback(value, message):
         if value != 1: 
-            UnityEditor.EditorUtility.DisplayProgressBar('Initializing Shotgun Toolkit', 'Please wait until initialization is complete', value)
+            UnityEditor.EditorUtility.DisplayProgressBar('Initializing Shotgrid Toolkit', 'Please wait until initialization is complete', value)
         else:
             UnityEditor.EditorUtility.ClearProgressBar()
             
@@ -132,6 +132,6 @@ def __launch_sgtk(base_config, plugin_id, bundle_cache):
     # look up on startup while Toolkit caches everything. We can't invoke it right
     # now because the Qt message loop doesn't work right now so it would fail.
     toolkit_mgr.bootstrap_engine(
-        os.environ.get("SHOTGUN_ENGINE", "tk-unity"),
+        os.environ.get("SHOTGRID_ENGINE", "tk-unity"),
         entity
     )

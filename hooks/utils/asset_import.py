@@ -19,7 +19,7 @@ def import_file(src_file, asset_name, dst_dir):
     """
     src_file: Full file path, e.g. S:/imgspc/production/adagio/assets/Character/Ghost/MDL/publish/maya/Ghost.v002.fbx
     asset_name: The name of the asset, in Unity, e.g. Ghost
-    dst_dir: The destination folder, e.g.  D:/projects/com.unity.integrations.shotgun/Shotgun/Assets
+    dst_dir: The destination folder, e.g.  D:/projects/com.unity.integrations.shotgrid/Shotgrid/Assets
     """
     src_file = os.path.normpath(src_file)
     dst_dir = os.path.normpath(dst_dir)
@@ -44,7 +44,7 @@ def import_file(src_file, asset_name, dst_dir):
     asset = os.path.join("Assets", os.path.relpath(dst_file_path, project_path))
     model_importer = UnityEditor.AssetImporter.GetAtPath(asset)
     if not model_importer:
-        log.warning("Shotgun: Could not find importer for asset {}. Cannot add userData".format(asset))
+        log.warning("Shotgrid: Could not find importer for asset {}. Cannot add userData".format(asset))
         return
 
     userData = {

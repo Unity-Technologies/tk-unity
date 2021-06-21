@@ -10,7 +10,7 @@ class MenuItemGenerator(object):
     def __init__(
         self, projectPath, cmdItems, contextName, callbackName, settings
     ):
-        self._cSharpClass = "ShotgunMenuItems"
+        self._cSharpClass = "ShotgridMenuItems"
         self._cmdItems = cmdItems
         self._callbackName = callbackName
         self._projectPath = projectPath
@@ -24,19 +24,19 @@ class MenuItemGenerator(object):
         self._priorities = defaultdict(lambda:22, context_menu=0, favorite=11)
         
         self._functionList = []
-        self._functionTemplate ="""        [MenuItem("Shotgun/{menuName}", false, {priority})] 
+        self._functionTemplate ="""        [MenuItem("Shotgrid/{menuName}", false, {priority})] 
         public static void MenuItem{count}()
         {{
             Call("{submenuName}");
         }}"""
 
         self._fileContentsTemplate = """
-#if SHOTGUN_INSTALLED
-//If Unity version for this project is lower than v2020.3,Removing the Shotgun for Unity package leaves this script in the assets/Shotgun directory.
-// It is recommended to manually delete the assets/Shotgun directory after removing the Shotgun for Unity package from a project.
+#if SHOTGRID_INSTALLED
+//If Unity version for this project is lower than v2020.3,Removing the Shotgrid for Unity package leaves this script in the assets/Shotgrid directory.
+// It is recommended to manually delete the assets/Shotgrid directory after removing the Shotgrid for Unity package from a project.
 using Python.Runtime;
 using UnityEditor.Scripting.Python;
-namespace UnityEditor.Integrations.Shotgun
+namespace UnityEditor.Integrations.Shotgrid
 {{
     class {className}
     {{
@@ -60,7 +60,7 @@ namespace UnityEditor.Integrations.Shotgun
 {{
     "name": "{className}",
     "references": [
-        "Unity.Integrations.Shotgun",
+        "Unity.Integrations.Shotgrid",
         "Unity.Scripting.Python.Editor"
     ],
     "optionalUnityReferences": [],
@@ -75,9 +75,9 @@ namespace UnityEditor.Integrations.Shotgun
     "defineConstraints": [],
     "versionDefines": [
         {{
-            "name": "com.unity.integrations.shotgun",
+            "name": "com.unity.integrations.shotgrid",
             "expression": "",
-            "define": "SHOTGUN_INSTALLED"
+            "define": "SHOTGRID_INSTALLED"
         }}
     ],
     "noEngineReferences": false
