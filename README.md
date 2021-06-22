@@ -17,4 +17,4 @@ acceptance of Autodesk's terms and conditions.
 
 See also:
 - [General information and documentation about Shotgrid integrations](https://support.shotgunsoftware.com/entries/95441257)
-- [Information about Shotgrid in general](http://www.shotgridsoftware.com/toolkit)
+- [Information about Shotgrid in general](https://www.shotgridsoftware.com/toolkit)
