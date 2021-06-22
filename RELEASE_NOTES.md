@@ -3,9 +3,10 @@
 **Version**: 1.1
 
 This versions requires:
-* Shotgun for Unity 1.1 (com.unity.integrations.shotgun)
+* Shotgrid for Unity 1.1 (com.unity.integrations.shotgrid)
 
 NEW FEATURES
+* Rebrand from Shotgun to Shotgrid
 * Direct Unity project launch (no need for Unity Hub)
 * API usage of python package updated to run in-process
 
