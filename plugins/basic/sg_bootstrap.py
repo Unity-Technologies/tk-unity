@@ -1,6 +1,6 @@
 """
-The Unity bootstrap module for Shotgun.
-process in order to serve the Shotgun integration
+The Unity bootstrap module for Shotgrid.
+process in order to serve the Shotgrid integration
 """
 
 import importlib.util
@@ -12,7 +12,7 @@ import UnityEditor
 import UnityEngine
 
 # Logging
-_log_to_file = os.environ.get('UNITY_SHOTGUN_CLIENT_LOGFILE')
+_log_to_file = os.environ.get('UNITY_SHOTGRID_CLIENT_LOGFILE')
 def log(msg):
     message = '[ShotgunClient] {}\n'.format(msg)
     if _log_to_file:
@@ -21,8 +21,8 @@ def log(msg):
 
     print(message)
 
-# We only initialize Shotgun once
-_shotgun_is_initialized = False
+# We only initialize Shotgrid once
+_shotgrid_is_initialized = False
 
 def invoke_post_init_hook():
     """
@@ -56,20 +56,20 @@ def execute_menu_item(menu_item):
         log('Got exception while executing menu item "{}"'.format(menu_item))
         log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))   
         
-def bootstrap_shotgun():
+def bootstrap_shotgrid():
     """
-    Checks if Shotgun is already initialized. If not, executes the 
+    Checks if Shotgrid is already initialized. If not, executes the 
     bootstrap script.
     """
-    global _shotgun_is_initialized
-    if _shotgun_is_initialized:
-        log('Shotgun is already initialized')
+    global _shotgrid_is_initialized
+    if _shotgrid_is_initialized:
+        log('Shotgrid is already initialized')
         return
 
     log('Requesting bootstrap')
-    path_to_bootstrap = os.environ.get('SHOTGUN_UNITY_BOOTSTRAP_LOCATION')
+    path_to_bootstrap = os.environ.get('SHOTGRID_UNITY_BOOTSTRAP_LOCATION')
     if not path_to_bootstrap:
-        raise EnvironmentError('Unity was not launched from Shotgun (SHOTGUN_UNITY_BOOTSTRAP_LOCATION is not defined in the environment). Cannot bootstrap toolkit.')
+        raise EnvironmentError('Unity was not launched from Shotgrid (SHOTGRID_UNITY_BOOTSTRAP_LOCATION is not defined in the environment). Cannot bootstrap toolkit.')
 
     path_to_bootstrap = os.path.normpath(path_to_bootstrap)
     try:
@@ -81,16 +81,16 @@ def bootstrap_shotgun():
         spec = importlib.util.spec_from_file_location("bootstrap", path_to_bootstrap)
         bootstrap_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(bootstrap_module)
-        _shotgun_is_initialized = True if bootstrap_module.plugin_startup() == 0 else False
+        _shotgrid_is_initialized = True if bootstrap_module.plugin_startup() == 0 else False
     except:
         import traceback
         log('Got an exception while bootstrapping:')
         log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
     
-    if _shotgun_is_initialized:
-        log('Shotgun has been initialized')
+    if _shotgrid_is_initialized:
+        log('Shotgrid has been initialized')
     else:
-        log('Shotgun has not been initialized')
+        log('Shotgrid has not been initialized')
         
     # Clear the progress bar in case we never got to 100%
     try:
@@ -118,4 +118,4 @@ if __name__ == '__main__':
     UnityEngine.Debug.Log("entering main")
     # Avoid working in the main module
     import sg_bootstrap
-    sg_bootstrap.bootstrap_shotgun()
+    sg_bootstrap.bootstrap_shotgrid()

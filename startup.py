@@ -88,33 +88,33 @@ class UnityLauncher(SoftwareLauncher):
         # connect to, what context to load, etc.
         required_env.update(self.get_standard_plugin_environment())
 
-        # This will be read by Bootstrap.cs (com.unity.integrations.shotgun) 
+        # This will be read by Bootstrap.cs (com.unity.integrations.shotgrid) 
         # from the C# plugin in UI to know where to pick up the
         # Toolkit code.
-        required_env["SHOTGUN_UNITY_BOOTSTRAP_LOCATION"] = os.path.join(
+        required_env["SHOTGRID_UNITY_BOOTSTRAP_LOCATION"] = os.path.join(
             self.disk_location,
             "plugins",
             "basic",
             "bootstrap.py"
         )
         #To be removed when Python Package is integrated properly
-        #Code is passing a PySide2 environment variable to Shotgun unity to use for install
+        #Code is passing a PySide2 environment variable to Shotgrid unity to use for install
         #A proper integration would simple Pip install Pyside
         from sgtk.util.qt_importer import QtImporter
         pyside_importer = QtImporter()._import_pyside2()
         pysideFilePath = pyside_importer[2].__path__[0]
         pysideFilePath=pysideFilePath.replace("Python","Python3").replace("python2.7","python3.7")
         pysideFilePath=os.path.dirname(pysideFilePath)
-        required_env["SHOTGUN_UNITY_PYSIDE_LOCATION"] = pysideFilePath
+        required_env["SHOTGRID_UNITY_PYSIDE_LOCATION"] = pysideFilePath
         
         # Signals which engine instance from the environment is going to be used.
-        required_env["SHOTGUN_ENGINE"] = self.engine_name
+        required_env["SHOTGRID_ENGINE"] = self.engine_name
 
         # We do not support the file_to_open logic. Its value comes from the 
         # launch plug-in when users launch DCCs from a published file.
-        # https://github.com/shotgunsoftware/tk-shotgun-launchpublish
+        # https://github.com/shotgunsoftware/tk-shotgrid-launchpublish
         # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/publishedfile.yml#L27
-        # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/includes/settings/tk-shotgun-launchpublish.yml
+        # https://github.com/shotgunsoftware/tk-config-default2/blob/master/env/includes/settings/tk-shotgrid-launchpublish.yml
         
         #Get user project path with Qt File Dialog          
         from sgtk.util.qt_importer import QtImporter

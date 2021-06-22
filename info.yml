@@ -50,14 +50,14 @@ configuration:
         description: "Logic to execute after the Unity engine has been successfully bootstrapped."
         default_value: "{self}/bootstrap/post_init.py"
 
-# the Shotgun fields that this engine needs in order to operate correctly
-requires_shotgun_fields:
+# the Shotgrid fields that this engine needs in order to operate correctly
+requires_shotgrid_fields:
         
 # More verbose description of this item 
-display_name: "Shotgun Engine for Unity"
-description: "Shotgun Integration in Unity"
+display_name: "Shotgrid Engine for Unity"
+description: "Shotgrid Integration in Unity"
 
 # Required minimum versions for this item to run
-requires_shotgun_version:
+requires_shotgrid_version:
 requires_core_version: "v0.18.8"
 

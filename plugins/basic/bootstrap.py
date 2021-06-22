@@ -1,6 +1,6 @@
 import UnityEditor
 
-# This script module is executed by Unity to bootstrap Shotgun
+# This script module is executed by Unity to bootstrap Shotgrid
 def plugin_startup():
     import os
     import sys
@@ -33,7 +33,7 @@ def plugin_startup():
                 qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_DontUseNativeMenuBar,False);
                 qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_MacPluginApplication,True);
     
-            qApp = qt.QtGui.QApplication(["Shotgun Engine for Unity"])
+            qApp = qt.QtGui.QApplication(["Shotgrid Engine for Unity"])
         
         if "darwin" in sys.platform:
             site_packages_path = '/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages'
@@ -42,7 +42,7 @@ def plugin_startup():
 
         # the plugin python path will be just below the root level. 
         # add it to sys.path
-        plugin_root_path = os.path.dirname(os.environ["SHOTGUN_UNITY_BOOTSTRAP_LOCATION"])
+        plugin_root_path = os.path.dirname(os.environ["SHOTGRID_UNITY_BOOTSTRAP_LOCATION"])
 
         if plugin_root_path not in sys.path:
             sys.path.insert(0, plugin_root_path)
@@ -61,13 +61,13 @@ def plugin_startup():
         sgtk.platform.current_engine()._initialize_dark_look_and_feel()
 
         # Engine is fully initialized. Let Unity know
-        UnityEditor.Integrations.Shotgun.Bootstrap.OnEngineInitialized()
+        UnityEditor.Integrations.Shotgrid.Bootstrap.OnEngineInitialized()
 
     except:
         import traceback
         
         import sg_bootstrap
-        sg_bootstrap.log('Shotgun Toolkit Error:')
+        sg_bootstrap.log('Shotgrid Toolkit Error:')
         sg_bootstrap.log('Exception stack trace:\n\n{}'.format(traceback.format_exc()))
         
         # Clean-up the engine
