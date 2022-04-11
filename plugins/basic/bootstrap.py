@@ -23,22 +23,29 @@ def plugin_startup():
         #   the engine. This is what we do for our old Softimage integration, as 
         #   an example. You can find that here 
         #   (https://github.com/shotgunsoftware/tk-framework-softimageqt)
+
+        import PySide2
+        # from PySide2 import QtGui
+        from PySide2 import QtWidgets
+
+        if not PySide2.QtWidgets.QApplication.instance():
+            qApp = PySide2.QtWidgets.QApplication(["Shotgrid Engine for Unity"])
         
-        # Start by creating the QApplication object
-        from sgtk.util.qt_importer import QtImporter
-        qt = QtImporter()
-        if not qt.QtGui.QApplication.instance():
-            # Tell QApplication that we're running as a plugin and not to muck with Native menus
-            if "darwin" == sys.platform:
-                qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_DontUseNativeMenuBar,False);
-                qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_MacPluginApplication,True);
-    
-            qApp = qt.QtGui.QApplication(["Shotgrid Engine for Unity"])
-        
-        if "darwin" in sys.platform:
-            site_packages_path = '/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages'
-            if site_packages_path not in sys.path:
-                sys.path.append(site_packages_path)
+        # # Start by creating the QApplication object
+        # from sgtk.util.qt_importer import QtImporter
+        # qt = QtImporter()
+        # if not qt.QtGui.QApplication.instance():
+        #     # Tell QApplication that we're running as a plugin and not to muck with Native menus
+        #     if "darwin" == sys.platform:
+        #         qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_DontUseNativeMenuBar,False);
+        #         qt.QtGui.QApplication.setAttribute(qt.QtCore.Qt.AA_MacPluginApplication,True);
+        # 
+        #     qApp = qt.QtGui.QApplication(["Shotgrid Engine for Unity"])
+        # 
+        # if "darwin" in sys.platform:
+        #     site_packages_path = '/Applications/Shotgun.app/Contents/Resources/Python/lib/python2.7/site-packages'
+        #     if site_packages_path not in sys.path:
+        #         sys.path.append(site_packages_path)
 
         # the plugin python path will be just below the root level. 
         # add it to sys.path
@@ -61,7 +68,7 @@ def plugin_startup():
         sgtk.platform.current_engine()._initialize_dark_look_and_feel()
 
         # Engine is fully initialized. Let Unity know
-        UnityEditor.Integrations.Shotgrid.Bootstrap.OnEngineInitialized()
+        UnityEditor.Integrations.ShotGrid.Bootstrap.OnEngineInitialized()
 
     except:
         import traceback
